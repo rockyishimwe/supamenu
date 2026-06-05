@@ -9,6 +9,7 @@ import {
   Coins, Download, Calendar, ArrowUpRight, 
   DollarSign, Activity, FileText, Landmark
 } from 'lucide-react';
+import BackButton from '../../../components/BackButton';
 
 const mockMonthlyRevenue = [
   { month: 'Jan', revenue: 14500, expenses: 8500 },
@@ -33,7 +34,8 @@ export default function OwnerFinance() {
 
   return (
     <div className="p-8 space-y-8 bg-[#07090e] min-h-screen text-gray-300">
-      
+      <BackButton />
+
       {/* Header */}
       <div className="flex justify-between items-center">
         <div className="space-y-1">

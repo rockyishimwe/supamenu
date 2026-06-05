@@ -5,6 +5,7 @@ import {
   Calendar, Clock, Users, Tag, AlertTriangle, CheckCircle, 
   XCircle, SlidersHorizontal, ChevronRight, MessageSquare
 } from 'lucide-react';
+import BackButton from '../../../components/BackButton';
 
 export default function CustomerReservations() {
   const { reservations, updateReservationStatus } = useDineFlow();
@@ -40,7 +41,8 @@ export default function CustomerReservations() {
 
   return (
     <div className="p-8 space-y-8 bg-[#07090e] min-h-screen text-gray-300">
-      
+      <BackButton />
+
       {/* Header */}
       <div className="space-y-1">
         <h2 className="text-xl font-bold text-white tracking-tight flex items-center gap-2">

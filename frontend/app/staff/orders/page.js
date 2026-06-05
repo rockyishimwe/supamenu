@@ -3,6 +3,7 @@ import { AnimatePresence } from 'framer-motion';
 import { useDineFlow } from '../../context';
 import OrderKanbanCard from '../../../components/OrderKanbanCard';
 import { ClipboardList } from 'lucide-react';
+import BackButton from '../../../components/BackButton';
 
 const PIPELINE = [
   { key: 'new', label: 'New' },
@@ -17,6 +18,7 @@ export default function StaffOrders() {
 
   return (
     <div className="space-y-6">
+      <BackButton />
       <div>
         <h1 className="text-2xl font-bold font-display text-white flex items-center gap-2">
           <ClipboardList className="w-6 h-6 text-primary" /> Orders Kanban

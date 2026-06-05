@@ -4,6 +4,7 @@ import { useDineFlow } from '../../context';
 import TableCard from '../../../components/TableCard';
 import TableContextPanel from '../../../components/TableContextPanel';
 import FloorPlan from '../../../components/FloorPlan';
+import BackButton from '../../../components/BackButton';
 
 export default function StaffTablesPage() {
   const { tables, selectedTableId, setSelectedTableId } = useDineFlow();
@@ -14,6 +15,7 @@ export default function StaffTablesPage() {
 
   return (
     <div className="space-y-6">
+      <BackButton />
       <h1 className="text-2xl font-bold font-display text-white">Tables</h1>
       <div className="flex gap-2 flex-wrap">
         {['all', 'available', 'occupied', 'reserved', 'cleaning'].map((f) => (

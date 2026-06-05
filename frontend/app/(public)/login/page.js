@@ -4,8 +4,9 @@ import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useDineFlow } from '../../context';
 import { 
-  UtensilsCrossed, ShieldCheck, RefreshCw, Sparkles, Heart, Mail, Lock, Eye, EyeOff, Check, Chrome, Apple, ChevronRight, HelpCircle
+  ShieldCheck, RefreshCw, Sparkles, Heart, Mail, Lock, Eye, EyeOff, Check, Chrome, Apple, ChevronRight, HelpCircle
 } from 'lucide-react';
+import DineFlowLogo from '../../../components/DineFlowLogo';
 
 export default function LoginPage() {
   const router = useRouter();
@@ -56,12 +57,9 @@ export default function LoginPage() {
         <div className="absolute top-1/4 -left-1/4 w-[150%] h-1/2 bg-[#FF6B00]/5 filter blur-3xl rounded-full"></div>
         
         {/* Header */}
-        <div className="flex items-center gap-3 relative z-10">
-          <div className="w-10 h-10 rounded-full bg-[#FF6B00] flex items-center justify-center">
-            <UtensilsCrossed className="text-white w-5 h-5" />
-          </div>
-          <span className="font-bold text-xl text-white">DineFlow</span>
-        </div>
+        <Link href="/" className="relative z-10 text-white">
+          <DineFlowLogo size="md" />
+        </Link>
 
         {/* Middle content */}
         <div className="space-y-8 relative z-10 max-w-sm">

@@ -3,10 +3,11 @@ import React, { useState, useEffect } from 'react';
 import { useDineFlow } from '../../../context';
 import { useRouter } from 'next/navigation';
 import { 
-  Star, Clock, MapPin, Globe, Phone, ChevronLeft, Plus, CheckCircle, 
+  Star, Clock, MapPin, Globe, Phone, Plus, CheckCircle, 
   Sparkles, Heart, Flame, ShieldAlert, Award, Calendar, Users
 } from 'lucide-react';
 import confetti from 'canvas-confetti';
+import BackButton from '../../../../components/BackButton';
 
 export default function RestaurantDetails({ params }) {
   const router = useRouter();
@@ -47,13 +48,7 @@ export default function RestaurantDetails({ params }) {
         <p className="text-sm text-gray-500 max-w-md">
           We could not find a restaurant matching this link. It may have been removed or the ID is invalid.
         </p>
-        <button
-          type="button"
-          onClick={() => router.back()}
-          className="px-6 py-3 rounded-xl bg-[#FF6B00] hover:bg-[#e05e00] text-white text-sm font-bold flex items-center gap-2"
-        >
-          <ChevronLeft className="w-4 h-4" /> Go back
-        </button>
+        <BackButton />
       </div>
     );
   }
@@ -109,7 +104,10 @@ export default function RestaurantDetails({ params }) {
 
   return (
     <div className="bg-[#07090e] text-gray-300 min-h-screen">
-      
+      <div className="px-8 pt-6">
+        <BackButton />
+      </div>
+
       {/* Cover Image and Header Info */}
       <div className="relative h-80 overflow-hidden">
         <img 
@@ -117,14 +115,6 @@ export default function RestaurantDetails({ params }) {
           alt={restaurant.name} 
           className="w-full h-full object-cover brightness-[0.4]"
         />
-        
-        {/* Floating Back Button */}
-        <button 
-          onClick={() => router.back()}
-          className="absolute top-6 left-6 w-10 h-10 rounded-full bg-black/60 border border-white/10 flex items-center justify-center text-white hover:bg-black transition-all z-10"
-        >
-          <ChevronLeft className="w-5 h-5" />
-        </button>
 
         {/* Floating Favorite */}
         <button className="absolute top-6 right-6 w-10 h-10 rounded-full bg-black/60 border border-white/10 flex items-center justify-center text-white hover:text-red-500 transition-all z-10">

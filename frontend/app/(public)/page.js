@@ -3,8 +3,9 @@ import React, { useState } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { 
-  ArrowRight, ShieldCheck, Flame, Zap, Award, Sparkles, CheckCircle2, ChevronDown, UtensilsCrossed, MonitorCheck, ChefHat
+  ArrowRight, ShieldCheck, Flame, Zap, Award, Sparkles, CheckCircle2, ChevronDown, MonitorCheck, ChefHat
 } from 'lucide-react';
+import DineFlowLogo from '../../components/DineFlowLogo';
 
 export default function LandingPage() {
   const router = useRouter();
@@ -37,12 +38,9 @@ export default function LandingPage() {
     <div className="min-h-screen bg-[#07090e] text-[#f3f4f6]">
       {/* Navbar */}
       <nav className="h-20 max-w-7xl mx-auto flex items-center justify-between px-8 border-b border-white/5">
-        <div className="flex items-center gap-3">
-          <div className="w-10 h-10 rounded-full bg-[#FF6B00] flex items-center justify-center">
-            <UtensilsCrossed className="text-white w-5 h-5" />
-          </div>
-          <span className="font-bold text-xl tracking-tight text-white">DineFlow</span>
-        </div>
+        <Link href="/" className="text-white">
+          <DineFlowLogo size="md" />
+        </Link>
         <div className="hidden md:flex items-center gap-8 text-sm font-medium text-gray-400">
           <a href="#features" className="hover:text-white transition-colors">Features</a>
           <a href="#faq" className="hover:text-white transition-colors">FAQ</a>
@@ -326,12 +324,9 @@ export default function LandingPage() {
       {/* Footer */}
       <footer className="bg-[#0f1115] border-t border-white/5 py-12 mt-12">
         <div className="max-w-7xl mx-auto px-8 flex flex-col md:flex-row items-center justify-between gap-6">
-          <div className="flex items-center gap-3">
-            <div className="w-8 h-8 rounded-full bg-[#FF6B00] flex items-center justify-center">
-              <UtensilsCrossed className="text-white w-4.5 h-4.5" />
-            </div>
-            <span className="font-bold text-md text-white">DineFlow</span>
-          </div>
+          <Link href="/" className="text-white">
+            <DineFlowLogo size="sm" />
+          </Link>
           <p className="text-xs text-gray-500">© 2026 DineFlow Restaurant Ecosystem. All rights reserved.</p>
           <div className="flex gap-6 text-xs text-gray-400 font-medium">
             <Link href="/login" className="hover:text-white">Sign In</Link>

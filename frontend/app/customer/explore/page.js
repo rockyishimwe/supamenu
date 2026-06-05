@@ -7,6 +7,7 @@ import {
   Compass, Clock, StarHalf, Phone, ChevronRight, Crosshair
 } from 'lucide-react';
 import FilterModal from '../../../components/FilterModal';
+import BackButton from '../../../components/BackButton';
 
 export default function CustomerExplore() {
   const { restaurants, menuItems } = useDineFlow();
@@ -48,7 +49,8 @@ export default function CustomerExplore() {
       
       {/* Left Column: Search Filters & List */}
       <div className="lg:col-span-6 p-6 border-r border-[#1f2228] flex flex-col overflow-y-auto max-h-[calc(100vh-5rem)] scrollbar-thin space-y-6">
-        
+        <BackButton />
+
         {/* Header Title */}
         <div className="flex justify-between items-center">
           <div className="space-y-1">

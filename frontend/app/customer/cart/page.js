@@ -3,6 +3,7 @@ import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { useDineFlow } from '../../context';
 import PaymentModal from '../../../components/PaymentModal';
+import BackButton from '../../../components/BackButton';
 import { Minus, Plus, Trash2 } from 'lucide-react';
 
 export default function CartPage() {
@@ -25,15 +26,19 @@ export default function CartPage() {
 
   if (!cart.length) {
     return (
-      <div className="max-w-2xl mx-auto text-center py-20">
+      <div className="max-w-2xl mx-auto py-8">
+        <BackButton />
+        <div className="text-center py-12">
         <p className="text-gray-500 mb-4">Your cart is empty</p>
         <a href="/customer" className="text-primary font-semibold">Browse restaurants</a>
+        </div>
       </div>
     );
   }
 
   return (
     <div className="max-w-3xl mx-auto space-y-6">
+      <BackButton />
       <h1 className="text-2xl font-bold font-display text-white">Your Cart</h1>
       <div className="space-y-3">
         {cart.map((item) => (

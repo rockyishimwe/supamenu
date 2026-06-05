@@ -6,6 +6,7 @@ import {
   Clock, ArrowRight, ShieldCheck, Mail, Calendar, CreditCard, ChevronRight
 } from 'lucide-react';
 import confetti from 'canvas-confetti';
+import BackButton from '../../../components/BackButton';
 
 export default function CustomerProfile() {
   const { currentUser, orders, topUpWallet } = useDineFlow();
@@ -56,7 +57,8 @@ export default function CustomerProfile() {
 
   return (
     <div className="p-8 space-y-8 bg-[#07090e] min-h-screen text-gray-300">
-      
+      <BackButton />
+
       {/* Top Banner: User card */}
       <div className="bg-[#0f1115] border border-white/5 p-6 rounded-3xl flex flex-wrap items-center justify-between gap-6 relative overflow-hidden">
         <div className="absolute top-0 right-0 w-64 h-64 bg-[#FF6B00]/5 rounded-full filter blur-3xl"></div>

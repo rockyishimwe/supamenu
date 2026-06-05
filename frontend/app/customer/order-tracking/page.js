@@ -4,6 +4,7 @@ import { useSearchParams } from 'next/navigation';
 import { motion } from 'framer-motion';
 import { useDineFlow } from '../../context';
 import { Check } from 'lucide-react';
+import BackButton from '../../../components/BackButton';
 
 const STEPS = [
   { key: 'new', label: 'Confirmed' },
@@ -36,7 +37,12 @@ function OrderTrackingContent() {
   }, [order]);
 
   if (!order) {
-    return <p className="text-center text-gray-500 py-20">Order not found</p>;
+    return (
+      <div className="max-w-lg mx-auto py-8">
+        <BackButton />
+        <p className="text-center text-gray-500 py-12">Order not found</p>
+      </div>
+    );
   }
 
   const currentIdx = STEPS.findIndex((s) => s.key === order.status) >= 0
@@ -45,6 +51,7 @@ function OrderTrackingContent() {
 
   return (
     <div className="max-w-lg mx-auto space-y-8 py-8">
+      <BackButton />
       <div className="text-center">
         <h1 className="text-2xl font-bold font-display text-white">Order Tracking</h1>
         <p className="text-gray-500 text-sm mt-1">#{order._id?.slice(-6)} · Table {order.tableNumber}</p>

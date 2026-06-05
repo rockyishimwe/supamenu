@@ -4,6 +4,7 @@ import {
   Users, Plus, Trash2, ShieldCheck, Mail, Sparkles, Check, 
   ChevronRight, Calendar, UserCheck, Star, Award
 } from 'lucide-react';
+import BackButton from '../../../components/BackButton';
 
 const initialStaff = [
   { id: 1, name: 'Alex Morgan', role: 'Staff Waiter', email: 'alex@dineflow.com', shift: 'Morning shift (08:00 - 16:00)', performance: 4.8 },
@@ -56,7 +57,8 @@ export default function OwnerStaffRoster() {
 
   return (
     <div className="p-8 space-y-8 bg-[#07090e] min-h-screen text-gray-300">
-      
+      <BackButton />
+
       {/* Header */}
       <div className="flex justify-between items-center">
         <div className="space-y-1">

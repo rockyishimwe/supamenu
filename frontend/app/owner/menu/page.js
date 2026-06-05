@@ -5,6 +5,7 @@ import {
   Menu as MenuIcon, Plus, Trash2, Edit, Check, AlertCircle, 
   Sparkles, Star, DollarSign, Tag, Info, ChefHat
 } from 'lucide-react';
+import BackButton from '../../../components/BackButton';
 
 export default function OwnerMenuEditor() {
   const { menuItems, addMenuItem } = useDineFlow();
@@ -59,7 +60,8 @@ export default function OwnerMenuEditor() {
 
   return (
     <div className="p-8 space-y-8 bg-[#07090e] min-h-screen text-gray-300">
-      
+      <BackButton />
+
       {/* Header */}
       <div className="flex justify-between items-center">
         <div className="space-y-1">

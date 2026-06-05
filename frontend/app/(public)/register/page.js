@@ -5,8 +5,10 @@ import { useRouter } from 'next/navigation';
 import { useDineFlow } from '../../context';
 import { useStore } from '../../../lib/store';
 import { 
-  UtensilsCrossed, ShieldCheck, Mail, Lock, User, Sparkles, ChevronRight, ChevronLeft, Building, MapPin, Store, Check, Utensils
+  ShieldCheck, Mail, Lock, User, Sparkles, ChevronRight, ChevronLeft, Building, MapPin, Store, Check, Utensils
 } from 'lucide-react';
+import DineFlowLogo from '../../../components/DineFlowLogo';
+import BackButton from '../../../components/BackButton';
 import confetti from 'canvas-confetti';
 
 export default function RegisterPage() {
@@ -105,12 +107,9 @@ export default function RegisterPage() {
         <div className="absolute top-1/4 -left-1/4 w-[150%] h-1/2 bg-[#FF6B00]/5 filter blur-3xl rounded-full"></div>
         
         {/* Header */}
-        <div className="flex items-center gap-3 relative z-10">
-          <div className="w-10 h-10 rounded-full bg-[#FF6B00] flex items-center justify-center">
-            <UtensilsCrossed className="text-white w-5 h-5" />
-          </div>
-          <span className="font-bold text-xl text-white">DineFlow</span>
-        </div>
+        <Link href="/" className="relative z-10 text-white">
+          <DineFlowLogo size="md" />
+        </Link>
 
         {/* Content */}
         <div className="space-y-6 relative z-10 max-w-sm">
@@ -136,7 +135,8 @@ export default function RegisterPage() {
       {/* Right Pane (Register Form / Wizard) */}
       <div className="lg:col-span-7 flex items-center justify-center p-8 sm:p-12">
         <div className="w-full max-w-md bg-[#0f1115] border border-white/5 rounded-3xl p-8 sm:p-10 shadow-2xl relative z-10">
-          
+          <BackButton href="/login" />
+
           {/* Header & Step progress */}
           <div className="space-y-2 mb-8">
             <div className="flex justify-between items-center">

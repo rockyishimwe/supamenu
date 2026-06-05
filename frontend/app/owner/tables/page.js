@@ -5,6 +5,7 @@ import {
   LayoutGrid, Plus, Trash2, ShieldCheck, MapPin, 
   Sparkles, CheckCircle2, ChevronRight, Award, Compass, AlertCircle
 } from 'lucide-react';
+import BackButton from '../../../components/BackButton';
 
 export default function OwnerTablesBuilder() {
   const { tables, addTable, deleteTable } = useDineFlow();
@@ -43,7 +44,8 @@ export default function OwnerTablesBuilder() {
 
   return (
     <div className="p-8 space-y-8 bg-[#07090e] min-h-screen text-gray-300">
-      
+      <BackButton />
+
       {/* Header */}
       <div className="flex justify-between items-center">
         <div className="space-y-1">
