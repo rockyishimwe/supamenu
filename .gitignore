@@ -83,3 +83,4 @@ public/uploads/
 .turbo/
 *.tsbuildinfo
 designs/
+.cursorrules/
