@@ -10,9 +10,13 @@ export default function MiniCalendar() {
   const daysInMonth = new Date(year, month + 1, 0).getDate();
   const bookedDays = new Set(
     reservations
-      .filter((r) => r.status === 'confirmed')
-      .map((r) => parseInt(r.reservationDate?.split('-')[2], 10))
-      .filter(Boolean)
+      .filter((r) => {
+        if (r.status !== 'confirmed' || !r.reservationDate) return false;
+        const [y, m] = r.reservationDate.split('-').map((v) => parseInt(v, 10));
+        return y === year && m === month + 1;
+      })
+      .map((r) => parseInt(r.reservationDate.split('-')[2], 10))
+      .filter((d) => !isNaN(d))
   );
 
   const cells = [];

@@ -15,6 +15,7 @@ export default function CustomerProfile() {
   const [topUpAmount, setTopUpAmount] = useState('50');
   const [topUpSuccess, setTopUpSuccess] = useState(false);
   const [topUpLoading, setTopUpLoading] = useState(false);
+  const [topUpError, setTopUpError] = useState('');
 
   // Check URL params for pre-selecting tab
   useEffect(() => {
@@ -30,8 +31,12 @@ export default function CustomerProfile() {
   const handleTopUpSubmit = async (e) => {
     e.preventDefault();
     const amt = parseFloat(topUpAmount);
-    if (isNaN(amt) || amt <= 0) return;
-    
+    if (isNaN(amt) || amt <= 0) {
+      setTopUpError('Please enter a positive amount');
+      return;
+    }
+
+    setTopUpError('');
     setTopUpLoading(true);
     await topUpWallet(amt);
     setTopUpLoading(false);
@@ -276,7 +281,7 @@ export default function CustomerProfile() {
                     <button
                       key={amt}
                       type="button"
-                      onClick={() => setTopUpAmount(amt)}
+                      onClick={() => { setTopUpAmount(amt); setTopUpError(''); }}
                       className={`py-3 rounded-xl border text-xs font-bold transition-all ${
                         topUpAmount === amt
                           ? 'border-[#FF6B00] bg-[#FF6B00]/5 text-[#FF6B00]'
@@ -298,13 +303,17 @@ export default function CustomerProfile() {
                       min="1"
                       max="1000"
                       value={topUpAmount}
-                      onChange={(e) => setTopUpAmount(e.target.value)}
+                      onChange={(e) => { setTopUpAmount(e.target.value); setTopUpError(''); }}
                       required
                       placeholder="0.00"
                       className="w-full pl-9 pr-4 py-3 rounded-xl bg-white/5 border border-white/5 text-xs text-white placeholder-gray-500 focus:outline-none focus:border-[#FF6B00] focus:bg-white/10 transition-all"
                     />
                   </div>
                 </div>
+
+                {topUpError && (
+                  <p className="text-sm text-red-400 text-center">{topUpError}</p>
+                )}
 
                 {topUpSuccess && (
                   <div className="bg-[#22C55E]/10 border border-[#22C55E]/20 p-3 rounded-xl text-center text-xs text-[#22C55E] flex items-center justify-center gap-1.5 font-semibold">

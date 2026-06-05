@@ -1,7 +1,10 @@
 const jwt = require('jsonwebtoken');
 const User = require('../models/User');
 
-const JWT_SECRET = process.env.JWT_SECRET || 'dineflow_secret_token_2026';
+if (!process.env.JWT_SECRET) {
+  throw new Error('JWT_SECRET environment variable is required. Set it in .env before starting the server.');
+}
+const JWT_SECRET = process.env.JWT_SECRET;
 
 async function authMiddleware(req, res, next) {
   try {

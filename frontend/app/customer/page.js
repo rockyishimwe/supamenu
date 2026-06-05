@@ -3,10 +3,8 @@ import React, { useState } from 'react';
 import { useDineFlow } from '../context';
 import Link from 'next/link';
 import { 
-  Sparkles, Star, Clock, Plus, Heart, Navigation, 
-  Flame, Award, Wallet, Calendar, Users, ChevronRight, Check
+  Sparkles, Star, Clock, Plus, Award, Wallet, Calendar, Users, ChevronRight
 } from 'lucide-react';
-import { motion } from 'framer-motion';
 import ConfettiSuccess from '../../components/ConfettiSuccess';
 
 export default function CustomerDashboard() {
@@ -196,8 +194,8 @@ export default function CustomerDashboard() {
                     </div>
 
                     <div className="flex flex-wrap gap-1.5">
-                      {res.cuisines.map((cuisine, idx) => (
-                        <span key={idx} className="text-[10px] px-2 py-0.5 rounded-md bg-white/5 text-gray-400 font-semibold">{cuisine}</span>
+                      {res.cuisines.map((cuisine) => (
+                        <span key={cuisine} className="text-[10px] px-2 py-0.5 rounded-md bg-white/5 text-gray-400 font-semibold">{cuisine}</span>
                       ))}
                     </div>
 

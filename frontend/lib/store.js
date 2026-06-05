@@ -172,7 +172,7 @@ export const useStore = create((set, get) => ({
       walletBalance: 120.00,
       customerDetails: {
         points: 0,
-        tier: 'Bronze',
+        loyaltyTier: 'Bronze',
         totalOrders: 0,
       },
     };

@@ -38,7 +38,25 @@ export default function RestaurantDetails({ params }) {
   }
 
   const id = resolvedParams.id;
-  const restaurant = restaurants.find(r => r._id === id) || restaurants[0];
+  const restaurant = restaurants.find((r) => String(r._id) === String(id));
+
+  if (!restaurant) {
+    return (
+      <div className="min-h-screen bg-[#07090e] flex flex-col items-center justify-center gap-6 text-center px-8">
+        <h1 className="text-xl font-bold text-white">Restaurant not found</h1>
+        <p className="text-sm text-gray-500 max-w-md">
+          We could not find a restaurant matching this link. It may have been removed or the ID is invalid.
+        </p>
+        <button
+          type="button"
+          onClick={() => router.back()}
+          className="px-6 py-3 rounded-xl bg-[#FF6B00] hover:bg-[#e05e00] text-white text-sm font-bold flex items-center gap-2"
+        >
+          <ChevronLeft className="w-4 h-4" /> Go back
+        </button>
+      </div>
+    );
+  }
 
   // Get menu items for this restaurant
   const restaurantMenu = menuItems.filter(item => item.restaurantId === id);
@@ -71,7 +89,7 @@ export default function RestaurantDetails({ params }) {
       notes: `Visual table booking for Table ${selectedTable.tableNumber}`
     });
 
-    setBookingLoading(true);
+    setBookingLoading(false);
     if (res.success) {
       setBookingSuccess(true);
       confetti({
@@ -87,7 +105,6 @@ export default function RestaurantDetails({ params }) {
     } else {
       setBookingError("Failed to book reservation. Please try again.");
     }
-    setBookingLoading(false);
   };
 
   return (

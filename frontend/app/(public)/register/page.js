@@ -3,6 +3,7 @@ import React, { useState } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useDineFlow } from '../../context';
+import { useStore } from '../../../lib/store';
 import { 
   UtensilsCrossed, ShieldCheck, Mail, Lock, User, Sparkles, ChevronRight, ChevronLeft, Building, MapPin, Store, Check, Utensils
 } from 'lucide-react';
@@ -86,6 +87,8 @@ export default function RegisterPage() {
           categories: ['Appetizers', 'Mains', 'Desserts']
         };
         localStorage.setItem('dineflow_restaurants', JSON.stringify([newRes, ...storedRes]));
+        const currentRestaurants = useStore.getState().restaurants;
+        useStore.setState({ restaurants: [newRes, ...currentRestaurants] });
         router.push('/owner');
       } else {
         router.push('/customer');
