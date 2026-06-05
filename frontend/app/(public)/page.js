@@ -1,0 +1,348 @@
+"use client";
+import React, { useState } from 'react';
+import Link from 'next/link';
+import { useRouter } from 'next/navigation';
+import { 
+  ArrowRight, ShieldCheck, Flame, Zap, Award, Sparkles, CheckCircle2, ChevronDown, UtensilsCrossed, MonitorCheck, ChefHat
+} from 'lucide-react';
+
+export default function LandingPage() {
+  const router = useRouter();
+  const [activeTab, setActiveTab] = useState('customer'); // customer, owner, staff
+  const [activeFaq, setActiveFaq] = useState(null);
+
+  const stats = [
+    { value: '2,500+', label: 'Restaurants', desc: 'Trust our platform' },
+    { value: '150K+', label: 'Happy Customers', desc: 'Served daily' },
+    { value: '250K+', label: 'Orders Processed', desc: 'Every day' },
+    { value: '99.9%', label: 'Uptime SLA', desc: 'Always reliable' },
+  ];
+
+  const features = [
+    { title: 'Smart Reservations', desc: 'Real-time table availability and instant reservations for a hassle-free experience.', color: 'from-[#FF6B00] to-amber-500' },
+    { title: 'QR Ordering', desc: 'Scan, browse menus, and pay directly from smartphones for zero friction.', color: 'from-blue-500 to-indigo-500' },
+    { title: 'Kitchen Displays', desc: 'Streamline kitchen operations with digital ticketing and automated queues.', color: 'from-[#22C55E] to-emerald-500' },
+    { title: 'Analytics & Reports', desc: 'Make data-driven decisions with rich dashboards on sales and visits.', color: 'from-purple-500 to-pink-500' },
+    { title: 'Staff Rosters', desc: 'Manage team schedules, roles, waiters, and performance tracking.', color: 'from-red-500 to-orange-500' },
+  ];
+
+  const faqs = [
+    { q: "How does table tracking work for staff?", a: "Staff can view a real-time layout grid of the dining floor. Tables change color based on their status: green for available, red for occupied, yellow for waiting on orders, and gray when being cleaned." },
+    { q: "Can we run this offline in our restaurant?", a: "Yes! DineFlow has a robust local-fallback capability that caches data in the browser or locally, allowing billing and kitchen orders to sync immediately once connection is restored." },
+    { q: "What payment methods are supported?", a: "We support major credit cards, Mobile Money options (e.g. M-Pesa, Orange Money), and a built-in pre-funded customer Wallet for one-tap payments." },
+    { q: "Is there a setup wizard for new owners?", a: "Absolutely. When you register as an owner, you will be guided through a 3-step wizard to upload your menu, define your initial table count, and establish your hours." },
+  ];
+
+  return (
+    <div className="min-h-screen bg-[#07090e] text-[#f3f4f6]">
+      {/* Navbar */}
+      <nav className="h-20 max-w-7xl mx-auto flex items-center justify-between px-8 border-b border-white/5">
+        <div className="flex items-center gap-3">
+          <div className="w-10 h-10 rounded-full bg-[#FF6B00] flex items-center justify-center">
+            <UtensilsCrossed className="text-white w-5 h-5" />
+          </div>
+          <span className="font-bold text-xl tracking-tight text-white">DineFlow</span>
+        </div>
+        <div className="hidden md:flex items-center gap-8 text-sm font-medium text-gray-400">
+          <a href="#features" className="hover:text-white transition-colors">Features</a>
+          <a href="#how-it-works" className="hover:text-white transition-colors">How It Works</a>
+          <a href="#pricing" className="hover:text-white transition-colors">Pricing</a>
+          <a href="#faq" className="hover:text-white transition-colors">FAQ</a>
+        </div>
+        <div className="flex items-center gap-4">
+          <Link href="/login" className="text-sm font-semibold text-white px-5 py-2.5 rounded-xl border border-white/10 hover:bg-white/5 transition-all">
+            Login
+          </Link>
+          <Link href="/register" className="text-sm font-semibold text-white px-5 py-2.5 rounded-xl bg-[#FF6B00] hover:bg-[#e05e00] transition-all hover-lift shadow-lg shadow-[#FF6B00]/10">
+            Get Started
+          </Link>
+        </div>
+      </nav>
+
+      {/* Hero Section */}
+      <section className="max-w-7xl mx-auto px-8 py-20 lg:py-28 grid lg:grid-cols-12 gap-12 items-center">
+        <div className="lg:col-span-6 space-y-8">
+          <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-[#FF6B00]/10 border border-[#FF6B00]/20 text-xs font-semibold text-[#FF6B00] tracking-wide">
+            <Sparkles className="w-3.5 h-3.5" /> All-in-One Restaurant Platform
+          </div>
+          <h1 className="text-4xl sm:text-5xl lg:text-6xl font-extrabold text-white leading-[1.1] tracking-tight">
+            One Platform. <br />
+            Three Experiences. <br />
+            <span className="bg-gradient-to-r from-[#FF6B00] to-amber-500 bg-clip-text text-transparent">Endless Possibilities.</span>
+          </h1>
+          <p className="text-gray-400 text-base sm:text-lg leading-relaxed max-w-xl">
+            Discover restaurants, reserve tables, order food, and run your entire restaurant business—all connected in real time. Designed for modern gastronomy.
+          </p>
+          <div className="flex flex-col sm:flex-row gap-4">
+            <Link href="/login" className="bg-[#FF6B00] hover:bg-[#e05e00] text-white font-semibold py-4 px-8 rounded-2xl flex items-center justify-center gap-2 shadow-lg shadow-[#FF6B00]/20 hover-lift transition-all">
+              Find Restaurants <ArrowRight className="w-5 h-5" />
+            </Link>
+            <Link href="/register" className="bg-white/5 hover:bg-white/10 border border-white/10 text-white font-semibold py-4 px-8 rounded-2xl flex items-center justify-center gap-2 hover-lift transition-all">
+              Register Restaurant
+            </Link>
+          </div>
+        </div>
+
+        {/* Hero Devices Illustration */}
+        <div className="lg:col-span-6 flex justify-center relative">
+          <div className="absolute inset-0 bg-[#FF6B00]/5 filter blur-3xl rounded-full"></div>
+          <div className="relative w-full max-w-lg aspect-square rounded-3xl bg-[#0f1115] border border-white/5 p-6 flex flex-col justify-between overflow-hidden shadow-2xl">
+            <div className="flex items-center justify-between border-b border-white/5 pb-4">
+              <span className="text-xs text-gray-500 font-mono">LIVE_SYSTEM_ECOSYSTEM</span>
+              <span className="w-2.5 h-2.5 rounded-full bg-[#22C55E] animate-pulse"></span>
+            </div>
+            
+            {/* Visual simulation of the three interconnected interfaces */}
+            <div className="grid grid-cols-3 gap-4 my-8">
+              {/* Customer node */}
+              <div className="p-4 bg-white/5 border border-[#22C55E]/20 rounded-2xl text-center space-y-2">
+                <div className="w-8 h-8 rounded-full bg-[#22C55E]/10 flex items-center justify-center mx-auto text-[#22C55E]">
+                  <CheckCircle2 className="w-4.5 h-4.5" />
+                </div>
+                <p className="text-[10px] font-bold text-white uppercase tracking-wider">Customer App</p>
+                <p className="text-[9px] text-gray-500">Ordering & Reservations</p>
+              </div>
+
+              {/* Owner node */}
+              <div className="p-4 bg-white/5 border border-[#FF6B00]/20 rounded-2xl text-center space-y-2">
+                <div className="w-8 h-8 rounded-full bg-[#FF6B00]/10 flex items-center justify-center mx-auto text-[#FF6B00]">
+                  <MonitorCheck className="w-4.5 h-4.5" />
+                </div>
+                <p className="text-[10px] font-bold text-white uppercase tracking-wider">Owner Portal</p>
+                <p className="text-[9px] text-gray-500">Sales & Floor Editor</p>
+              </div>
+
+              {/* Staff node */}
+              <div className="p-4 bg-white/5 border border-blue-500/20 rounded-2xl text-center space-y-2">
+                <div className="w-8 h-8 rounded-full bg-blue-500/10 flex items-center justify-center mx-auto text-blue-500">
+                  <ChefHat className="w-4.5 h-4.5" />
+                </div>
+                <p className="text-[10px] font-bold text-white uppercase tracking-wider">Staff App</p>
+                <p className="text-[9px] text-gray-500">Live Orders & Tables</p>
+              </div>
+            </div>
+
+            <div className="border-t border-white/5 pt-4 text-center">
+              <p className="text-[10px] text-gray-400 uppercase tracking-widest font-semibold bg-white/5 py-2 rounded-xl">
+                🔗 All connected in real-time
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Stats Bar */}
+      <section className="bg-[#0f1115] border-y border-white/5 py-12">
+        <div className="max-w-7xl mx-auto px-8 grid grid-cols-2 md:grid-cols-4 gap-8">
+          {stats.map((stat, i) => (
+            <div key={i} className="text-center space-y-1">
+              <p className="text-3xl font-extrabold text-white">{stat.value}</p>
+              <p className="text-sm font-semibold text-gray-300">{stat.label}</p>
+              <p className="text-xs text-gray-500">{stat.desc}</p>
+            </div>
+          ))}
+        </div>
+      </section>
+
+      {/* Experience Tabs ("Choose Your Experience") */}
+      <section className="max-w-7xl mx-auto px-8 py-24 space-y-12">
+        <div className="text-center space-y-4">
+          <h2 className="text-3xl font-bold text-white">Choose Your Experience</h2>
+          <p className="text-gray-400 text-sm max-w-md mx-auto">One integrated system catering to every role inside the culinary environment.</p>
+        </div>
+
+        {/* Tab triggers */}
+        <div className="flex justify-center gap-4 max-w-lg mx-auto">
+          <button 
+            onClick={() => setActiveTab('customer')}
+            className={`flex-1 py-3 px-6 rounded-2xl text-xs font-bold uppercase tracking-wider transition-all duration-200 border ${
+              activeTab === 'customer' 
+                ? 'bg-[#FF6B00] border-[#FF6B00] text-white shadow-lg shadow-[#FF6B00]/15' 
+                : 'bg-white/5 border-white/5 text-gray-400 hover:text-white'
+            }`}
+          >
+            I'm a Customer
+          </button>
+          <button 
+            onClick={() => setActiveTab('owner')}
+            className={`flex-1 py-3 px-6 rounded-2xl text-xs font-bold uppercase tracking-wider transition-all duration-200 border ${
+              activeTab === 'owner' 
+                ? 'bg-[#FF6B00] border-[#FF6B00] text-white shadow-lg shadow-[#FF6B00]/15' 
+                : 'bg-white/5 border-white/5 text-gray-400 hover:text-white'
+            }`}
+          >
+            I'm an Owner
+          </button>
+          <button 
+            onClick={() => setActiveTab('staff')}
+            className={`flex-1 py-3 px-6 rounded-2xl text-xs font-bold uppercase tracking-wider transition-all duration-200 border ${
+              activeTab === 'staff' 
+                ? 'bg-[#FF6B00] border-[#FF6B00] text-white shadow-lg shadow-[#FF6B00]/15' 
+                : 'bg-white/5 border-white/5 text-gray-400 hover:text-white'
+            }`}
+          >
+            I'm Staff
+          </button>
+        </div>
+
+        {/* Tab Content Cards */}
+        <div className="max-w-3xl mx-auto p-8 rounded-3xl bg-[#0f1115] border border-white/5 grid md:grid-cols-2 gap-8 items-center">
+          <div className="space-y-6">
+            <h3 className="text-2xl font-bold text-white capitalize">
+              {activeTab === 'customer' && 'Discover & Book Instantly'}
+              {activeTab === 'owner' && 'Optimize Your Operations'}
+              {activeTab === 'staff' && 'Perform with Perfection'}
+            </h3>
+            <p className="text-gray-400 text-xs leading-relaxed">
+              {activeTab === 'customer' && 'Explore trending nearby restaurants, customize orders ahead of time, check live table layouts, and book tables with one click.'}
+              {activeTab === 'owner' && 'Configure interactive floor plan layout, add/edit food items in menus, assign servers, set local tax preferences, and study growth reports.'}
+              {activeTab === 'staff' && 'Track seating duration in real-time. Speed up order status updates (New -> Preparing -> Ready -> Served -> Paid) to enhance visitor experience.'}
+            </p>
+            <ul className="space-y-3">
+              {(activeTab === 'customer' ? [
+                'Find top-rated cuisines',
+                'Reserve visual tables instantly',
+                'Earn loyalty membership rewards'
+              ] : activeTab === 'owner' ? [
+                'Manage menus and categories',
+                'Monitor team schedules and waiters',
+                'Study sales and analytics trends'
+              ] : [
+                'Update table service statuses',
+                'Direct notifications from kitchen',
+                'Track tip splits and checklists'
+              ]).map((benefit, i) => (
+                <li key={i} className="flex items-center gap-2 text-xs text-gray-300">
+                  <CheckCircle2 className="w-4 h-4 text-[#FF6B00]" /> {benefit}
+                </li>
+              ))}
+            </ul>
+            <Link 
+              href="/login"
+              className="inline-flex items-center gap-2 text-xs font-bold text-white bg-[#FF6B00] hover:bg-[#e05e00] px-6 py-3 rounded-xl transition-all shadow-md shadow-[#FF6B00]/10"
+            >
+              Enter Portal <ArrowRight className="w-4 h-4" />
+            </Link>
+          </div>
+
+          {/* Visual card sidebar mockup representation */}
+          <div className="bg-[#07090e] border border-white/5 rounded-2xl p-6 space-y-4">
+            <div className="flex items-center justify-between border-b border-white/5 pb-3">
+              <span className="text-[10px] text-gray-500 font-bold uppercase tracking-wider">Preview Dashboard</span>
+              <span className="text-[9px] px-2 py-0.5 rounded-full bg-[#FF6B00]/15 text-[#FF6B00] font-semibold">Active</span>
+            </div>
+            
+            {activeTab === 'customer' && (
+              <div className="space-y-3">
+                <div className="h-10 bg-white/5 rounded-xl flex items-center justify-between px-3 text-[11px]">
+                  <span>The Garden Bistro</span>
+                  <span className="text-green-500">Confirmed • Table 2</span>
+                </div>
+                <div className="h-10 bg-white/5 rounded-xl flex items-center justify-between px-3 text-[11px]">
+                  <span>Sakura Sushi</span>
+                  <span className="text-gray-500">12:00 PM • Fri</span>
+                </div>
+              </div>
+            )}
+
+            {activeTab === 'owner' && (
+              <div className="space-y-3">
+                <div className="flex justify-between items-center text-xs">
+                  <span className="text-gray-400">Total Revenue</span>
+                  <span className="font-bold text-white">$12,650</span>
+                </div>
+                <div className="h-2 w-full bg-white/5 rounded-full overflow-hidden">
+                  <div className="h-full bg-[#FF6B00] rounded-full" style={{ width: '75%' }}></div>
+                </div>
+                <div className="flex justify-between items-center text-[10px] text-gray-500">
+                  <span>+18% from last week</span>
+                  <span>75% Capacity</span>
+                </div>
+              </div>
+            )}
+
+            {activeTab === 'staff' && (
+              <div className="space-y-3">
+                <div className="h-9 bg-red-500/10 border border-red-500/20 rounded-xl flex items-center justify-between px-3 text-[10px] text-red-400">
+                  <span>Table 2 - Needs Service</span>
+                  <span>35m duration</span>
+                </div>
+                <div className="h-9 bg-yellow-500/10 border border-yellow-500/20 rounded-xl flex items-center justify-between px-3 text-[10px] text-yellow-400">
+                  <span>Table 3 - Waiting for Food</span>
+                  <span>22m duration</span>
+                </div>
+              </div>
+            )}
+          </div>
+        </div>
+      </section>
+
+      {/* Feature Grid */}
+      <section id="features" className="max-w-7xl mx-auto px-8 py-24 space-y-16">
+        <div className="text-center space-y-4">
+          <h2 className="text-3xl font-bold text-white">Everything You Need, All in One Place</h2>
+          <p className="text-gray-400 text-sm max-w-md mx-auto">Powerful components built together for a modern, fluid dining ecosystem.</p>
+        </div>
+
+        <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
+          {features.map((feature, i) => (
+            <div key={i} className="p-6 rounded-3xl bg-[#0f1115] border border-white/5 hover:border-white/10 hover-lift transition-all space-y-4">
+              <div className={`w-10 h-10 rounded-2xl bg-gradient-to-br ${feature.color} flex items-center justify-center font-bold text-white text-sm`}>
+                0{i + 1}
+              </div>
+              <h3 className="font-semibold text-white text-sm">{feature.title}</h3>
+              <p className="text-xs text-gray-400 leading-relaxed">{feature.desc}</p>
+            </div>
+          ))}
+        </div>
+      </section>
+
+      {/* FAQs */}
+      <section id="faq" className="max-w-4xl mx-auto px-8 py-24 space-y-12">
+        <div className="text-center space-y-4">
+          <h2 className="text-3xl font-bold text-white text-center">Frequently Asked Questions</h2>
+          <p className="text-gray-400 text-sm max-w-md mx-auto">Got questions? We have answers to help you get started with DineFlow.</p>
+        </div>
+
+        <div className="space-y-4">
+          {faqs.map((faq, idx) => (
+            <div 
+              key={idx} 
+              className="bg-[#0f1115] border border-white/5 rounded-2xl overflow-hidden cursor-pointer"
+              onClick={() => setActiveFaq(activeFaq === idx ? null : idx)}
+            >
+              <div className="p-5 flex items-center justify-between text-xs font-semibold text-white">
+                <span>{faq.q}</span>
+                <ChevronDown className={`w-4 h-4 text-gray-400 transition-transform duration-200 ${activeFaq === idx ? 'rotate-180' : ''}`} />
+              </div>
+              {activeFaq === idx && (
+                <div className="p-5 pt-0 text-[11px] text-gray-400 leading-relaxed border-t border-white/5">
+                  {faq.a}
+                </div>
+              )}
+            </div>
+          ))}
+        </div>
+      </section>
+
+      {/* Footer */}
+      <footer className="bg-[#0f1115] border-t border-white/5 py-12 mt-12">
+        <div className="max-w-7xl mx-auto px-8 flex flex-col md:flex-row items-center justify-between gap-6">
+          <div className="flex items-center gap-3">
+            <div className="w-8 h-8 rounded-full bg-[#FF6B00] flex items-center justify-center">
+              <UtensilsCrossed className="text-white w-4.5 h-4.5" />
+            </div>
+            <span className="font-bold text-md text-white">DineFlow</span>
+          </div>
+          <p className="text-xs text-gray-500">© 2026 DineFlow Restaurant Ecosystem. All rights reserved.</p>
+          <div className="flex gap-6 text-xs text-gray-400 font-medium">
+            <Link href="/login" className="hover:text-white">Sign In</Link>
+            <Link href="/register" className="hover:text-white">Register</Link>
+            <span className="text-gray-600">|</span>
+            <span className="text-gray-500">v1.0.0</span>
+          </div>
+        </div>
+      </footer>
+    </div>
+  );
+}

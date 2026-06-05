@@ -1,0 +1,29 @@
+You are working on DineFlow, a full-stack restaurant management SaaS.
+
+# Stack
+- Frontend: Next.js 16, TypeScript, Tailwind CSS, Framer Motion, Recharts, Lucide React
+- Backend: Express.js, Node.js, Mongoose, MongoDB
+- Auth: JWT stored in localStorage
+
+# Code rules
+- Always use TypeScript with proper types — never use `any`
+- Always use async/await, never .then()
+- Use functional components with hooks only — no class components
+- All components go in frontend/components/
+- All pages go in frontend/app/
+- All API calls go through frontend/lib/api.ts
+- Backend routes go in backend/routes/
+
+# Design rules
+- Primary color: #FF6B00 (orange)
+- Dark panels: #0F1115
+- Border radius: minimum 20px on cards and modals
+- Typography: Inter for body, SF Pro Display for headings
+- Use Framer Motion for all animations — no CSS transitions
+- Use Tailwind only — never write inline styles
+
+# Patterns
+- Always handle loading and error states in every component
+- Use the dual-mode store (frontend/lib/store.ts) for all data — never fetch directly in components
+- Seed data must match mock data structure exactly
+- All forms must validate before submitting
