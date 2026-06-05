@@ -25,6 +25,10 @@ mongoose.connect(MONGO_URI)
     } catch (err) {
       console.error('Auto-seed failed:', err.message);
     }
+
+    app.listen(PORT, () => {
+      console.log(`DineFlow Express server running on port ${PORT}`);
+    });
   })
   .catch((err) => {
     console.error('MongoDB connection failed:', err.message);
@@ -46,7 +50,3 @@ app.use('/api/orders', require('./routes/orders'));
 app.use('/api/analytics', require('./routes/analytics'));
 
 app.use(errorHandler);
-
-app.listen(PORT, () => {
-  console.log(`DineFlow Express server running on port ${PORT}`);
-});

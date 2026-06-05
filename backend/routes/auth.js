@@ -20,7 +20,7 @@ function formatUser(user) {
 
 // Register
 router.post('/register', async (req, res) => {
-  const { name, email, password, role } = req.body;
+  const { name, email, password } = req.body;
   try {
     let user = await User.findOne({ email });
     if (user) return res.status(400).json({ message: 'User already exists' });
@@ -32,7 +32,7 @@ router.post('/register', async (req, res) => {
       name,
       email,
       password: hashedPassword,
-      role: role || 'customer',
+      role: 'customer',
       walletBalance: 128.50,
       customerDetails: {
         points: 350,
@@ -58,7 +58,7 @@ router.post('/login', async (req, res) => {
 
     // Optionally check role
     if (role && user.role !== role) {
-      return res.status(400).json({ message: `Invalid credentials for role: ${role}` });
+      return res.status(400).json({ message: 'Invalid credentials' });
     }
 
     const isMatch = await bcrypt.compare(password, user.password);
@@ -83,9 +83,13 @@ router.get('/profile', authMiddleware, async (req, res) => {
 // Update Wallet Balance
 router.post('/wallet/topup', authMiddleware, async (req, res) => {
   const { amount } = req.body;
+  const amt = parseFloat(amount);
+  if (!amt || amt <= 0) {
+    return res.status(400).json({ message: 'Invalid amount' });
+  }
   try {
     const user = await User.findById(req.user.id);
-    user.walletBalance += parseFloat(amount || 0);
+    user.walletBalance += amt;
     await user.save();
     res.json({ walletBalance: user.walletBalance });
   } catch (err) {

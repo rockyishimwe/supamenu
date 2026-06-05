@@ -34,8 +34,8 @@ async function updateTableHandler(req, res) {
   }
 }
 
-router.put('/:id', updateTableHandler);
-router.patch('/:id/status', updateTableHandler);
+router.put('/:id', authMiddleware, updateTableHandler);
+router.patch('/:id/status', authMiddleware, updateTableHandler);
 
 // Create a table (Owner only)
 router.post('/', authMiddleware, async (req, res) => {

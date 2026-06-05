@@ -20,6 +20,7 @@ export default function CartPage() {
     if (result.success) {
       router.push(`/customer/order-tracking?id=${result.order._id}`);
     }
+    return result;
   };
 
   if (!cart.length) {

@@ -6,16 +6,17 @@ module.exports = {
     './lib/**/*.{js,jsx,ts,tsx}',
   ],
   theme: {
-    borderRadius: {
-      none: '0',
-      sm: '12px',
-      DEFAULT: '20px',
-      md: '20px',
-      lg: '24px',
-      xl: '32px',
-      full: '9999px',
-    },
     extend: {
+      borderRadius: {
+        sm: '12px',
+        DEFAULT: '20px',
+        md: '20px',
+        lg: '24px',
+        xl: '32px',
+        '2xl': '24px',
+        '3xl': '32px',
+        full: '9999px',
+      },
       colors: {
         primary: '#FF6B00',
         panel: '#0F1115',

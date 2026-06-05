@@ -23,6 +23,13 @@ router.get('/', authMiddleware, async (req, res) => {
 router.post('/', authMiddleware, async (req, res) => {
   const { restaurantId, restaurantName, tableId, tableNumber, items, subtotal, tax, serviceCharge, total, paymentMethod } = req.body;
   try {
+    if (paymentMethod === 'wallet') {
+      const user = await User.findById(req.user.id);
+      if (!user || user.walletBalance < total) {
+        return res.status(400).json({ message: 'Insufficient wallet balance' });
+      }
+    }
+
     const order = new Order({
       restaurantId,
       restaurantName,
@@ -41,17 +48,12 @@ router.post('/', authMiddleware, async (req, res) => {
 
     await order.save();
 
-    // If order is paid with wallet, deduct balance
     if (paymentMethod === 'wallet') {
       const user = await User.findById(req.user.id);
-      if (user.walletBalance < total) {
-        return res.status(400).json({ message: 'Insufficient wallet balance' });
-      }
       user.walletBalance -= total;
-      // Add points
       user.customerDetails.points += Math.floor(total);
       await user.save();
-      order.status = 'paid';
+      order.status = 'preparing';
       await order.save();
     }
 

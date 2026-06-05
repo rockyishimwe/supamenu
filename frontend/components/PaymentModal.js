@@ -1,5 +1,5 @@
 "use client";
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { X, CreditCard, Smartphone, Wallet } from 'lucide-react';
 
@@ -12,12 +12,22 @@ const METHODS = [
 export default function PaymentModal({ open, onClose, total, onConfirm }) {
   const [method, setMethod] = useState('wallet');
   const [processing, setProcessing] = useState(false);
+  const [error, setError] = useState('');
+
+  useEffect(() => {
+    if (open) setError('');
+  }, [open]);
 
   const handlePay = async () => {
     setProcessing(true);
-    await onConfirm?.(method);
+    setError('');
+    const result = await onConfirm?.(method);
     setProcessing(false);
-    onClose?.();
+    if (result?.success === true) {
+      onClose?.();
+    } else {
+      setError(result?.message || 'Payment failed');
+    }
   };
 
   return (
@@ -58,6 +68,9 @@ export default function PaymentModal({ open, onClose, total, onConfirm }) {
                 </button>
               ))}
             </div>
+            {error && (
+              <p className="text-sm text-red-400 mb-4 text-center">{error}</p>
+            )}
             <button
               type="button"
               disabled={processing}

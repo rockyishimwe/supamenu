@@ -9,7 +9,7 @@ import {
 import FilterModal from '../../../components/FilterModal';
 
 export default function CustomerExplore() {
-  const { restaurants } = useDineFlow();
+  const { restaurants, menuItems } = useDineFlow();
   const [searchQuery, setSearchQuery] = useState('');
   const [cuisineFilter, setCuisineFilter] = useState('All');
   const [ratingFilter, setRatingFilter] = useState(0);
@@ -28,12 +28,15 @@ export default function CustomerExplore() {
     const matchesCuisine = cuisineFilter === 'All' || res.cuisines.includes(cuisineFilter);
     const matchesRating = res.rating >= ratingFilter;
     
-    // Mock price range mapping
-    const getPriceRange = (id) => {
-      if (id === 'res1') return '$$';
-      if (id === 'res2') return '$$$';
-      if (id === 'res3') return '$';
-      return '$$';
+    const getPriceRange = (restaurantId) => {
+      const prices = menuItems
+        .filter((m) => String(m.restaurantId) === String(restaurantId))
+        .map((m) => m.price);
+      if (!prices.length) return '$$';
+      const avg = prices.reduce((a, b) => a + b, 0) / prices.length;
+      if (avg < 12) return '$';
+      if (avg < 20) return '$$';
+      return '$$$';
     };
     const matchesPrice = priceFilter === 'All' || getPriceRange(res._id) === priceFilter;
 

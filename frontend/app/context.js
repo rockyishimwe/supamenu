@@ -47,7 +47,7 @@ export function useDineFlow() {
     setActiveRole: store.setActiveRole,
     setSelectedTableId: store.setSelectedTableId,
     setSidebarCollapsed: store.setSidebarCollapsed,
-    addTable: () => {},
-    deleteTable: () => {},
+    addTable: store.addTable,
+    deleteTable: store.deleteTable,
   };
 }

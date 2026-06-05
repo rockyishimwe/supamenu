@@ -47,11 +47,17 @@ export const api = {
   login: (body) => fetchWithAuth('/auth/login', { method: 'POST', body: JSON.stringify(body) }),
   register: (body) => fetchWithAuth('/auth/register', { method: 'POST', body: JSON.stringify(body) }),
   me: (token) => fetchWithAuth('/auth/me', {}, token),
+  getRestaurants: () => fetchWithAuth('/restaurants'),
   getRestaurant: (id, token) => fetchWithAuth(`/restaurants/${id}`, {}, token),
+  getRestaurantMenu: (id) => fetchWithAuth(`/restaurants/${id}/menu`),
   patchRestaurant: (id, body, token) =>
     fetchWithAuth(`/restaurants/${id}`, { method: 'PATCH', body: JSON.stringify(body) }, token),
   getTables: (restaurantId) =>
     fetchWithAuth(`/tables${restaurantId ? `?restaurantId=${restaurantId}` : ''}`),
+  addTable: (body, token) =>
+    fetchWithAuth('/tables', { method: 'POST', body: JSON.stringify(body) }, token),
+  deleteTable: (id, token) =>
+    fetchWithAuth(`/tables/${id}`, { method: 'DELETE' }, token),
   patchTableStatus: (id, body, token) =>
     fetchWithAuth(`/tables/${id}/status`, { method: 'PATCH', body: JSON.stringify(body) }, token),
   getReservations: (token) => fetchWithAuth('/reservations', {}, token),

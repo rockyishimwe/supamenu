@@ -35,6 +35,43 @@ router.get('/:id/menu', async (req, res) => {
   }
 });
 
+// Update restaurant by id (Owner only)
+router.patch('/:id', authMiddleware, async (req, res) => {
+  if (req.user.role !== 'owner') {
+    return res.status(403).json({ message: 'Access denied: Owners only' });
+  }
+
+  try {
+    const allowed = [
+      'name',
+      'description',
+      'coverImage',
+      'logo',
+      'cuisines',
+      'address',
+      'contactNumber',
+      'website',
+      'openingHours',
+      'settings',
+      'categories',
+    ];
+    const updates = {};
+    for (const key of allowed) {
+      if (req.body[key] !== undefined) updates[key] = req.body[key];
+    }
+
+    const restaurant = await Restaurant.findByIdAndUpdate(
+      req.params.id,
+      { $set: updates },
+      { new: true, runValidators: true }
+    );
+    if (!restaurant) return res.status(404).json({ message: 'Restaurant not found' });
+    res.json(restaurant);
+  } catch (err) {
+    res.status(500).json({ message: 'Server error', error: err.message });
+  }
+});
+
 // Create/Update restaurant profile (Owner only)
 router.post('/', authMiddleware, async (req, res) => {
   if (req.user.role !== 'owner') {

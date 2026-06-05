@@ -6,6 +6,20 @@ const saveLocal = (key, value) => {
   if (typeof window !== 'undefined') localStorage.setItem(key, JSON.stringify(value));
 };
 
+const parseJson = (raw, fallback) => {
+  if (!raw || raw === 'null') return fallback;
+  try {
+    return JSON.parse(raw);
+  } catch {
+    return fallback;
+  }
+};
+
+const parseLocal = (key, fallback) => {
+  if (typeof window === 'undefined') return fallback;
+  return parseJson(localStorage.getItem(key), fallback);
+};
+
 export const useStore = create((set, get) => ({
   mode: 'demo',
   hydrated: false,
@@ -48,15 +62,15 @@ export const useStore = create((set, get) => ({
       hydrated: true,
       loading: false,
       token: storedToken,
-      currentUser: storedUser ? JSON.parse(storedUser) : null,
+      currentUser: parseJson(storedUser, null),
       activeRole: storedRole || 'customer',
-      cart: storedCart ? JSON.parse(storedCart) : [],
-      restaurants: JSON.parse(localStorage.getItem('dineflow_restaurants') || 'null') || mock.restaurants,
-      menuItems: JSON.parse(localStorage.getItem('dineflow_menu') || 'null') || mock.menuItems,
-      tables: JSON.parse(localStorage.getItem('dineflow_tables') || 'null') || mock.tables,
-      reservations: JSON.parse(localStorage.getItem('dineflow_reservations') || 'null') || mock.reservations,
-      orders: JSON.parse(localStorage.getItem('dineflow_orders') || 'null') || mock.orders,
-      analytics: JSON.parse(localStorage.getItem('dineflow_analytics') || 'null') || mock.analytics,
+      cart: parseJson(storedCart, []),
+      restaurants: parseLocal('dineflow_restaurants', mock.restaurants),
+      menuItems: parseLocal('dineflow_menu', mock.menuItems),
+      tables: parseLocal('dineflow_tables', mock.tables),
+      reservations: parseLocal('dineflow_reservations', mock.reservations),
+      orders: parseLocal('dineflow_orders', mock.orders),
+      analytics: parseLocal('dineflow_analytics', mock.analytics),
     });
 
     // Check backend in background AFTER page already rendered
@@ -65,6 +79,14 @@ export const useStore = create((set, get) => ({
       if (!ok) return;
 
       set({ mode: 'live' });
+
+      const restaurants = await api.getRestaurants();
+      const menuItems = (
+        await Promise.all(restaurants.map((r) => api.getRestaurantMenu(r._id).catch(() => [])))
+      ).flat();
+      set({ restaurants, menuItems });
+      saveLocal('dineflow_restaurants', restaurants);
+      saveLocal('dineflow_menu', menuItems);
 
       if (!storedToken) return;
 
@@ -81,15 +103,12 @@ export const useStore = create((set, get) => ({
         tables,
         reservations,
         orders,
-        restaurants: JSON.parse(localStorage.getItem('dineflow_restaurants') || 'null') || mock.restaurants,
-        menuItems: JSON.parse(localStorage.getItem('dineflow_menu') || 'null') || mock.menuItems,
         analytics: { summary, salesChart, reservationsChart },
       });
 
       saveLocal('dineflow_tables', tables);
       saveLocal('dineflow_reservations', reservations);
       saveLocal('dineflow_orders', orders);
-
     } catch {
       // backend unreachable, already in demo mode, nothing to do
     }
@@ -224,8 +243,11 @@ export const useStore = create((set, get) => ({
     const updated = [newRes, ...reservations];
     saveLocal('dineflow_reservations', updated);
     if (data.tableNumber) {
+      const restaurantId = data.restaurantId || newRes.restaurantId;
       const updatedTables = tables.map((t) =>
-        t.tableNumber === data.tableNumber ? { ...t, status: 'reserved', currentGuestName: currentUser?.name } : t
+        t.restaurantId === restaurantId && t.tableNumber === data.tableNumber
+          ? { ...t, status: 'reserved', currentGuestName: currentUser?.name }
+          : t
       );
       saveLocal('dineflow_tables', updatedTables);
       set({ reservations: updated, tables: updatedTables });
@@ -329,6 +351,61 @@ export const useStore = create((set, get) => ({
     const updated = { ...currentUser, walletBalance: currentUser.walletBalance + parseFloat(amount) };
     localStorage.setItem('dineflow_user', JSON.stringify(updated));
     set({ currentUser: updated });
+  },
+
+  addTable: async (data) => {
+    const { mode, token, tables, restaurants } = get();
+    const restaurantId = data.restaurantId || restaurants[0]?._id;
+    const payload = {
+      restaurantId,
+      tableNumber: parseInt(data.tableNumber, 10),
+      capacity: parseInt(data.capacity, 10) || 4,
+      location: data.location || 'Main Floor',
+      x: parseFloat(data.x) || 0,
+      y: parseFloat(data.y) || 0,
+      shape: data.shape || 'square',
+    };
+
+    if (mode === 'live' && token) {
+      try {
+        const newTable = await api.addTable(payload, token);
+        const updated = [...tables, newTable];
+        saveLocal('dineflow_tables', updated);
+        set({ tables: updated });
+        return { success: true };
+      } catch (err) {
+        return { success: false, message: err.message };
+      }
+    }
+
+    const newTable = {
+      _id: `t-${Date.now()}`,
+      ...payload,
+      width: 80,
+      height: 80,
+      status: 'available',
+    };
+    const updated = [...tables, newTable];
+    saveLocal('dineflow_tables', updated);
+    set({ tables: updated });
+    return { success: true };
+  },
+
+  deleteTable: async (id) => {
+    const { mode, token, tables } = get();
+
+    if (mode === 'live' && token) {
+      try {
+        await api.deleteTable(id, token);
+      } catch (err) {
+        return { success: false, message: err.message };
+      }
+    }
+
+    const updated = tables.filter((t) => t._id !== id);
+    saveLocal('dineflow_tables', updated);
+    set({ tables: updated });
+    return { success: true };
   },
 }));
 
