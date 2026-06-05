@@ -4,8 +4,19 @@ import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useDineFlow } from '../../context';
 import { useStore } from '../../../lib/store';
-import { 
-  ShieldCheck, Mail, Lock, User, Sparkles, ChevronRight, ChevronLeft, Building, MapPin, Store, Check, Utensils
+import {
+  ShieldCheck,
+  Mail,
+  Lock,
+  User,
+  ChevronRight,
+  ChevronLeft,
+  Building,
+  MapPin,
+  Store,
+  Check,
+  Utensils,
+  Shield,
 } from 'lucide-react';
 import DineFlowLogo from '../../../components/DineFlowLogo';
 import BackButton from '../../../components/BackButton';
@@ -15,21 +26,28 @@ export default function RegisterPage() {
   const router = useRouter();
   const { register } = useDineFlow();
 
-  const [role, setRole] = useState('customer'); // customer, owner
-  const [step, setStep] = useState(1); // 1: Account info, 2: Restaurant Profile (Owner only), 3: Summary (Owner only)
+  const [role, setRole] = useState('customer');
+  const [step, setStep] = useState(1);
 
-  // Account details
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [errorMsg, setErrorMsg] = useState('');
   const [loading, setLoading] = useState(false);
 
-  // Restaurant details (Owner only)
   const [restaurantName, setRestaurantName] = useState('');
   const [restaurantAddress, setRestaurantAddress] = useState('');
   const [cuisines, setCuisines] = useState('Italian, Continental');
   const [openingHours, setOpeningHours] = useState('10:00 AM - 11:00 PM');
+  const [restaurantCode, setRestaurantCode] = useState('');
+
+  const isMultiStep = role === 'owner' || role === 'staff';
+
+  const selectRole = (nextRole) => {
+    setRole(nextRole);
+    setStep(1);
+    setErrorMsg('');
+  };
 
   const handleNext = () => {
     setErrorMsg('');
@@ -44,7 +62,12 @@ export default function RegisterPage() {
         setStep(2);
       }
     } else if (step === 2) {
-      if (!restaurantName || !restaurantAddress) {
+      if (role === 'staff') {
+        if (!restaurantCode.trim()) {
+          setErrorMsg('Please enter your restaurant invite code');
+          return;
+        }
+      } else if (!restaurantName || !restaurantAddress) {
         setErrorMsg('Please fill in restaurant details');
         return;
       }
@@ -60,25 +83,24 @@ export default function RegisterPage() {
   const handleRegister = async () => {
     setLoading(true);
     setErrorMsg('');
-    const res = await register(name, email, password, role);
+    const res = await register(name, email, password, role, { restaurantCode: restaurantCode.trim() });
     setLoading(false);
-    
+
     if (res.success) {
       confetti({
         particleCount: 150,
         spread: 80,
         origin: { y: 0.6 },
-        colors: ['#FF6B00', '#ffffff', '#22C55E']
+        colors: ['#FF6B00', '#ffffff', '#22C55E'],
       });
 
-      // If Owner, save their restaurant profile locally as well
       if (role === 'owner') {
         const storedRes = JSON.parse(localStorage.getItem('dineflow_restaurants') || '[]');
         const newRes = {
           _id: `res-${Date.now()}`,
           name: restaurantName,
           description: `Welcome to ${restaurantName}! Highly recommended fine dining experience.`,
-          cuisines: cuisines.split(',').map(c => c.trim()),
+          cuisines: cuisines.split(',').map((c) => c.trim()),
           address: restaurantAddress,
           openingHours: openingHours,
           rating: 4.5,
@@ -86,12 +108,14 @@ export default function RegisterPage() {
           coverImage: 'https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?w=1200',
           logo: 'https://images.unsplash.com/photo-1543007630-9710e4a00a20?w=150',
           settings: { taxes: 8.5, serviceCharges: 10.0 },
-          categories: ['Appetizers', 'Mains', 'Desserts']
+          categories: ['Appetizers', 'Mains', 'Desserts'],
         };
         localStorage.setItem('dineflow_restaurants', JSON.stringify([newRes, ...storedRes]));
         const currentRestaurants = useStore.getState().restaurants;
         useStore.setState({ restaurants: [newRes, ...currentRestaurants] });
         router.push('/owner');
+      } else if (role === 'staff') {
+        router.push('/staff');
       } else {
         router.push('/customer');
       }
@@ -102,16 +126,13 @@ export default function RegisterPage() {
 
   return (
     <div className="min-h-screen grid lg:grid-cols-12 bg-[#07090e] text-[#f3f4f6]">
-      {/* Left Pane (Design details) */}
       <div className="hidden lg:flex lg:col-span-5 flex-col justify-between p-12 bg-gradient-to-br from-[#0f1115] to-[#07090e] border-r border-white/5 relative">
         <div className="absolute top-1/4 -left-1/4 w-[150%] h-1/2 bg-[#FF6B00]/5 filter blur-3xl rounded-full"></div>
-        
-        {/* Header */}
+
         <Link href="/" className="relative z-10 text-white">
           <DineFlowLogo size="md" />
         </Link>
 
-        {/* Content */}
         <div className="space-y-6 relative z-10 max-w-sm">
           <div className="inline-block px-3 py-1.5 rounded-full bg-white/5 border border-white/5 text-[10px] uppercase font-bold tracking-widest text-[#FF6B00]">
             Get Started Today
@@ -122,7 +143,7 @@ export default function RegisterPage() {
             Ecosystem.
           </h2>
           <p className="text-xs text-gray-400 leading-relaxed">
-            Create an account to browse restaurants, or register your venue and start welcoming guests using DineFlow's digital floor plan.
+            Create an account to browse restaurants, join a venue as staff, or register your restaurant on DineFlow.
           </p>
         </div>
 
@@ -132,16 +153,14 @@ export default function RegisterPage() {
         </div>
       </div>
 
-      {/* Right Pane (Register Form / Wizard) */}
       <div className="lg:col-span-7 flex items-center justify-center p-8 sm:p-12">
         <div className="w-full max-w-md bg-[#0f1115] border border-white/5 rounded-3xl p-8 sm:p-10 shadow-2xl relative z-10">
           <BackButton href="/login" />
 
-          {/* Header & Step progress */}
           <div className="space-y-2 mb-8">
             <div className="flex justify-between items-center">
               <h3 className="text-2xl font-bold text-white">Create Account</h3>
-              {role === 'owner' && (
+              {isMultiStep && (
                 <span className="text-[10px] bg-white/5 border border-white/5 text-gray-400 font-bold px-2.5 py-1 rounded-full uppercase tracking-wider">
                   Step {step} of 3
                 </span>
@@ -150,78 +169,84 @@ export default function RegisterPage() {
             <p className="text-xs text-gray-500">Get access to reservations, checkout, and platform tools.</p>
           </div>
 
-          {/* Wizard step render */}
           {step === 1 && (
             <div className="space-y-6">
-              {/* Account role */}
               <div className="space-y-1.5">
                 <label className="text-[11px] font-semibold text-gray-400">Registering as a...</label>
-                <div className="grid grid-cols-2 gap-3">
+                <div className="grid grid-cols-3 gap-2">
                   <button
                     type="button"
-                    onClick={() => setRole('customer')}
-                    className={`py-3 rounded-2xl border text-xs font-semibold flex items-center justify-center gap-2 transition-all ${
-                      role === 'customer' 
-                        ? 'border-[#FF6B00] bg-[#FF6B00]/5 text-[#FF6B00]' 
+                    onClick={() => selectRole('customer')}
+                    className={`py-3 rounded-2xl border text-[10px] sm:text-xs font-semibold flex flex-col sm:flex-row items-center justify-center gap-1.5 transition-all ${
+                      role === 'customer'
+                        ? 'border-[#FF6B00] bg-[#FF6B00]/5 text-[#FF6B00]'
                         : 'border-white/5 bg-white/2 text-gray-400 hover:text-white'
                     }`}
                   >
-                    <User className="w-4 h-4" /> Customer
+                    <User className="w-4 h-4 shrink-0" /> Customer
                   </button>
                   <button
                     type="button"
-                    onClick={() => setRole('owner')}
-                    className={`py-3 rounded-2xl border text-xs font-semibold flex items-center justify-center gap-2 transition-all ${
-                      role === 'owner' 
-                        ? 'border-[#FF6B00] bg-[#FF6B00]/5 text-[#FF6B00]' 
+                    onClick={() => selectRole('staff')}
+                    className={`py-3 rounded-2xl border text-[10px] sm:text-xs font-semibold flex flex-col sm:flex-row items-center justify-center gap-1.5 transition-all ${
+                      role === 'staff'
+                        ? 'border-[#FF6B00] bg-[#FF6B00]/5 text-[#FF6B00]'
                         : 'border-white/5 bg-white/2 text-gray-400 hover:text-white'
                     }`}
                   >
-                    <Building className="w-4 h-4" /> Restaurant Owner
+                    <Shield className="w-4 h-4 shrink-0" /> Staff Member
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => selectRole('owner')}
+                    className={`py-3 rounded-2xl border text-[10px] sm:text-xs font-semibold flex flex-col sm:flex-row items-center justify-center gap-1.5 transition-all ${
+                      role === 'owner'
+                        ? 'border-[#FF6B00] bg-[#FF6B00]/5 text-[#FF6B00]'
+                        : 'border-white/5 bg-white/2 text-gray-400 hover:text-white'
+                    }`}
+                  >
+                    <Building className="w-4 h-4 shrink-0" /> Owner
                   </button>
                 </div>
               </div>
 
-              {/* Full Name */}
               <div className="space-y-1.5">
                 <label className="text-[11px] font-semibold text-gray-400">Full Name</label>
                 <div className="relative">
                   <User className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-500 w-4 h-4" />
-                  <input 
-                    type="text" 
+                  <input
+                    type="text"
                     value={name}
                     onChange={(e) => setName(e.target.value)}
-                    placeholder="Enter your name" 
+                    placeholder="Enter your name"
                     className="w-full pl-11 pr-4 py-3 rounded-xl bg-white/5 border border-white/5 text-xs text-white placeholder-gray-500 focus:outline-none focus:border-[#FF6B00] focus:bg-white/10 transition-all"
                   />
                 </div>
               </div>
 
-              {/* Email */}
               <div className="space-y-1.5">
                 <label className="text-[11px] font-semibold text-gray-400">Email Address</label>
                 <div className="relative">
                   <Mail className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-500 w-4 h-4" />
-                  <input 
-                    type="email" 
+                  <input
+                    type="email"
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
-                    placeholder="Enter your email" 
+                    placeholder="Enter your email"
                     className="w-full pl-11 pr-4 py-3 rounded-xl bg-white/5 border border-white/5 text-xs text-white placeholder-gray-500 focus:outline-none focus:border-[#FF6B00] focus:bg-white/10 transition-all"
                   />
                 </div>
               </div>
 
-              {/* Password */}
               <div className="space-y-1.5">
                 <label className="text-[11px] font-semibold text-gray-400">Password</label>
                 <div className="relative">
                   <Lock className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-500 w-4 h-4" />
-                  <input 
-                    type="password" 
+                  <input
+                    type="password"
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
-                    placeholder="Create a password" 
+                    placeholder="Create a password"
                     className="w-full pl-11 pr-4 py-3 rounded-xl bg-white/5 border border-white/5 text-xs text-white placeholder-gray-500 focus:outline-none focus:border-[#FF6B00] focus:bg-white/10 transition-all"
                   />
                 </div>
@@ -229,48 +254,45 @@ export default function RegisterPage() {
             </div>
           )}
 
-          {step === 2 && (
+          {step === 2 && role === 'owner' && (
             <div className="space-y-6">
-              {/* Restaurant Name */}
               <div className="space-y-1.5">
                 <label className="text-[11px] font-semibold text-gray-400">Restaurant Name</label>
                 <div className="relative">
                   <Store className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-500 w-4 h-4" />
-                  <input 
-                    type="text" 
+                  <input
+                    type="text"
                     value={restaurantName}
                     onChange={(e) => setRestaurantName(e.target.value)}
-                    placeholder="e.g. The Garden Bistro" 
+                    placeholder="e.g. The Garden Bistro"
                     className="w-full pl-11 pr-4 py-3 rounded-xl bg-white/5 border border-white/5 text-xs text-white placeholder-gray-500 focus:outline-none focus:border-[#FF6B00] focus:bg-white/10 transition-all"
                   />
                 </div>
               </div>
 
-              {/* Restaurant Address */}
               <div className="space-y-1.5">
                 <label className="text-[11px] font-semibold text-gray-400">Restaurant Address</label>
                 <div className="relative">
                   <MapPin className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-500 w-4 h-4" />
-                  <input 
-                    type="text" 
+                  <input
+                    type="text"
                     value={restaurantAddress}
                     onChange={(e) => setRestaurantAddress(e.target.value)}
-                    placeholder="e.g. 123 Green Street, New York" 
+                    placeholder="e.g. 123 Green Street, New York"
                     className="w-full pl-11 pr-4 py-3 rounded-xl bg-white/5 border border-white/5 text-xs text-white placeholder-gray-500 focus:outline-none focus:border-[#FF6B00] focus:bg-white/10 transition-all"
                   />
                 </div>
               </div>
 
-              {/* Cuisines */}
               <div className="space-y-1.5">
                 <label className="text-[11px] font-semibold text-gray-400">Cuisines (comma separated)</label>
                 <div className="relative">
                   <Utensils className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-500 w-4 h-4" />
-                  <input 
-                    type="text" 
+                  <input
+                    type="text"
                     value={cuisines}
                     onChange={(e) => setCuisines(e.target.value)}
-                    placeholder="e.g. Italian, Continental, Pizza" 
+                    placeholder="e.g. Italian, Continental, Pizza"
                     className="w-full pl-11 pr-4 py-3 rounded-xl bg-white/5 border border-white/5 text-xs text-white placeholder-gray-500 focus:outline-none focus:border-[#FF6B00] focus:bg-white/10 transition-all"
                   />
                 </div>
@@ -278,14 +300,35 @@ export default function RegisterPage() {
             </div>
           )}
 
-          {step === 3 && (
+          {step === 2 && role === 'staff' && (
+            <div className="space-y-6">
+              <p className="text-xs text-gray-500 leading-relaxed">
+                Enter the invite code provided by your restaurant manager to join their team on DineFlow.
+              </p>
+              <div className="space-y-1.5">
+                <label className="text-[11px] font-semibold text-gray-400">Restaurant Code</label>
+                <div className="relative">
+                  <Shield className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-500 w-4 h-4" />
+                  <input
+                    type="text"
+                    value={restaurantCode}
+                    onChange={(e) => setRestaurantCode(e.target.value)}
+                    placeholder="Enter your restaurant's invite code"
+                    className="w-full pl-11 pr-4 py-3 rounded-xl bg-white/5 border border-white/5 text-xs text-white placeholder-gray-500 focus:outline-none focus:border-[#FF6B00] focus:bg-white/10 transition-all"
+                  />
+                </div>
+              </div>
+            </div>
+          )}
+
+          {step === 3 && role === 'owner' && (
             <div className="space-y-6">
               <div className="bg-[#FF6B00]/5 border border-[#FF6B00]/15 p-6 rounded-2xl space-y-4">
                 <div className="w-10 h-10 rounded-full bg-[#FF6B00]/15 flex items-center justify-center text-[#FF6B00] mx-auto">
                   <Check className="w-5 h-5" />
                 </div>
                 <h4 className="text-center font-bold text-sm text-white">Review Setup</h4>
-                
+
                 <div className="space-y-2.5 text-[11px] border-t border-white/5 pt-4">
                   <div className="flex justify-between">
                     <span className="text-gray-500">Account Owner</span>
@@ -308,29 +351,64 @@ export default function RegisterPage() {
             </div>
           )}
 
-          {errorMsg && (
-            <p className="text-red-500 text-[11px] font-medium bg-red-500/5 p-2 rounded-xl border border-red-500/10 text-center mt-4">{errorMsg}</p>
+          {step === 3 && role === 'staff' && (
+            <div className="space-y-6">
+              <div className="bg-[#FF6B00]/5 border border-[#FF6B00]/15 p-6 rounded-2xl space-y-4">
+                <div className="w-10 h-10 rounded-full bg-[#FF6B00]/15 flex items-center justify-center text-[#FF6B00] mx-auto">
+                  <Check className="w-5 h-5" />
+                </div>
+                <h4 className="text-center font-bold text-sm text-white">Review Staff Setup</h4>
+
+                <div className="space-y-2.5 text-[11px] border-t border-white/5 pt-4">
+                  <div className="flex justify-between">
+                    <span className="text-gray-500">Staff Member</span>
+                    <span className="text-white font-medium">{name}</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="text-gray-500">Email</span>
+                    <span className="text-white font-medium truncate max-w-[180px]">{email}</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="text-gray-500">Restaurant Code</span>
+                    <span className="text-[#FF6B00] font-medium font-mono">{restaurantCode}</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="text-gray-500">Portal Access</span>
+                    <span className="text-emerald-500 font-medium">Staff Dashboard</span>
+                  </div>
+                </div>
+              </div>
+            </div>
           )}
 
-          {/* Action buttons */}
+          {errorMsg && (
+            <p className="text-red-500 text-[11px] font-medium bg-red-500/5 p-2 rounded-xl border border-red-500/10 text-center mt-4">
+              {errorMsg}
+            </p>
+          )}
+
           <div className="flex items-center gap-3 mt-8">
             {step > 1 && (
-              <button 
-                type="button" 
+              <button
+                type="button"
                 onClick={handleBack}
                 className="py-3 px-4 rounded-xl border border-white/5 hover:border-white/10 hover:bg-white/5 text-xs font-semibold text-gray-400 hover:text-white transition-all flex items-center justify-center gap-1"
               >
                 <ChevronLeft className="w-4 h-4" /> Back
               </button>
             )}
-            
-            <button 
+
+            <button
               type="button"
               onClick={step === 3 || role === 'customer' ? handleRegister : handleNext}
               disabled={loading}
               className="flex-1 py-3.5 bg-[#FF6B00] hover:bg-[#e05e00] text-white font-semibold text-xs rounded-xl flex items-center justify-center gap-1.5 hover-lift shadow-lg shadow-[#FF6B00]/10"
             >
-              {loading ? 'Creating...' : (step === 3 || role === 'customer' ? 'Create Ecosystem Account' : 'Continue')}
+              {loading
+                ? 'Creating...'
+                : step === 3 || role === 'customer'
+                  ? 'Create Ecosystem Account'
+                  : 'Continue'}
               <ChevronRight className="w-4 h-4" />
             </button>
           </div>

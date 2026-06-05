@@ -146,36 +146,76 @@ export const useStore = create((set, get) => ({
   },
 
   // ✅ FIXED: register now properly saves the user's actual name
-  register: async (name, email, password, role = 'customer') => {
+  register: async (name, email, password, role = 'customer', options = {}) => {
     const { mode } = get();
+    const { restaurantCode } = options;
 
     if (mode === 'live') {
       try {
         const data = await api.register({ name, email, password, role });
+        let user = data.user;
+        if (role === 'staff' && restaurantCode) {
+          user = {
+            ...user,
+            role: 'staff',
+            staffDetails: {
+              ...(user.staffDetails || {}),
+              role: 'Waiter',
+              restaurantCode,
+            },
+          };
+        }
         localStorage.setItem('dineflow_token', data.token);
-        localStorage.setItem('dineflow_user', JSON.stringify(data.user));
-        localStorage.setItem('dineflow_role', data.user.role);
-        set({ token: data.token, currentUser: data.user, activeRole: data.user.role });
+        localStorage.setItem('dineflow_user', JSON.stringify(user));
+        localStorage.setItem('dineflow_role', role);
+        set({ token: data.token, currentUser: user, activeRole: role });
         return { success: true };
       } catch (err) {
         return { success: false, message: err.message };
       }
     }
 
-    // Demo mode — create user with the actual name they entered
-    const user = {
-      ...DEMO_USER,
-      id: `u-${Date.now()}`,
-      name,
-      email,
-      role,
-      walletBalance: 120.00,
-      customerDetails: {
-        points: 0,
-        loyaltyTier: 'Bronze',
-        totalOrders: 0,
-      },
-    };
+    const id = `u-${Date.now()}`;
+    let user;
+
+    if (role === 'staff') {
+      user = {
+        ...DEMO_USER,
+        id,
+        name,
+        email,
+        role: 'staff',
+        avatar: DEMO_USER.avatar,
+        staffDetails: {
+          role: 'Waiter',
+          restaurantCode: restaurantCode || '',
+        },
+      };
+    } else if (role === 'owner') {
+      user = {
+        ...DEMO_USER,
+        id,
+        name,
+        email,
+        role: 'owner',
+        avatar: DEMO_USER.avatar,
+      };
+    } else {
+      user = {
+        ...DEMO_USER,
+        id,
+        name,
+        email,
+        role: 'customer',
+        walletBalance: 120.0,
+        customerDetails: {
+          points: 0,
+          loyaltyTier: 'Bronze',
+          totalOrders: 0,
+        },
+      };
+    }
+
     localStorage.setItem('dineflow_token', `mock-${role}`);
     localStorage.setItem('dineflow_user', JSON.stringify(user));
     localStorage.setItem('dineflow_role', role);
