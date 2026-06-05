@@ -4,6 +4,44 @@ import { useRouter } from 'next/navigation';
 import { Bell, ShoppingCart, Wallet, Search, Menu } from 'lucide-react';
 import { useDineFlow } from '../app/context';
 
+function DineFlowLogo() {
+  return (
+    <svg width="130" height="36" viewBox="0 0 340 100" xmlns="http://www.w3.org/2000/svg" aria-label="DineFlow">
+      {/* Arc mark */}
+      <path
+        d="M 55 15 A 35 35 0 1 1 55 85"
+        fill="none" stroke="#FF6B00" strokeWidth="10" strokeLinecap="round"
+      />
+      {/* Flow lines */}
+      <path
+        d="M 52 30 C 68 30 82 25 94 30"
+        fill="none" stroke="#FF6B00" strokeWidth="4" strokeLinecap="round"
+      />
+      <path
+        d="M 52 50 C 72 50 86 44 102 50"
+        fill="none" stroke="#FF6B00" strokeWidth="4" strokeLinecap="round" opacity="0.65"
+      />
+      <path
+        d="M 52 70 C 70 70 84 65 94 70"
+        fill="none" stroke="#FF6B00" strokeWidth="4" strokeLinecap="round" opacity="0.35"
+      />
+      {/* Accent dot */}
+      <circle cx="102" cy="50" r="4" fill="#FF6B00" />
+      {/* Wordmark */}
+      <text
+        x="118" y="58"
+        fontFamily="Inter, sans-serif"
+        fontWeight="500"
+        fontSize="32"
+        fill="currentColor"
+        letterSpacing="-0.5"
+      >
+        DineFlow
+      </text>
+    </svg>
+  );
+}
+
 export default function Navbar({ role = 'customer', onMenuToggle }) {
   const { currentUser, cart, logout } = useDineFlow();
   const router = useRouter();
@@ -19,13 +57,19 @@ export default function Navbar({ role = 'customer', onMenuToggle }) {
       <div className="flex items-center justify-between gap-4">
         <div className="flex items-center gap-3">
           {onMenuToggle && (
-            <button type="button" onClick={onMenuToggle} className="lg:hidden p-2 rounded-xl hover:bg-white/5">
+            <button
+              type="button"
+              onClick={onMenuToggle}
+              className="lg:hidden p-2 rounded-xl hover:bg-white/5"
+            >
               <Menu className="w-5 h-5" />
             </button>
           )}
           <Link href="/" className="flex items-center gap-2">
-            <span className="text-primary font-bold text-lg font-display">DineFlow</span>
-            <span className="text-[10px] uppercase tracking-widest text-gray-500 hidden sm:inline">{role}</span>
+            <DineFlowLogo />
+            <span className="text-[10px] uppercase tracking-widest text-gray-500 hidden sm:inline">
+              {role}
+            </span>
           </Link>
         </div>
 
@@ -65,13 +109,13 @@ export default function Navbar({ role = 'customer', onMenuToggle }) {
           <div className="flex items-center gap-2 pl-2 border-l border-white/10">
             <img
               src={currentUser?.avatar || 'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=80'}
-              alt=""
+              alt="avatar"
               className="w-8 h-8 rounded-full object-cover"
             />
             <button
               type="button"
               onClick={handleLogout}
-              className="text-xs text-gray-500 hover:text-white hidden sm:block"
+              className="text-xs text-gray-500 hover:text-white hidden sm:block transition-colors"
             >
               Logout
             </button>
