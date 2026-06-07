@@ -3,14 +3,26 @@ import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { X } from 'lucide-react';
 
-export default function FilterModal({ open, onClose, onApply }) {
+export default function FilterModal({ open, onClose, onApply, priceRange }) {
   const [rating, setRating] = useState(4);
   const [distance, setDistance] = useState(5);
-  const [price, setPrice] = useState(2);
+  const [minPrice, setMinPrice] = useState(priceRange?.min ?? '');
+  const [maxPrice, setMaxPrice] = useState(priceRange?.max ?? '');
   const [cuisines, setCuisines] = useState([]);
 
   const toggleCuisine = (c) => {
     setCuisines((prev) => (prev.includes(c) ? prev.filter((x) => x !== c) : [...prev, c]));
+  };
+
+  const handleApply = () => {
+    onApply?.({
+      rating,
+      distance,
+      minPrice: minPrice ? parseFloat(minPrice) : null,
+      maxPrice: maxPrice ? parseFloat(maxPrice) : null,
+      cuisines,
+    });
+    onClose();
   };
 
   return (
@@ -45,8 +57,28 @@ export default function FilterModal({ open, onClose, onApply }) {
                 <input type="range" min="1" max="20" value={distance} onChange={(e) => setDistance(+e.target.value)} className="w-full accent-primary" />
               </div>
               <div>
-                <label className="text-sm text-gray-400 mb-2 block">Price Level: {'$'.repeat(price)}</label>
-                <input type="range" min="1" max="4" value={price} onChange={(e) => setPrice(+e.target.value)} className="w-full accent-primary" />
+                <label className="text-sm text-gray-400 mb-2 block">Price Range ($)</label>
+                <div className="flex items-center gap-3">
+                  <input
+                    type="number"
+                    min="0"
+                    step="0.01"
+                    placeholder="Min"
+                    value={minPrice}
+                    onChange={(e) => setMinPrice(e.target.value)}
+                    className="w-full glass-input px-4 py-2.5"
+                  />
+                  <span className="text-gray-500">—</span>
+                  <input
+                    type="number"
+                    min="0"
+                    step="0.01"
+                    placeholder="Max"
+                    value={maxPrice}
+                    onChange={(e) => setMaxPrice(e.target.value)}
+                    className="w-full glass-input px-4 py-2.5"
+                  />
+                </div>
               </div>
               <div>
                 <p className="text-sm text-gray-400 mb-2">Cuisine</p>
@@ -68,7 +100,7 @@ export default function FilterModal({ open, onClose, onApply }) {
             </div>
             <button
               type="button"
-              onClick={() => { onApply?.({ rating, distance, price, cuisines }); onClose(); }}
+              onClick={handleApply}
               className="w-full mt-6 py-3 rounded-[20px] bg-primary text-white font-bold"
             >
               Apply Filters

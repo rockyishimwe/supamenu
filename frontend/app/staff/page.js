@@ -1,5 +1,6 @@
 "use client";
 import { useStore } from '../../lib/store';
+import { SkeletonRow } from '../../components/SkeletonRow';
 import StatsCard from '../../components/StatsCard';
 import FloorPlan from '../../components/FloorPlan';
 import TableContextPanel from '../../components/TableContextPanel';
@@ -7,6 +8,9 @@ import { LayoutGrid, Users, ClipboardList, Sparkles } from 'lucide-react';
 
 export default function StaffDashboard() {
   const { tables, orders, reservations, selectedTableId, setSelectedTableId, currentUser } = useStore();
+  
+  if (!tables || !orders) return <SkeletonRow />;
+
   const staffRestId = currentUser?.staffDetails?.restaurantId;
 
   const displayTables = tables.filter((t) => t.restaurantId === staffRestId);

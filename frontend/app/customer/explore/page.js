@@ -2,6 +2,7 @@
 import React, { useState } from 'react';
 import { useDineFlow } from '../../context';
 import Link from 'next/link';
+import Image from 'next/image';
 import { 
   Search, Star, Navigation, MapPin, SlidersHorizontal, 
   Compass, Clock, StarHalf, Phone, ChevronRight, Crosshair
@@ -14,7 +15,8 @@ export default function CustomerExplore() {
   const [searchQuery, setSearchQuery] = useState('');
   const [cuisineFilter, setCuisineFilter] = useState('All');
   const [ratingFilter, setRatingFilter] = useState(0);
-  const [priceFilter, setPriceFilter] = useState('All');
+  const [priceMinFilter, setPriceMinFilter] = useState(null);
+  const [priceMaxFilter, setPriceMaxFilter] = useState(null);
   const [showFilters, setShowFilters] = useState(false);
   const [selectedMapPin, setSelectedMapPin] = useState(null);
 
@@ -29,17 +31,17 @@ export default function CustomerExplore() {
     const matchesCuisine = cuisineFilter === 'All' || res.cuisines.includes(cuisineFilter);
     const matchesRating = res.rating >= ratingFilter;
     
-    const getPriceRange = (restaurantId) => {
+    // Check if restaurant has any menu items within the price range
+    const matchesPrice = (() => {
+      if (!priceMinFilter && !priceMaxFilter) return true;
       const prices = menuItems
-        .filter((m) => String(m.restaurantId) === String(restaurantId))
+        .filter((m) => String(m.restaurantId) === String(res._id))
         .map((m) => m.price);
-      if (!prices.length) return '$$';
-      const avg = prices.reduce((a, b) => a + b, 0) / prices.length;
-      if (avg < 12) return '$';
-      if (avg < 20) return '$$';
-      return '$$$';
-    };
-    const matchesPrice = priceFilter === 'All' || getPriceRange(res._id) === priceFilter;
+      if (!prices.length) return true;
+      const min = priceMinFilter ?? 0;
+      const max = priceMaxFilter ?? Infinity;
+      return prices.some((p) => p >= min && p <= max);
+    })();
 
     return matchesSearch && matchesCuisine && matchesRating && matchesPrice;
   });
@@ -62,7 +64,7 @@ export default function CustomerExplore() {
           <button 
             onClick={() => setShowFilters(!showFilters)}
             className={`p-2.5 rounded-xl border text-xs font-semibold flex items-center gap-1.5 transition-all duration-200 ${
-              showFilters || cuisineFilter !== 'All' || ratingFilter > 0 || priceFilter !== 'All'
+              showFilters || cuisineFilter !== 'All' || ratingFilter > 0 || priceMinFilter !== null || priceMaxFilter !== null
                 ? 'border-[#FF6B00] bg-[#FF6B00]/5 text-[#FF6B00]' 
                 : 'border-white/5 bg-white/2 hover:border-white/10 text-gray-400 hover:text-white'
             }`}
@@ -130,19 +132,40 @@ export default function CustomerExplore() {
               <div className="space-y-2">
                 <label className="text-[10px] font-bold text-gray-400 uppercase tracking-wider">Price Range</label>
                 <div className="flex gap-1.5">
-                  {['All', '$', '$$', '$$$'].map(price => (
-                    <button
-                      key={price}
-                      onClick={() => setPriceFilter(price)}
-                      className={`flex-1 py-1.5 rounded-xl text-[10px] font-bold border transition-all duration-150 ${
-                        priceFilter === price
-                          ? 'bg-[#FF6B00] border-[#FF6B00] text-white'
-                          : 'bg-panel border-white/5 text-gray-400 hover:text-white'
-                      }`}
-                    >
-                      {price}
-                    </button>
-                  ))}
+                  {['All', '$5–$15', '$15–$25', '$25+'].map(price => {
+                    const isActive = price === 'All'
+                      ? (!priceMinFilter && !priceMaxFilter)
+                      : (price === '$5–$15' && priceMinFilter === 5 && priceMaxFilter === 15)
+                      || (price === '$15–$25' && priceMinFilter === 15 && priceMaxFilter === 25)
+                      || (price === '$25+' && priceMinFilter === 25 && !priceMaxFilter);
+                    return (
+                      <button
+                        key={price}
+                        onClick={() => {
+                          if (price === 'All') {
+                            setPriceMinFilter(null);
+                            setPriceMaxFilter(null);
+                          } else if (price === '$5–$15') {
+                            setPriceMinFilter(5);
+                            setPriceMaxFilter(15);
+                          } else if (price === '$15–$25') {
+                            setPriceMinFilter(15);
+                            setPriceMaxFilter(25);
+                          } else {
+                            setPriceMinFilter(25);
+                            setPriceMaxFilter(null);
+                          }
+                        }}
+                        className={`flex-1 py-1.5 rounded-xl text-[10px] font-bold border transition-all duration-150 ${
+                          isActive
+                            ? 'bg-[#FF6B00] border-[#FF6B00] text-white'
+                            : 'bg-panel border-white/5 text-gray-400 hover:text-white'
+                        }`}
+                      >
+                        {price}
+                      </button>
+                    );
+                  })}
                 </div>
               </div>
             </div>
@@ -168,10 +191,12 @@ export default function CustomerExplore() {
                   selectedMapPin === res._id ? 'border-[#FF6B00]' : 'border-white/5'
                 }`}
               >
-                <img 
+                <Image 
                   src={res.coverImage} 
                   alt={res.name}
-                  className="w-24 h-24 rounded-2xl object-cover" 
+                  width={96}
+                  height={96}
+                  className="rounded-2xl object-cover" 
                 />
                 
                 <div className="flex-1 flex flex-col justify-between py-0.5">
@@ -296,18 +321,16 @@ export default function CustomerExplore() {
       <FilterModal
         open={showFilters}
         onClose={() => setShowFilters(false)}
-        onApply={({ rating, cuisines, price }) => {
+        priceRange={{ min: priceMinFilter ?? undefined, max: priceMaxFilter ?? undefined }}
+        onApply={({ rating, cuisines, minPrice, maxPrice }) => {
           setRatingFilter(rating);
           if (cuisines?.[0]) {
             setCuisineFilter(cuisines[0]);
           } else {
             setCuisineFilter('All');
           }
-          if (price) {
-            setPriceFilter('$'.repeat(price));
-          } else {
-            setPriceFilter('All');
-          }
+          setPriceMinFilter(minPrice);
+          setPriceMaxFilter(maxPrice);
         }}
       />
     </div>

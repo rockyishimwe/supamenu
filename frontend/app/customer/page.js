@@ -2,6 +2,7 @@
 import React, { useState } from 'react';
 import { useDineFlow } from '../context';
 import Link from 'next/link';
+import Image from 'next/image';
 import { 
   Sparkles, Star, Clock, Plus, Award, Wallet, Calendar, Users, ChevronRight
 } from 'lucide-react';
@@ -108,10 +109,12 @@ export default function CustomerDashboard() {
                   className="bg-panel border border-white/5 rounded-3xl overflow-hidden hover:border-white/10 transition-all duration-300 group flex flex-col justify-between"
                 >
                   <div className="relative h-44 overflow-hidden">
-                    <img 
+                    <Image 
                       src={res.coverImage} 
                       alt={res.name}
-                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" 
+                      fill
+                      sizes="(max-width: 768px) 100vw, 50vw"
+                      className="object-cover group-hover:scale-105 transition-transform duration-500" 
                     />
                     <div className="absolute top-4 right-4 px-2.5 py-1 rounded-xl bg-panel/80 backdrop-blur-md border border-white/10 flex items-center gap-1 text-[11px] font-bold text-white">
                       <Star className="w-3.5 h-3.5 fill-[#FF6B00] text-[#FF6B00]" />
@@ -155,10 +158,12 @@ export default function CustomerDashboard() {
                   key={item._id}
                   className="p-4 bg-panel border border-white/5 rounded-3xl flex gap-4 hover:border-white/10 transition-all duration-300"
                 >
-                  <img 
+                  <Image 
                     src={item.image} 
                     alt={item.name} 
-                    className="w-24 h-24 rounded-2xl object-cover"
+                    width={96}
+                    height={96}
+                    className="rounded-2xl object-cover"
                   />
                   <div className="flex-1 flex flex-col justify-between py-0.5">
                     <div className="space-y-1">

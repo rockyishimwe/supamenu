@@ -2,6 +2,7 @@
 import React, { useState, useEffect } from 'react';
 import { useDineFlow } from '../../../context';
 import { useRouter } from 'next/navigation';
+import Image from 'next/image';
 import { 
   Star, Clock, MapPin, Globe, Phone, Plus, CheckCircle, 
   Sparkles, Heart, Flame, ShieldAlert, Award, Calendar, Users
@@ -110,10 +111,12 @@ export default function RestaurantDetails({ params }) {
 
       {/* Cover Image and Header Info */}
       <div className="relative h-80 overflow-hidden">
-        <img 
+        <Image 
           src={restaurant.coverImage} 
           alt={restaurant.name} 
-          className="w-full h-full object-cover brightness-[0.4]"
+          fill
+          sizes="100vw"
+          className="object-cover brightness-[0.4]"
         />
 
         {/* Floating Favorite */}
@@ -125,10 +128,12 @@ export default function RestaurantDetails({ params }) {
         <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-[#07090e] to-transparent pt-32 pb-8 px-8 flex flex-col md:flex-row md:items-end justify-between gap-6">
           <div className="space-y-4">
             <div className="flex items-center gap-3">
-              <img 
+              <Image 
                 src={restaurant.logo} 
                 alt="Logo" 
-                className="w-16 h-16 rounded-2xl object-cover border border-white/10 bg-panel"
+                width={64}
+                height={64}
+                className="rounded-2xl object-cover border border-white/10 bg-panel"
               />
               <div>
                 <h1 className="text-3xl font-extrabold text-white tracking-tight">{restaurant.name}</h1>
@@ -189,10 +194,12 @@ export default function RestaurantDetails({ params }) {
                     key={item._id}
                     className="p-4 bg-panel border border-white/5 rounded-3xl flex gap-4 hover:border-white/10 transition-all duration-300"
                   >
-                    <img 
+                    <Image 
                       src={item.image} 
                       alt={item.name} 
-                      className="w-24 h-24 rounded-2xl object-cover"
+                      width={96}
+                      height={96}
+                      className="rounded-2xl object-cover"
                     />
                     <div className="flex-1 flex flex-col justify-between py-0.5">
                       <div className="space-y-1">

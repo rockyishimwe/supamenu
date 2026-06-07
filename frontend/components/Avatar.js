@@ -1,4 +1,5 @@
 "use client";
+import Image from 'next/image';
 import { useState } from 'react';
 import { User } from 'lucide-react';
 
@@ -14,17 +15,22 @@ const iconSizeMap = {
   lg: 'w-8 h-8',
 };
 
+const sizePx = { sm: 32, md: 40, lg: 80 };
+
 export default function Avatar({ src, name, size = 'sm', className = '' }) {
   const [imgError, setImgError] = useState(false);
   const showImage = src && src.trim() && !imgError;
 
   if (showImage) {
+    const px = sizePx[size];
     return (
-      <img
+      <Image
         src={src}
         alt={name || 'Avatar'}
-        onError={() => setImgError(true)}
+        width={px}
+        height={px}
         className={`${sizeMap[size]} rounded-full object-cover ${className}`}
+        onError={() => setImgError(true)}
       />
     );
   }

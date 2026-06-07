@@ -1,6 +1,7 @@
 "use client";
 import React from 'react';
 import { useDineFlow } from '../context';
+import { SkeletonRow } from '../../components/SkeletonRow';
 import { 
   LineChart, Line, BarChart, Bar, XAxis, YAxis, 
   CartesianGrid, Tooltip, ResponsiveContainer, AreaChart, Area
@@ -31,20 +32,6 @@ const mockTimePeakData = [
   { time: '9pm', occupancy: 85 },
   { time: '11pm', occupancy: 25 }
 ];
-
-function SkeletonRow() {
-  return (
-    <div className="grid grid-cols-2 lg:grid-cols-4 gap-6 animate-pulse">
-      {[1,2,3,4].map(i => (
-        <div key={i} className="p-5 rounded-3xl bg-panel border border-white/5 h-28">
-          <div className="h-3 bg-white/5 rounded w-20 mb-4" />
-          <div className="h-6 bg-white/5 rounded w-24" />
-          <div className="h-3 bg-white/5 rounded w-16 mt-2" />
-        </div>
-      ))}
-    </div>
-  );
-}
 
 function SkeletonChart() {
   return (
@@ -78,7 +65,7 @@ export default function OwnerDashboard() {
   if (loading) {
     return (
       <div className="p-8 space-y-8 bg-surface min-h-screen">
-        <SkeletonRow />
+        <SkeletonRow rows={4} />
         <div className="grid lg:grid-cols-12 gap-8">
           <div className="lg:col-span-8"><SkeletonChart /></div>
           <div className="lg:col-span-4"><SkeletonChart /></div>

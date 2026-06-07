@@ -5,8 +5,10 @@ import { motion } from 'framer-motion';
 import {
   LayoutDashboard, Compass, Calendar, ShoppingBag, User, UtensilsCrossed,
   LayoutGrid, ClipboardList, BarChart3, Users, Settings, ChevronLeft,
+  Sun, Moon,
 } from 'lucide-react';
 import { useDineFlow } from '../app/context';
+import { useThemeStore } from '../lib/useTheme';
 
 const NAV = {
   customer: [
@@ -36,6 +38,7 @@ const NAV = {
 export default function Sidebar({ role = 'customer' }) {
   const pathname = usePathname();
   const { sidebarCollapsed, setSidebarCollapsed } = useDineFlow();
+  const { theme, toggleTheme } = useThemeStore();
   const links = NAV[role] || NAV.customer;
 
   return (
@@ -61,13 +64,23 @@ export default function Sidebar({ role = 'customer' }) {
           );
         })}
       </nav>
-      <button
-        type="button"
-        onClick={() => setSidebarCollapsed(!sidebarCollapsed)}
-        className="m-3 p-2 rounded-xl border border-white/10 hover:bg-white/5 flex items-center justify-center"
-      >
-        <ChevronLeft className={`w-4 h-4 transition-transform ${sidebarCollapsed ? 'rotate-180' : ''}`} />
-      </button>
+      <div className="m-3 flex items-center gap-2">
+        <button
+          type="button"
+          onClick={toggleTheme}
+          className="flex-1 p-2 rounded-xl border border-white/10 hover:bg-white/5 flex items-center justify-center"
+          aria-label={`Switch to ${theme === 'dark' ? 'light' : 'dark'} mode`}
+        >
+          {theme === 'dark' ? <Sun className="w-4 h-4" /> : <Moon className="w-4 h-4" />}
+        </button>
+        <button
+          type="button"
+          onClick={() => setSidebarCollapsed(!sidebarCollapsed)}
+          className="flex-1 p-2 rounded-xl border border-white/10 hover:bg-white/5 flex items-center justify-center"
+        >
+          <ChevronLeft className={`w-4 h-4 transition-transform ${sidebarCollapsed ? 'rotate-180' : ''}`} />
+        </button>
+      </div>
     </motion.aside>
   );
 }

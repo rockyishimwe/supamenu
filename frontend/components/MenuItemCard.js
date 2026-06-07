@@ -1,4 +1,5 @@
 "use client";
+import Image from 'next/image';
 import { motion } from 'framer-motion';
 import { Plus, Star } from 'lucide-react';
 
@@ -9,7 +10,7 @@ export default function MenuItemCard({ item, onAdd }) {
       className="glass-panel rounded-[20px] overflow-hidden border border-white/5 shadow-glass"
     >
       <div className="relative h-36 bg-panel">
-        <img src={item.image} alt={item.name} className="w-full h-full object-cover opacity-90" />
+        <Image src={item.image} alt={item.name} fill className="object-cover opacity-90" sizes="(max-width: 768px) 50vw, 33vw" />
         {item.tags?.length > 0 && (
           <div className="absolute top-3 left-3 flex gap-1 flex-wrap">
             {item.tags.slice(0, 2).map((tag) => (

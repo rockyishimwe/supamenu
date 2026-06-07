@@ -2,6 +2,7 @@
 import React, { useState } from 'react';
 import { useDineFlow } from '../app/context';
 import { useRouter } from 'next/navigation';
+import Image from 'next/image';
 import { 
   MapPin, Search, Heart, ShoppingCart, Bell, X, Plus, Minus, Trash2, ShieldCheck, Wallet, ArrowRight
 } from 'lucide-react';
@@ -142,10 +143,12 @@ export default function CustomerHeader() {
                 ) : (
                   cart.map((item) => (
                     <div key={item._id} className="flex gap-4 p-3 bg-white/5 rounded-2xl border border-white/5 hover:border-white/10 transition-all duration-200">
-                      <img 
+                      <Image 
                         src={item.image} 
                         alt={item.name} 
-                        className="w-16 h-16 rounded-xl object-cover"
+                        width={64}
+                        height={64}
+                        className="rounded-xl object-cover"
                       />
                       <div className="flex-1 flex flex-col justify-between">
                         <div className="flex justify-between items-start">

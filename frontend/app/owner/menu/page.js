@@ -1,6 +1,7 @@
 "use client";
 import React, { useState } from 'react';
 import { useDineFlow } from '../../context';
+import Image from 'next/image';
 import { 
   Menu as MenuIcon, Plus, Trash2, Edit, Check, AlertCircle, 
   Sparkles, Star, DollarSign, Tag, Info, ChefHat
@@ -107,10 +108,12 @@ export default function OwnerMenuEditor() {
                 key={item._id}
                 className="p-4 bg-panel border border-white/5 rounded-3xl flex gap-4 hover:border-white/10 transition-all duration-300"
               >
-                <img 
+                <Image 
                   src={item.image} 
                   alt={item.name} 
-                  className="w-24 h-24 rounded-2xl object-cover"
+                  width={96}
+                  height={96}
+                  className="rounded-2xl object-cover"
                 />
                 <div className="flex-1 flex flex-col justify-between py-0.5">
                   <div className="space-y-1">

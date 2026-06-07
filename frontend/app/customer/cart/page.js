@@ -2,6 +2,7 @@
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { useDineFlow } from '../../context';
+import Image from 'next/image';
 import PaymentModal from '../../../components/PaymentModal';
 import BackButton from '../../../components/BackButton';
 import { Minus, Plus, Trash2 } from 'lucide-react';
@@ -43,7 +44,7 @@ export default function CartPage() {
       <div className="space-y-3">
         {cart.map((item) => (
           <div key={item._id} className="glass-panel rounded-[20px] p-4 flex gap-4 items-center border border-white/5">
-            <img src={item.image} alt="" className="w-16 h-16 rounded-xl object-cover" />
+            <Image src={item.image} alt="" width={64} height={64} className="rounded-xl object-cover" />
             <div className="flex-1">
               <h3 className="font-semibold text-white">{item.name}</h3>
               <p className="text-primary font-bold">${item.price?.toFixed(2)}</p>
