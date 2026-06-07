@@ -1,15 +1,16 @@
 "use client";
 import { useState, useEffect } from 'react';
 import { useStore } from '../../../lib/store';
+import { useToast } from '../../../lib/useToast';
 import BackButton from '../../../components/BackButton';
 import Avatar from '../../../components/Avatar';
 
 export default function StaffProfilePage() {
   const { currentUser, token, updateProfile } = useStore();
+  const { showToast } = useToast();
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [loading, setLoading] = useState(false);
-  const [message, setMessage] = useState({ type: '', text: '' });
 
   useEffect(() => {
     if (currentUser) {
@@ -20,20 +21,19 @@ export default function StaffProfilePage() {
 
   const handleSave = async () => {
     if (!name || !email) {
-      setMessage({ type: 'error', text: 'All fields are required.' });
+      showToast('All fields are required.', 'error');
       return;
     }
     setLoading(true);
-    setMessage({ type: '', text: '' });
     try {
-      const res = await updateProfile({ name, email });
+      const res = await updateProfile({ name, email }, token);
       if (res.success) {
-        setMessage({ type: 'success', text: 'Profile saved successfully!' });
+        showToast('Profile saved successfully!', 'success');
       } else {
-        setMessage({ type: 'error', text: res.message || 'Failed to update profile.' });
+        showToast(res.message || 'Failed to update profile.', 'error');
       }
     } catch (err) {
-      setMessage({ type: 'error', text: 'An unexpected error occurred.' });
+      showToast('An unexpected error occurred.', 'error');
     } finally {
       setLoading(false);
     }
@@ -54,12 +54,6 @@ export default function StaffProfilePage() {
       <div className="glass-panel rounded-[20px] p-6 border border-white/5 space-y-4">
         <h3 className="font-semibold text-white">Account Settings</h3>
         
-        {message.text && (
-          <div className={`p-3 rounded-lg text-sm ${message.type === 'success' ? 'bg-emerald-500/10 text-emerald-400 border border-emerald-500/20' : 'bg-rose-500/10 text-rose-400 border border-rose-500/20'}`}>
-            {message.text}
-          </div>
-        )}
-
         <div>
           <label className="text-xs text-gray-500">Display Name</label>
           <input 
