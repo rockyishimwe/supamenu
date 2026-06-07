@@ -29,6 +29,7 @@ const NAV = {
     { href: '/owner/tables', label: 'Tables', icon: LayoutGrid },
     { href: '/owner/staff', label: 'Staff', icon: Users },
     { href: '/owner/finance', label: 'Billing', icon: BarChart3 },
+    { href: '/owner/profile', label: 'Profile', icon: User },
   ],
 };
 

@@ -8,6 +8,7 @@ import {
 import confetti from 'canvas-confetti';
 import BackButton from '../../../components/BackButton';
 import { useToast } from '../../../lib/useToast';
+import Avatar from '../../../components/Avatar';
 
 export default function CustomerProfile() {
   const { currentUser, orders, topUpWallet, token } = useDineFlow();
@@ -67,11 +68,7 @@ export default function CustomerProfile() {
         <div className="absolute top-0 right-0 w-64 h-64 bg-[#FF6B00]/5 rounded-full filter blur-3xl"></div>
         
         <div className="flex items-center gap-4 relative z-10">
-          <img 
-            src={currentUser?.avatar || "https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=150"} 
-            alt="Avatar" 
-            className="w-20 h-20 rounded-2xl object-cover border border-white/10"
-          />
+          <Avatar src={currentUser?.avatar} name={currentUser?.name} size="lg" />
           <div className="space-y-1">
             <h2 className="text-xl font-bold text-white tracking-tight">{currentUser?.name || 'Sarah Jenkins'}</h2>
             <p className="text-xs text-gray-400 flex items-center gap-1.5"><Mail className="w-3.5 h-3.5 text-[#FF6B00]" /> {currentUser?.email || 'sarah@dineflow.com'}</p>

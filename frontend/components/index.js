@@ -1,3 +1,4 @@
+export { default as Avatar } from './Avatar';
 export { default as BackButton } from './BackButton';
 export { default as ConfettiSuccess } from './ConfettiSuccess';
 export { default as ConfirmDialog } from './ConfirmDialog';

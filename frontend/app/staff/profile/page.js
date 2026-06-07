@@ -44,7 +44,7 @@ export default function StaffProfilePage() {
       <BackButton />
       <h1 className="text-2xl font-bold font-display text-white">Staff Profile</h1>
       <div className="glass-panel rounded-[20px] p-6 border border-white/5 flex items-center gap-4">
-        <img src={currentUser?.avatar || 'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=150'} alt="" className="w-20 h-20 rounded-full object-cover" />
+        <Avatar src={currentUser?.avatar} name={currentUser?.name} size="lg" />
         <div>
           <h2 className="text-xl font-bold text-white">{currentUser?.name || 'Alex Morgan'}</h2>
           <p className="text-gray-500 text-sm">{currentUser?.email}</p>

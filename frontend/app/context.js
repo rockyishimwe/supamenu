@@ -2,6 +2,7 @@
 import { useEffect, useState } from 'react';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { useAuthStore, useDataStore, useUIStore } from '../lib/store';
+import { useNotificationStore } from '../lib/useNotifications';
 import { useThemeStore } from '../lib/useTheme';
 import ToastContainer from '../components/Toast';
 
@@ -15,13 +16,22 @@ export function DineFlowProvider({ children }) {
   const hydrateAuth = useAuthStore((s) => s.hydrateAuth);
   const hydrateUI = useUIStore((s) => s.hydrateUI);
   const initTheme = useThemeStore((s) => s.initTheme);
+  const addNotification = useNotificationStore((s) => s.addNotification);
 
   useEffect(() => {
     initTheme();
     hydrateAuth();
     hydrateUI();
     if (!hydrated) hydrate();
-  }, [hydrate, hydrated, hydrateAuth, hydrateUI, initTheme]);
+
+    // Seed sample notifications
+    if (!localStorage.getItem('dineflow_notif_seeded')) {
+      addNotification({ title: 'Welcome to DineFlow!', message: 'Explore restaurants and place your first order.', type: 'info' });
+      addNotification({ title: 'Wallet Credit', message: 'You received $10 bonus for signing up!', type: 'payment' });
+      addNotification({ title: 'Reservation Reminder', message: 'Your table at The Garden Bistro is tomorrow at 7pm.', type: 'reservation' });
+      localStorage.setItem('dineflow_notif_seeded', 'true');
+    }
+  }, [hydrate, hydrated, hydrateAuth, hydrateUI, initTheme, addNotification]);
 
   return (
     <QueryClientProvider client={queryClient}>

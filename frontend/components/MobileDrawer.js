@@ -25,6 +25,7 @@ const roleLinks = {
     { href: '/owner/menu', label: 'Menu', icon: ShoppingBag },
     { href: '/owner/tables', label: 'Tables', icon: LayoutDashboard },
     { href: '/owner/finance', label: 'Finance', icon: CreditCard },
+    { href: '/owner/profile', label: 'Profile', icon: Settings },
   ],
 };
 
