@@ -2,6 +2,7 @@
 import { useState, useEffect } from 'react';
 import { useStore } from '../../../lib/store';
 import BackButton from '../../../components/BackButton';
+import Avatar from '../../../components/Avatar';
 
 export default function StaffProfilePage() {
   const { currentUser, token, updateProfile } = useStore();

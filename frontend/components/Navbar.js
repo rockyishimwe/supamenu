@@ -1,10 +1,12 @@
 "use client";
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import { Bell, ShoppingCart, Wallet, Search, Menu, Sun, Moon } from 'lucide-react';
+import { ShoppingCart, Wallet, Search, Menu, Sun, Moon } from 'lucide-react';
 import { useDineFlow } from '../app/context';
 import { useThemeStore } from '../lib/useTheme';
 import DineFlowLogo from './DineFlowLogo';
+import Avatar from './Avatar';
+import NotificationDropdown from './NotificationDropdown';
 
 export default function Navbar({ role = 'customer', onMenuToggle }) {
   const { currentUser, cart, logout } = useDineFlow();
@@ -75,16 +77,9 @@ export default function Navbar({ role = 'customer', onMenuToggle }) {
               )}
             </Link>
           )}
-          <button type="button" className="relative p-2 rounded-xl hover:bg-white/5">
-            <Bell className="w-5 h-5" />
-            <span className="absolute top-1 right-1 w-2 h-2 rounded-full bg-red-500" />
-          </button>
+          <NotificationDropdown />
           <div className="flex items-center gap-2 pl-2 border-l border-white/10">
-            <img
-              src={currentUser?.avatar || 'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=80'}
-              alt="avatar"
-              className="w-8 h-8 rounded-full object-cover"
-            />
+            <Avatar src={currentUser?.avatar} name={currentUser?.name} size="sm" />
             <button
               type="button"
               onClick={handleLogout}
