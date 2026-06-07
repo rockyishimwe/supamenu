@@ -8,6 +8,7 @@
     "start": "next start"
   },
   "dependencies": {
+    "@tanstack/react-query": "^5.101.0",
     "autoprefixer": "^10.4.19",
     "canvas-confetti": "^1.9.3",
     "clsx": "^2.1.1",
