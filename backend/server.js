@@ -9,6 +9,8 @@ const seedDatabase = require('./seed');
 const errorHandler = require('./middleware/errorHandler');
 const ensureIndexes = require('./seed/indexes');
 const logger = require('./utils/logger');
+const swaggerUi = require('swagger-ui-express');
+const swaggerSpec = require('./swagger');
 
 dotenv.config();
 const validateEnv = require('./config/env');
@@ -80,6 +82,10 @@ app.get('/api/health', (req, res) => {
     database: mongoose.connection.readyState === 1 ? 'connected' : 'disconnected',
   });
 });
+
+// API Documentation
+app.use('/api/docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec, { explorer: true }));
+app.get('/api/docs.json', (req, res) => res.json(swaggerSpec));
 
 app.use('/api/auth', require('./routes/auth'));
 app.use('/api/restaurants', require('./routes/restaurants'));
