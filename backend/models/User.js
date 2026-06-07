@@ -13,6 +13,10 @@ const UserSchema = new mongoose.Schema({
   },
   staffDetails: {
     role: { type: String, enum: ['Waiter', 'Cashier', 'Kitchen Staff', 'Manager'] },
+    restaurantId: { type: mongoose.Schema.Types.ObjectId, ref: 'Restaurant' },
+    restaurantCode: { type: String }
+  },
+  ownerDetails: {
     restaurantId: { type: mongoose.Schema.Types.ObjectId, ref: 'Restaurant' }
   },
   createdAt: { type: Date, default: Date.now }

@@ -1,35 +1,40 @@
 const express = require('express');
 const router = express.Router();
-const Restaurant = require('../models/Restaurant');
-const MenuItem = require('../models/MenuItem');
+const { body } = require('express-validator');
 const { authMiddleware } = require('../middleware/auth');
+const validate = require('../middleware/validate');
+const restaurantService = require('../services/restaurantService');
 
-// Get all restaurants
+const ALLOWED_UPDATE_FIELDS = [
+  'name', 'description', 'coverImage', 'logo', 'cuisines', 'address',
+  'contactNumber', 'website', 'openingHours', 'settings', 'categories',
+];
+
+// Get all restaurants (public)
 router.get('/', async (req, res) => {
   try {
-    const restaurants = await Restaurant.find();
+    const restaurants = await restaurantService.getAll();
     res.json(restaurants);
   } catch (err) {
     res.status(500).json({ message: 'Server error', error: err.message });
   }
 });
 
-// Get single restaurant detail
+// Get single restaurant detail (public)
 router.get('/:id', async (req, res) => {
   try {
-    const restaurant = await Restaurant.findById(req.id || req.params.id);
-    if (!restaurant) return res.status(404).json({ message: 'Restaurant not found' });
+    const restaurant = await restaurantService.getById(req.params.id);
     res.json(restaurant);
   } catch (err) {
-    res.status(500).json({ message: 'Server error', error: err.message });
+    res.status(err.status || 500).json({ message: err.message });
   }
 });
 
-// Get menu items for restaurant
+// Get menu items for restaurant (public)
 router.get('/:id/menu', async (req, res) => {
   try {
-    const menuItems = await MenuItem.find({ restaurantId: req.params.id });
-    res.json(menuItems);
+    const menu = await restaurantService.getMenu(req.params.id);
+    res.json(menu);
   } catch (err) {
     res.status(500).json({ message: 'Server error', error: err.message });
   }
@@ -37,109 +42,36 @@ router.get('/:id/menu', async (req, res) => {
 
 // Update restaurant by id (Owner only)
 router.patch('/:id', authMiddleware, async (req, res) => {
-  if (req.user.role !== 'owner') {
-    return res.status(403).json({ message: 'Access denied: Owners only' });
-  }
-
+  if (req.user.role !== 'owner') return res.status(403).json({ message: 'Access denied' });
   try {
-    const allowed = [
-      'name',
-      'description',
-      'coverImage',
-      'logo',
-      'cuisines',
-      'address',
-      'contactNumber',
-      'website',
-      'openingHours',
-      'settings',
-      'categories',
-    ];
-    const updates = {};
-    for (const key of allowed) {
-      if (req.body[key] !== undefined) updates[key] = req.body[key];
-    }
-
-    const restaurant = await Restaurant.findByIdAndUpdate(
-      req.params.id,
-      { $set: updates },
-      { new: true, runValidators: true }
-    );
-    if (!restaurant) return res.status(404).json({ message: 'Restaurant not found' });
+    const restaurant = await restaurantService.updateRestaurant(req.params.id, req.body, ALLOWED_UPDATE_FIELDS);
     res.json(restaurant);
   } catch (err) {
-    res.status(500).json({ message: 'Server error', error: err.message });
+    res.status(err.status || 500).json({ message: err.message });
   }
 });
 
 // Create/Update restaurant profile (Owner only)
 router.post('/', authMiddleware, async (req, res) => {
-  if (req.user.role !== 'owner') {
-    return res.status(403).json({ message: 'Access denied: Owners only' });
-  }
-
-  const { name, description, coverImage, logo, cuisines, address, contactNumber, website, openingHours, settings, categories } = req.body;
+  if (req.user.role !== 'owner') return res.status(403).json({ message: 'Access denied' });
   try {
-    let restaurant = await Restaurant.findOne(); // For demo/sandbox, we assume single main restaurant
+    let restaurant = await restaurantService.getById(req.params.id).catch(() => null);
     if (restaurant) {
-      // Update
-      restaurant.name = name || restaurant.name;
-      restaurant.description = description || restaurant.description;
-      restaurant.coverImage = coverImage || restaurant.coverImage;
-      restaurant.logo = logo || restaurant.logo;
-      restaurant.cuisines = cuisines || restaurant.cuisines;
-      restaurant.address = address || restaurant.address;
-      restaurant.contactNumber = contactNumber || restaurant.contactNumber;
-      restaurant.website = website || restaurant.website;
-      restaurant.openingHours = openingHours || restaurant.openingHours;
-      restaurant.settings = settings || restaurant.settings;
-      restaurant.categories = categories || restaurant.categories;
-      await restaurant.save();
+      restaurant = await restaurantService.updateRestaurant(restaurant._id, req.body, ALLOWED_UPDATE_FIELDS);
     } else {
-      // Create new
-      restaurant = new Restaurant({
-        name,
-        description,
-        coverImage,
-        logo,
-        cuisines,
-        address,
-        contactNumber,
-        website,
-        openingHours,
-        settings,
-        categories
-      });
-      await restaurant.save();
+      restaurant = await restaurantService.createRestaurant(req.body);
     }
     res.status(200).json(restaurant);
   } catch (err) {
-    res.status(500).json({ message: 'Server error', error: err.message });
+    res.status(err.status || 500).json({ message: err.message });
   }
 });
 
 // Add menu item (Owner only)
 router.post('/:id/menu', authMiddleware, async (req, res) => {
-  if (req.user.role !== 'owner') {
-    return res.status(403).json({ message: 'Access denied: Owners only' });
-  }
-
-  const { name, description, image, price, category, status, stockLevel, tags, ingredients, nutrition } = req.body;
+  if (req.user.role !== 'owner') return res.status(403).json({ message: 'Access denied' });
   try {
-    const item = new MenuItem({
-      restaurantId: req.params.id,
-      name,
-      description,
-      image,
-      price,
-      category,
-      status: status || 'in_stock',
-      stockLevel: stockLevel || 100,
-      tags: tags || [],
-      ingredients: ingredients || [],
-      nutrition: nutrition || {}
-    });
-    await item.save();
+    const item = await restaurantService.addMenuItem(req.params.id, req.body);
     res.status(201).json(item);
   } catch (err) {
     res.status(500).json({ message: 'Server error', error: err.message });

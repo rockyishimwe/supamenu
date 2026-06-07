@@ -11,8 +11,14 @@ router.get('/', authMiddleware, async (req, res) => {
     if (req.user.role === 'customer') {
       query.userId = req.user.id;
     }
-    const reservations = await Reservation.find(query).sort({ reservationDate: -1, reservationTime: -1 });
-    res.json(reservations);
+    const page = parseInt(req.query.page) || 1;
+    const limit = parseInt(req.query.limit) || 20;
+    const skip = (page - 1) * limit;
+    const [reservations, total] = await Promise.all([
+      Reservation.find(query).sort({ reservationDate: -1, reservationTime: -1 }).skip(skip).limit(limit),
+      Reservation.countDocuments(query),
+    ]);
+    res.json({ data: reservations, pagination: { page, limit, total, pages: Math.ceil(total / limit) } });
   } catch (err) {
     res.status(500).json({ message: 'Server error', error: err.message });
   }

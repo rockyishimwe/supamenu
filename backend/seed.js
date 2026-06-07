@@ -2,6 +2,7 @@ const mongoose = require('mongoose');
 const bcrypt = require('bcryptjs');
 const dotenv = require('dotenv');
 const { GARDEN_BISTRO_LAYOUT, SAKURA_SUSHI_LAYOUT } = require('./seed/floor-layouts');
+const logger = require('./utils/logger');
 
 dotenv.config();
 
@@ -52,12 +53,12 @@ const SAKURA_MENU = [
 
 async function seedDatabase({ force = false } = {}) {
   await mongoose.connect(MONGO_URI);
-  console.log('Connected to MongoDB for seeding...');
+  logger.info('Connected to MongoDB for seeding...');
 
   const restaurantCount = await Restaurant.countDocuments();
 
   if (!force && restaurantCount > 0) {
-    console.log('Database already seeded. Skipping.');
+    logger.info('Database already seeded. Skipping.');
     return { skipped: true };
   }
 
@@ -70,7 +71,7 @@ async function seedDatabase({ force = false } = {}) {
       Reservation.deleteMany({}),
       Order.deleteMany({}),
     ]);
-    console.log('Existing data cleared.');
+    logger.info('Existing data cleared.');
   }
 
   const salt = await bcrypt.genSalt(10);
@@ -192,7 +193,7 @@ async function seedDatabase({ force = false } = {}) {
     { restaurantId: garden._id, restaurantName: garden.name, userId: customer._id, userName: customer.name, tableId: gardenTables[9]._id, tableNumber: 10, items: [{ menuItemId: gardenMenuDocs[3]._id, name: gardenMenuDocs[3].name, quantity: 2, price: 9.99 }], subtotal: 19.98, tax: 1.7, serviceCharge: 2.0, total: 23.68, status: 'paid', paymentMethod: 'wallet' },
   ]);
 
-  console.log('Seeded:', {
+  logger.info('Seeded:', {
     users: await User.countDocuments(),
     restaurants: 2,
     tables: gardenTables.length + sakuraTables.length,
@@ -207,8 +208,8 @@ async function seedDatabase({ force = false } = {}) {
 
 if (require.main === module) {
   seedDatabase({ force: true })
-    .then(() => { console.log('Database seeding completed!'); process.exit(0); })
-    .catch((err) => { console.error('Seeding error:', err); process.exit(1); });
+    .then(() => { logger.info('Database seeding completed!'); process.exit(0); })
+    .catch((err) => { logger.error('Seeding error:', err); process.exit(1); });
 }
 
 module.exports = seedDatabase;

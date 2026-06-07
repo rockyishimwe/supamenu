@@ -10,6 +10,7 @@ import {
   Activity, Star, Clock, Sparkles, Plus
 } from 'lucide-react';
 import MiniCalendar from '../../components/MiniCalendar';
+import OwnerKPIRow from '../../components/owner/OwnerKPIRow';
 
 const mockSalesData = [
   { name: 'Mon', sales: 1400, reservations: 12 },
@@ -31,43 +32,72 @@ const mockTimePeakData = [
   { time: '11pm', occupancy: 25 }
 ];
 
+function SkeletonRow() {
+  return (
+    <div className="grid grid-cols-2 lg:grid-cols-4 gap-6 animate-pulse">
+      {[1,2,3,4].map(i => (
+        <div key={i} className="p-5 rounded-3xl bg-[#0f1115] border border-white/5 h-28">
+          <div className="h-3 bg-white/5 rounded w-20 mb-4" />
+          <div className="h-6 bg-white/5 rounded w-24" />
+          <div className="h-3 bg-white/5 rounded w-16 mt-2" />
+        </div>
+      ))}
+    </div>
+  );
+}
+
+function SkeletonChart() {
+  return (
+    <div className="bg-[#0f1115] border border-white/5 p-6 rounded-3xl animate-pulse">
+      <div className="h-4 bg-white/5 rounded w-48 mb-2" />
+      <div className="h-3 bg-white/5 rounded w-32 mb-4" />
+      <div className="h-[260px] bg-white/5 rounded-xl" />
+    </div>
+  );
+}
+
 export default function OwnerDashboard() {
-  const { restaurants, menuItems, tables, reservations, orders, analytics, addMenuItem } = useDineFlow();
+  const { restaurants, menuItems, tables, reservations, orders, analytics, addMenuItem, currentUser } = useDineFlow();
+
+  const loading = !analytics;
+
+  const myRestaurant = currentUser?.ownerDetails?.restaurantId
+    ? restaurants.find(r => r._id === currentUser.ownerDetails.restaurantId)
+    : null;
+
   const salesData = analytics?.salesChart?.slice(-7).map((d, i) => ({
     name: d.date?.split(' ')[0] || ['Mon','Tue','Wed','Thu','Fri','Sat','Sun'][i],
     sales: d.sales,
   })) || mockSalesData;
   const coversData = analytics?.reservationsChart || mockSalesData.map((d) => ({ day: d.name, covers: d.reservations }));
 
-  // Stats calculation
-  const totalRevenue = orders.reduce((sum, o) => sum + o.total, 0) + 12650; // Mock base + dynamic orders
+  const totalRevenue = orders.reduce((sum, o) => sum + o.total, 0) + 12650;
   const activeTablesCount = tables.filter(t => t.status === 'occupied').length;
-  const totalReservationsCount = reservations.length + 15; // Mock base
+  const totalReservationsCount = reservations.length + 15;
+
+  if (loading) {
+    return (
+      <div className="p-8 space-y-8 bg-[#07090e] min-h-screen">
+        <SkeletonRow />
+        <div className="grid lg:grid-cols-12 gap-8">
+          <div className="lg:col-span-8"><SkeletonChart /></div>
+          <div className="lg:col-span-4"><SkeletonChart /></div>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="p-8 space-y-8 bg-[#07090e] min-h-screen text-gray-300">
       
       {/* Upper KPIs Row */}
-      <div className="grid grid-cols-2 lg:grid-cols-4 gap-6">
-        {[
-          { label: 'Weekly Revenue', val: `$${totalRevenue.toLocaleString()}`, change: '+18% from last week', color: 'text-[#FF6B00]' },
-          { label: 'Floor Occupancy', val: `${Math.round((activeTablesCount / (tables.length || 1)) * 100)}%`, change: 'Active floor layout', color: 'text-blue-400' },
-          { label: 'Active Bookings', val: totalReservationsCount, change: 'Seated reservations', color: 'text-yellow-400' },
-          { label: 'Food Items Listed', val: menuItems.length, change: 'Menu categories active', color: 'text-emerald-500' }
-        ].map((kpi, idx) => (
-          <div key={idx} className="p-5 rounded-3xl bg-[#0f1115] border border-white/5 flex flex-col justify-between h-28 relative overflow-hidden">
-            <div className="absolute top-0 right-0 w-16 h-16 bg-white/2 rounded-full filter blur-xl"></div>
-            <div className="flex justify-between items-start">
-              <span className="text-[9px] uppercase font-bold tracking-widest text-gray-500">{kpi.label}</span>
-              <ArrowUpRight className="w-3.5 h-3.5 text-gray-600" />
-            </div>
-            <div>
-              <p className={`text-2xl font-extrabold tracking-tight ${kpi.color}`}>{kpi.val}</p>
-              <p className="text-[9px] text-gray-500 mt-1 font-semibold">{kpi.change}</p>
-            </div>
-          </div>
-        ))}
-      </div>
+      <OwnerKPIRow
+        totalRevenue={totalRevenue}
+        activeTablesCount={activeTablesCount}
+        totalTables={tables.length}
+        totalReservationsCount={totalReservationsCount}
+        menuItemsLength={menuItems.length}
+      />
 
       {/* Main charts split */}
       <div className="grid lg:grid-cols-12 gap-8">
@@ -135,10 +165,25 @@ export default function OwnerDashboard() {
       </div>
 
       <div className="grid lg:grid-cols-12 gap-6">
-        <div className="lg:col-span-4">
+        <div className="lg:col-span-3">
           <MiniCalendar />
         </div>
-        <div className="lg:col-span-8 glass-panel rounded-[20px] p-6 border border-white/5">
+        {myRestaurant?.inviteCode && (
+        <div className="lg:col-span-3 bg-[#0f1115] border border-white/5 p-5 rounded-3xl space-y-3">
+          <h3 className="text-sm font-bold uppercase tracking-wider text-white">Staff Invite Code</h3>
+          <p className="text-[10px] text-gray-500">Share this code with staff to join your restaurant.</p>
+          <div className="flex items-center justify-center gap-3 p-4 bg-white/5 rounded-2xl border border-dashed border-white/10">
+            <span className="text-2xl font-mono font-extrabold tracking-[0.2em] text-[#FF6B00]">{myRestaurant.inviteCode}</span>
+            <button
+              onClick={() => navigator.clipboard?.writeText(myRestaurant.inviteCode)}
+              className="px-3 py-1.5 bg-[#FF6B00]/10 hover:bg-[#FF6B00]/20 border border-[#FF6B00]/20 rounded-xl text-[10px] text-[#FF6B00] font-bold transition-all"
+            >
+              Copy
+            </button>
+          </div>
+        </div>
+        )}
+        <div className="lg:col-span-6 glass-panel rounded-[20px] p-6 border border-white/5">
           <div className="flex justify-between items-center mb-4">
             <h3 className="text-sm font-bold uppercase tracking-wider text-white">Menu CRUD</h3>
             <button

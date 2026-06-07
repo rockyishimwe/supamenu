@@ -84,3 +84,4 @@ public/uploads/
 *.tsbuildinfo
 designs/
 .cursorrules
+.hermes/

@@ -1,12 +1,26 @@
 const express = require('express');
 const router = express.Router();
+const { body } = require('express-validator');
 const Table = require('../models/Table');
 const { authMiddleware } = require('../middleware/auth');
+const validate = require('../middleware/validate');
 
 // Get all tables for a restaurant
-router.get('/', async (req, res) => {
+router.get('/', authMiddleware, async (req, res) => {
   try {
-    const query = req.query.restaurantId ? { restaurantId: req.query.restaurantId } : {};
+    const user = req.user;
+    let query = {};
+    
+    if (user.role === 'customer') {
+      if (!req.query.restaurantId) return res.status(400).json({ message: 'restaurantId required' });
+      query = { restaurantId: req.query.restaurantId };
+    } else {
+      // staff or owner
+      const restaurantId = user.staffDetails?.restaurantId || user.ownerDetails?.restaurantId;
+      if (!restaurantId) return res.status(403).json({ message: 'No restaurant assigned' });
+      query = { restaurantId };
+    }
+
     const tables = await Table.find(query).sort({ tableNumber: 1 });
     res.json(tables);
   } catch (err) {
@@ -19,6 +33,12 @@ async function updateTableHandler(req, res) {
   try {
     const table = await Table.findById(req.params.id);
     if (!table) return res.status(404).json({ message: 'Table not found' });
+
+    // Validate ownership
+    const userRestaurantId = req.user.staffDetails?.restaurantId || req.user.ownerDetails?.restaurantId;
+    if (table.restaurantId.toString() !== userRestaurantId.toString()) {
+        return res.status(403).json({ message: 'Access denied' });
+    }
 
     if (status !== undefined) table.status = status;
     if (currentDuration !== undefined) table.currentDuration = currentDuration;
@@ -38,7 +58,13 @@ router.put('/:id', authMiddleware, updateTableHandler);
 router.patch('/:id/status', authMiddleware, updateTableHandler);
 
 // Create a table (Owner only)
-router.post('/', authMiddleware, async (req, res) => {
+router.post('/',
+  authMiddleware,
+  body('restaurantId').notEmpty().withMessage('restaurantId is required'),
+  body('tableNumber').isInt({ min: 1 }).withMessage('tableNumber must be a positive integer'),
+  body('capacity').isInt({ min: 1 }).withMessage('capacity must be at least 1'),
+  validate,
+  async (req, res) => {
   if (req.user.role !== 'owner' && req.user.role !== 'staff') {
     return res.status(403).json({ message: 'Access denied' });
   }

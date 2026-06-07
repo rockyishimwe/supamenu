@@ -18,6 +18,7 @@ const RestaurantSchema = new mongoose.Schema({
   },
   categories: [{ type: String }],
   owner: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
+  inviteCode: { type: String, unique: true },
   createdAt: { type: Date, default: Date.now }
 });
 

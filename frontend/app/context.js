@@ -1,6 +1,7 @@
 "use client";
 import { useEffect } from 'react';
 import { useStore } from '../lib/store';
+import ToastContainer from '../components/Toast';
 
 export function DineFlowProvider({ children }) {
   const hydrate = useStore((s) => s.hydrate);
@@ -10,7 +11,10 @@ export function DineFlowProvider({ children }) {
     if (!hydrated) hydrate();
   }, [hydrate, hydrated]);
 
-  return <>{children}</>;  // ← was just "children", now wrapped in fragment
+  return <>
+    {children}
+    <ToastContainer />
+  </>;
 }
 
 export function useDineFlow() {

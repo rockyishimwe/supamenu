@@ -2,9 +2,11 @@
 import React, { useState } from 'react';
 import { 
   Users, Plus, Trash2, ShieldCheck, Mail, Sparkles, Check, 
-  ChevronRight, Calendar, UserCheck, Star, Award
+  ChevronRight, Calendar, UserCheck, Star, Award, X
 } from 'lucide-react';
 import BackButton from '../../../components/BackButton';
+import { useToast } from '../../../lib/useToast';
+import { validateForm } from '../../../lib/validation';
 
 const initialStaff = [
   { id: 1, name: 'Alex Morgan', role: 'Staff Waiter', email: 'alex@dineflow.com', shift: 'Morning shift (08:00 - 16:00)', performance: 4.8 },
@@ -14,7 +16,10 @@ const initialStaff = [
 ];
 
 export default function OwnerStaffRoster() {
+  const { toast } = useToast();
   const [staffList, setStaffList] = useState(initialStaff);
+  const [fieldErrors, setFieldErrors] = useState({});
+  const [confirmDelete, setConfirmDelete] = useState(null);
   
   // Form State
   const [name, setName] = useState('');
@@ -27,7 +32,16 @@ export default function OwnerStaffRoster() {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    if (!name || !email) return;
+    setFieldErrors({});
+
+    const { valid, errors } = validateForm(
+      { name, email },
+      { name: ['required'], email: ['required', 'email'] }
+    );
+    if (!valid) {
+      setFieldErrors(errors);
+      return;
+    }
 
     const newMember = {
       id: Date.now(),
@@ -39,6 +53,7 @@ export default function OwnerStaffRoster() {
     };
 
     setStaffList([...staffList, newMember]);
+    toast.success('Staff member added successfully!');
     setFormSuccess(true);
     setName('');
     setEmail('');
@@ -50,12 +65,17 @@ export default function OwnerStaffRoster() {
   };
 
   const handleDelete = (id) => {
-    if (confirm("Remove this staff member?")) {
-      setStaffList(staffList.filter(s => s.id !== id));
-    }
+    setConfirmDelete(id);
+  };
+
+  const confirmDeleteAction = () => {
+    setStaffList(staffList.filter(s => s.id !== confirmDelete));
+    toast.success('Staff member removed.');
+    setConfirmDelete(null);
   };
 
   return (
+    <>
     <div className="p-8 space-y-8 bg-[#07090e] min-h-screen text-gray-300">
       <BackButton />
 
@@ -133,6 +153,7 @@ export default function OwnerStaffRoster() {
                   placeholder="e.g. Emma Stone"
                   className="w-full bg-white/5 border border-white/5 p-2.5 rounded-xl text-xs text-white"
                 />
+                {fieldErrors.name && <p className="text-red-400 text-[10px] mt-1">{fieldErrors.name}</p>}
               </div>
 
               <div className="space-y-1">
@@ -145,6 +166,7 @@ export default function OwnerStaffRoster() {
                   placeholder="e.g. emma.stone@dineflow.com"
                   className="w-full bg-white/5 border border-white/5 p-2.5 rounded-xl text-xs text-white"
                 />
+                {fieldErrors.email && <p className="text-red-400 text-[10px] mt-1">{fieldErrors.email}</p>}
               </div>
 
               <div className="space-y-1">
@@ -193,5 +215,26 @@ export default function OwnerStaffRoster() {
       </div>
 
     </div>
+
+      {confirmDelete && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm" onClick={() => setConfirmDelete(null)}>
+          <div className="bg-[#0f1115] border border-white/10 rounded-3xl p-6 max-w-sm w-full mx-4 shadow-2xl space-y-4" onClick={(e) => e.stopPropagation()}>
+            <div className="flex items-center justify-between">
+              <h3 className="text-sm font-bold text-white">Remove Staff</h3>
+              <button onClick={() => setConfirmDelete(null)}><X className="w-4 h-4 text-gray-500" /></button>
+            </div>
+            <p className="text-xs text-gray-400">Are you sure you want to remove this staff member? This action cannot be undone.</p>
+            <div className="flex gap-3">
+              <button onClick={() => setConfirmDelete(null)} className="flex-1 py-2.5 border border-white/5 hover:bg-white/5 text-xs text-gray-400 rounded-xl">
+                Cancel
+              </button>
+              <button onClick={confirmDeleteAction} className="flex-1 py-2.5 bg-red-500 hover:bg-red-600 text-white text-xs font-bold rounded-xl">
+                Remove
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+  </>
   );
 }

@@ -296,9 +296,18 @@ export default function CustomerExplore() {
       <FilterModal
         open={showFilters}
         onClose={() => setShowFilters(false)}
-        onApply={({ rating, cuisines }) => {
+        onApply={({ rating, cuisines, price }) => {
           setRatingFilter(rating);
-          if (cuisines?.[0]) setCuisineFilter(cuisines[0]);
+          if (cuisines?.[0]) {
+            setCuisineFilter(cuisines[0]);
+          } else {
+            setCuisineFilter('All');
+          }
+          if (price) {
+            setPriceFilter('$'.repeat(price));
+          } else {
+            setPriceFilter('All');
+          }
         }}
       />
     </div>

@@ -3,6 +3,8 @@ import React, { useState } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useDineFlow } from '../../context';
+import { validateForm } from '../../../lib/validation';
+import { useToast } from '../../../lib/useToast';
 import { 
   ShieldCheck, RefreshCw, Sparkles, Heart, Mail, Lock, Eye, EyeOff, Check, Chrome, Apple, ChevronRight, HelpCircle
 } from 'lucide-react';
@@ -11,6 +13,7 @@ import DineFlowLogo from '../../../components/DineFlowLogo';
 export default function LoginPage() {
   const router = useRouter();
   const { login, activeRole, setActiveRole } = useDineFlow();
+  const { toast } = useToast();
   
   const [email, setEmail] = useState('sarah@dineflow.com');
   const [password, setPassword] = useState('password123');
@@ -18,6 +21,7 @@ export default function LoginPage() {
   const [rememberMe, setRememberMe] = useState(true);
   const [loading, setLoading] = useState(false);
   const [errorMsg, setErrorMsg] = useState('');
+  const [fieldErrors, setFieldErrors] = useState({});
 
   // Handle active role selector adjustments
   const handleRoleChange = (role) => {
@@ -34,17 +38,30 @@ export default function LoginPage() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setLoading(true);
+    setFieldErrors({});
     setErrorMsg('');
+
+    const { valid, errors } = validateForm(
+      { email, password },
+      { email: ['required', 'email'], password: ['required'] }
+    );
+    if (!valid) {
+      setFieldErrors(errors);
+      return;
+    }
+
+    setLoading(true);
     
     const res = await login(email, password, activeRole);
     setLoading(false);
     
     if (res.success) {
+      toast.success(`Logged in as ${activeRole.charAt(0).toUpperCase() + activeRole.slice(1)}`);
       if (activeRole === 'customer') router.push('/customer');
       else if (activeRole === 'staff') router.push('/staff');
       else if (activeRole === 'owner') router.push('/owner');
     } else {
+      toast.error(res.message || 'Login failed. Please check credentials.');
       setErrorMsg(res.message || 'Login failed. Please check credentials.');
     }
   };
@@ -164,6 +181,7 @@ export default function LoginPage() {
                   className="w-full pl-11 pr-4 py-3 rounded-xl bg-white/5 border border-white/5 text-xs text-white placeholder-gray-500 focus:outline-none focus:border-[#FF6B00] focus:bg-white/10 transition-all"
                 />
               </div>
+              {fieldErrors.email && <p className="text-red-400 text-[10px] mt-1">{fieldErrors.email}</p>}
             </div>
 
             {/* Password */}
@@ -192,6 +210,7 @@ export default function LoginPage() {
                   {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
                 </button>
               </div>
+              {fieldErrors.password && <p className="text-red-400 text-[10px] mt-1">{fieldErrors.password}</p>}
             </div>
 
             {/* Remember Me */}

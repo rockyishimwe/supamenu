@@ -4,6 +4,8 @@ import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useDineFlow } from '../../context';
 import { useStore } from '../../../lib/store';
+import { validateForm } from '../../../lib/validation';
+import { useToast } from '../../../lib/useToast';
 import {
   ShieldCheck,
   Mail,
@@ -25,6 +27,7 @@ import confetti from 'canvas-confetti';
 export default function RegisterPage() {
   const router = useRouter();
   const { register } = useDineFlow();
+  const { toast } = useToast();
 
   const [role, setRole] = useState('customer');
   const [step, setStep] = useState(1);
@@ -33,6 +36,7 @@ export default function RegisterPage() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [errorMsg, setErrorMsg] = useState('');
+  const [fieldErrors, setFieldErrors] = useState({});
   const [loading, setLoading] = useState(false);
 
   const [restaurantName, setRestaurantName] = useState('');
@@ -51,9 +55,14 @@ export default function RegisterPage() {
 
   const handleNext = () => {
     setErrorMsg('');
+    setFieldErrors({});
     if (step === 1) {
-      if (!name || !email || !password) {
-        setErrorMsg('Please fill in all account fields');
+      const { valid, errors } = validateForm(
+        { name, email, password },
+        { name: ['required'], email: ['required', 'email'], password: ['required', ['minLength', 6]] }
+      );
+      if (!valid) {
+        setFieldErrors(errors);
         return;
       }
       if (role === 'customer') {
@@ -64,12 +73,18 @@ export default function RegisterPage() {
     } else if (step === 2) {
       if (role === 'staff') {
         if (!restaurantCode.trim()) {
-          setErrorMsg('Please enter your restaurant invite code');
+          setFieldErrors({ restaurantCode: 'Invite code is required' });
           return;
         }
-      } else if (!restaurantName || !restaurantAddress) {
-        setErrorMsg('Please fill in restaurant details');
-        return;
+      } else {
+        const { valid, errors } = validateForm(
+          { restaurantName, restaurantAddress },
+          { restaurantName: ['required'], restaurantAddress: ['required'] }
+        );
+        if (!valid) {
+          setFieldErrors(errors);
+          return;
+        }
       }
       setStep(3);
     }
@@ -83,10 +98,12 @@ export default function RegisterPage() {
   const handleRegister = async () => {
     setLoading(true);
     setErrorMsg('');
+    setFieldErrors({});
     const res = await register(name, email, password, role, { restaurantCode: restaurantCode.trim() });
     setLoading(false);
 
     if (res.success) {
+      toast.success(`Welcome${restaurantName ? ` to ${restaurantName}` : ''}! Account created successfully.`);
       confetti({
         particleCount: 150,
         spread: 80,
@@ -222,6 +239,7 @@ export default function RegisterPage() {
                     className="w-full pl-11 pr-4 py-3 rounded-xl bg-white/5 border border-white/5 text-xs text-white placeholder-gray-500 focus:outline-none focus:border-[#FF6B00] focus:bg-white/10 transition-all"
                   />
                 </div>
+                {fieldErrors.name && <p className="text-red-400 text-[10px] mt-1">{fieldErrors.name}</p>}
               </div>
 
               <div className="space-y-1.5">
@@ -236,6 +254,7 @@ export default function RegisterPage() {
                     className="w-full pl-11 pr-4 py-3 rounded-xl bg-white/5 border border-white/5 text-xs text-white placeholder-gray-500 focus:outline-none focus:border-[#FF6B00] focus:bg-white/10 transition-all"
                   />
                 </div>
+                {fieldErrors.email && <p className="text-red-400 text-[10px] mt-1">{fieldErrors.email}</p>}
               </div>
 
               <div className="space-y-1.5">
@@ -250,6 +269,7 @@ export default function RegisterPage() {
                     className="w-full pl-11 pr-4 py-3 rounded-xl bg-white/5 border border-white/5 text-xs text-white placeholder-gray-500 focus:outline-none focus:border-[#FF6B00] focus:bg-white/10 transition-all"
                   />
                 </div>
+                {fieldErrors.password && <p className="text-red-400 text-[10px] mt-1">{fieldErrors.password}</p>}
               </div>
             </div>
           )}
@@ -268,6 +288,7 @@ export default function RegisterPage() {
                     className="w-full pl-11 pr-4 py-3 rounded-xl bg-white/5 border border-white/5 text-xs text-white placeholder-gray-500 focus:outline-none focus:border-[#FF6B00] focus:bg-white/10 transition-all"
                   />
                 </div>
+                {fieldErrors.restaurantName && <p className="text-red-400 text-[10px] mt-1">{fieldErrors.restaurantName}</p>}
               </div>
 
               <div className="space-y-1.5">
@@ -282,6 +303,7 @@ export default function RegisterPage() {
                     className="w-full pl-11 pr-4 py-3 rounded-xl bg-white/5 border border-white/5 text-xs text-white placeholder-gray-500 focus:outline-none focus:border-[#FF6B00] focus:bg-white/10 transition-all"
                   />
                 </div>
+                {fieldErrors.restaurantAddress && <p className="text-red-400 text-[10px] mt-1">{fieldErrors.restaurantAddress}</p>}
               </div>
 
               <div className="space-y-1.5">
@@ -317,6 +339,7 @@ export default function RegisterPage() {
                     className="w-full pl-11 pr-4 py-3 rounded-xl bg-white/5 border border-white/5 text-xs text-white placeholder-gray-500 focus:outline-none focus:border-[#FF6B00] focus:bg-white/10 transition-all"
                   />
                 </div>
+                {fieldErrors.restaurantCode && <p className="text-red-400 text-[10px] mt-1">{fieldErrors.restaurantCode}</p>}
               </div>
             </div>
           )}

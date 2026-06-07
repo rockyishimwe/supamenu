@@ -7,14 +7,15 @@ import {
 } from 'lucide-react';
 import confetti from 'canvas-confetti';
 import BackButton from '../../../components/BackButton';
+import { useToast } from '../../../lib/useToast';
 
 export default function CustomerProfile() {
-  const { currentUser, orders, topUpWallet } = useDineFlow();
+  const { currentUser, orders, topUpWallet, token } = useDineFlow();
+  const { toast } = useToast();
   const [activeTab, setActiveTab] = useState('profile'); // profile, orders, wallet
   
   // Wallet top-up input state
   const [topUpAmount, setTopUpAmount] = useState('50');
-  const [topUpSuccess, setTopUpSuccess] = useState(false);
   const [topUpLoading, setTopUpLoading] = useState(false);
   const [topUpError, setTopUpError] = useState('');
 
@@ -39,9 +40,15 @@ export default function CustomerProfile() {
 
     setTopUpError('');
     setTopUpLoading(true);
-    await topUpWallet(amt);
+    const res = await topUpWallet(topUpAmount, token);
     setTopUpLoading(false);
-    setTopUpSuccess(true);
+    
+    if (res?.success === false) {
+      toast.error(res.message || 'Top-up failed');
+      return;
+    }
+    
+    toast.success(`$${parseFloat(topUpAmount).toFixed(2)} added to wallet!`);
     
     confetti({
       particleCount: 100,
@@ -49,10 +56,6 @@ export default function CustomerProfile() {
       origin: { y: 0.8 },
       colors: ['#FF6B00', '#ffffff', '#3B82F6']
     });
-
-    setTimeout(() => {
-      setTopUpSuccess(false);
-    }, 3000);
   };
 
   return (
@@ -315,12 +318,6 @@ export default function CustomerProfile() {
 
                 {topUpError && (
                   <p className="text-sm text-red-400 text-center">{topUpError}</p>
-                )}
-
-                {topUpSuccess && (
-                  <div className="bg-[#22C55E]/10 border border-[#22C55E]/20 p-3 rounded-xl text-center text-xs text-[#22C55E] flex items-center justify-center gap-1.5 font-semibold">
-                    <ShieldCheck className="w-4.5 h-4.5" /> Funds added successfully!
-                  </div>
                 )}
 
                 <button 

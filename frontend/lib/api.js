@@ -47,13 +47,16 @@ export const api = {
   login: (body) => fetchWithAuth('/auth/login', { method: 'POST', body: JSON.stringify(body) }),
   register: (body) => fetchWithAuth('/auth/register', { method: 'POST', body: JSON.stringify(body) }),
   me: (token) => fetchWithAuth('/auth/me', {}, token),
+  walletTopUp: (amount, token) => 
+    fetchWithAuth('/auth/wallet/topup', { method: 'POST', body: JSON.stringify({ amount }) }, token),
   getRestaurants: () => fetchWithAuth('/restaurants'),
   getRestaurant: (id, token) => fetchWithAuth(`/restaurants/${id}`, {}, token),
   getRestaurantMenu: (id) => fetchWithAuth(`/restaurants/${id}/menu`),
+  addMenuItem: (restaurantId, body, token) =>
+    fetchWithAuth(`/restaurants/${restaurantId}/menu`, { method: 'POST', body: JSON.stringify(body) }, token),
   patchRestaurant: (id, body, token) =>
     fetchWithAuth(`/restaurants/${id}`, { method: 'PATCH', body: JSON.stringify(body) }, token),
-  getTables: (restaurantId) =>
-    fetchWithAuth(`/tables${restaurantId ? `?restaurantId=${restaurantId}` : ''}`),
+  getTables: (token) => fetchWithAuth('/tables', {}, token),
   addTable: (body, token) =>
     fetchWithAuth('/tables', { method: 'POST', body: JSON.stringify(body) }, token),
   deleteTable: (id, token) =>
@@ -75,6 +78,8 @@ export const api = {
   analyticsSummary: (token) => fetchWithAuth('/analytics/summary', {}, token),
   analyticsSalesChart: (token) => fetchWithAuth('/analytics/sales-chart', {}, token),
   analyticsReservationsChart: (token) => fetchWithAuth('/analytics/reservations-chart', {}, token),
+  updateProfile: (body, token) =>
+    fetchWithAuth('/auth/profile', { method: 'PATCH', body: JSON.stringify(body) }, token),
 };
 
 export default api;

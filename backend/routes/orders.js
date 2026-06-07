@@ -1,105 +1,44 @@
 const express = require('express');
 const router = express.Router();
-const Order = require('../models/Order');
-const Table = require('../models/Table');
-const User = require('../models/User');
+const { body } = require('express-validator');
 const { authMiddleware } = require('../middleware/auth');
+const validate = require('../middleware/validate');
+const orderService = require('../services/orderService');
 
 // Get all orders (Staff/Owner: all, Customer: only their own)
 router.get('/', authMiddleware, async (req, res) => {
   try {
-    let query = {};
-    if (req.user.role === 'customer') {
-      query.userId = req.user.id;
-    }
-    const orders = await Order.find(query).sort({ createdAt: -1 });
-    res.json(orders);
+    const result = await orderService.getOrders(req.user.id, req.user.role, req.query);
+    res.json(result);
   } catch (err) {
-    res.status(500).json({ message: 'Server error', error: err.message });
+    res.status(err.status || 500).json({ message: err.message });
   }
 });
 
 // Create/Place an order
-router.post('/', authMiddleware, async (req, res) => {
-  const { restaurantId, restaurantName, tableId, tableNumber, items, subtotal, tax, serviceCharge, total, paymentMethod } = req.body;
-  try {
-    if (paymentMethod === 'wallet') {
-      const user = await User.findById(req.user.id);
-      if (!user || user.walletBalance < total) {
-        return res.status(400).json({ message: 'Insufficient wallet balance' });
-      }
+router.post('/',
+  authMiddleware,
+  body('items').isArray({ min: 1 }).withMessage('Order must have at least one item'),
+  body('total').isFloat({ min: 0.01 }).withMessage('Total must be a positive number'),
+  body('paymentMethod').optional().isIn(['wallet', 'card', 'mobile_money']).withMessage('Invalid payment method'),
+  validate,
+  async (req, res) => {
+    try {
+      const order = await orderService.createOrder(req.user.id, req.body);
+      res.status(201).json(order);
+    } catch (err) {
+      res.status(err.status || 500).json({ message: err.message });
     }
-
-    const order = new Order({
-      restaurantId,
-      restaurantName,
-      tableId,
-      tableNumber,
-      userId: req.user.id,
-      userName: req.user.name,
-      items,
-      subtotal,
-      tax,
-      serviceCharge,
-      total,
-      status: 'new',
-      paymentMethod: paymentMethod || 'wallet'
-    });
-
-    await order.save();
-
-    if (paymentMethod === 'wallet') {
-      const user = await User.findById(req.user.id);
-      user.walletBalance -= total;
-      user.customerDetails.points += Math.floor(total);
-      await user.save();
-      order.status = 'preparing';
-      await order.save();
-    }
-
-    // If a table is assigned, update its details
-    if (tableId) {
-      await Table.findByIdAndUpdate(tableId, {
-        status: paymentMethod === 'wallet' ? 'available' : 'occupied',
-        currentOrderTotal: paymentMethod === 'wallet' ? 0 : total,
-        currentGuestName: paymentMethod === 'wallet' ? '' : req.user.name
-      });
-    }
-
-    res.status(201).json(order);
-  } catch (err) {
-    res.status(500).json({ message: 'Server error', error: err.message });
   }
-});
+);
 
+// Update order status
 async function updateOrderStatusHandler(req, res) {
-  const { status } = req.body;
   try {
-    const order = await Order.findById(req.params.id);
-    if (!order) return res.status(404).json({ message: 'Order not found' });
-
-    order.status = status;
-    await order.save();
-
-    // Sync status back to table if needed
-    if (order.tableId) {
-      if (status === 'paid') {
-        await Table.findByIdAndUpdate(order.tableId, {
-          status: 'available',
-          currentGuestName: '',
-          currentGuestsCount: 0,
-          currentOrderTotal: 0
-        });
-      } else if (status === 'preparing') {
-        await Table.findByIdAndUpdate(order.tableId, {
-          status: 'occupied'
-        });
-      }
-    }
-
+    const order = await orderService.updateOrderStatus(req.params.id, req.body.status);
     res.json(order);
   } catch (err) {
-    res.status(500).json({ message: 'Server error', error: err.message });
+    res.status(err.status || 500).json({ message: err.message });
   }
 }
 

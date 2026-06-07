@@ -1,9 +1,42 @@
 "use client";
-import { useDineFlow } from '../../context';
+import { useState, useEffect } from 'react';
+import { useStore } from '../../../lib/store';
 import BackButton from '../../../components/BackButton';
 
 export default function StaffProfilePage() {
-  const { currentUser } = useDineFlow();
+  const { currentUser, token, updateProfile } = useStore();
+  const [name, setName] = useState('');
+  const [email, setEmail] = useState('');
+  const [loading, setLoading] = useState(false);
+  const [message, setMessage] = useState({ type: '', text: '' });
+
+  useEffect(() => {
+    if (currentUser) {
+      setName(currentUser.name || '');
+      setEmail(currentUser.email || '');
+    }
+  }, [currentUser]);
+
+  const handleSave = async () => {
+    if (!name || !email) {
+      setMessage({ type: 'error', text: 'All fields are required.' });
+      return;
+    }
+    setLoading(true);
+    setMessage({ type: '', text: '' });
+    try {
+      const res = await updateProfile({ name, email });
+      if (res.success) {
+        setMessage({ type: 'success', text: 'Profile saved successfully!' });
+      } else {
+        setMessage({ type: 'error', text: res.message || 'Failed to update profile.' });
+      }
+    } catch (err) {
+      setMessage({ type: 'error', text: 'An unexpected error occurred.' });
+    } finally {
+      setLoading(false);
+    }
+  };
 
   return (
     <div className="max-w-xl mx-auto space-y-6">
@@ -19,15 +52,37 @@ export default function StaffProfilePage() {
       </div>
       <div className="glass-panel rounded-[20px] p-6 border border-white/5 space-y-4">
         <h3 className="font-semibold text-white">Account Settings</h3>
+        
+        {message.text && (
+          <div className={`p-3 rounded-lg text-sm ${message.type === 'success' ? 'bg-emerald-500/10 text-emerald-400 border border-emerald-500/20' : 'bg-rose-500/10 text-rose-400 border border-rose-500/20'}`}>
+            {message.text}
+          </div>
+        )}
+
         <div>
           <label className="text-xs text-gray-500">Display Name</label>
-          <input defaultValue={currentUser?.name} className="w-full glass-input mt-1 px-4 py-2.5" />
+          <input 
+            value={name} 
+            onChange={(e) => setName(e.target.value)} 
+            className="w-full glass-input mt-1 px-4 py-2.5" 
+          />
         </div>
         <div>
           <label className="text-xs text-gray-500">Email</label>
-          <input defaultValue={currentUser?.email} className="w-full glass-input mt-1 px-4 py-2.5" />
+          <input 
+            value={email} 
+            onChange={(e) => setEmail(e.target.value)} 
+            className="w-full glass-input mt-1 px-4 py-2.5" 
+          />
         </div>
-        <button type="button" className="w-full py-3 rounded-[20px] bg-primary text-white font-semibold">Save Changes</button>
+        <button 
+          onClick={handleSave} 
+          disabled={loading}
+          type="button" 
+          className="w-full py-3 rounded-[20px] bg-primary text-white font-semibold flex items-center justify-center gap-2 hover:opacity-90 transition-opacity disabled:opacity-55"
+        >
+          {loading ? 'Saving Changes...' : 'Save Changes'}
+        </button>
       </div>
     </div>
   );

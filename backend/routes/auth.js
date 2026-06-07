@@ -1,101 +1,85 @@
 const express = require('express');
 const router = express.Router();
-const bcrypt = require('bcryptjs');
-const jwt = require('jsonwebtoken');
-const User = require('../models/User');
-const { authMiddleware, JWT_SECRET } = require('../middleware/auth');
-
-function formatUser(user) {
-  return {
-    id: user._id,
-    name: user.name,
-    email: user.email,
-    role: user.role,
-    walletBalance: user.walletBalance,
-    avatar: user.avatar,
-    customerDetails: user.customerDetails,
-    staffDetails: user.staffDetails,
-  };
-}
+const { body } = require('express-validator');
+const { authMiddleware } = require('../middleware/auth');
+const validate = require('../middleware/validate');
+const authService = require('../services/authService');
 
 // Register
-router.post('/register', async (req, res) => {
-  const { name, email, password } = req.body;
-  try {
-    let user = await User.findOne({ email });
-    if (user) return res.status(400).json({ message: 'User already exists' });
-
-    const salt = await bcrypt.genSalt(10);
-    const hashedPassword = await bcrypt.hash(password, salt);
-
-    user = new User({
-      name,
-      email,
-      password: hashedPassword,
-      role: 'customer',
-      walletBalance: 128.50,
-      customerDetails: {
-        points: 350,
-        loyaltyTier: 'Gold Member'
-      }
-    });
-
-    await user.save();
-
-    const token = jwt.sign({ id: user._id, role: user.role }, JWT_SECRET, { expiresIn: '7d' });
-    res.status(201).json({ token, user: formatUser(user) });
-  } catch (err) {
-    res.status(500).json({ message: 'Server error', error: err.message });
+router.post('/register',
+  body('name').trim().notEmpty().withMessage('Name is required'),
+  body('email').isEmail().withMessage('Valid email is required').normalizeEmail(),
+  body('password').isLength({ min: 6 }).withMessage('Password must be at least 6 characters'),
+  body('role').isIn(['customer', 'staff', 'owner']).withMessage('Role must be customer, staff, or owner'),
+  validate,
+  async (req, res) => {
+    try {
+      const result = await authService.registerUser(req.body);
+      res.status(201).json(result);
+    } catch (err) {
+      res.status(err.status || 500).json({ message: err.message });
+    }
   }
-});
+);
 
 // Login
-router.post('/login', async (req, res) => {
-  const { email, password, role } = req.body;
-  try {
-    const user = await User.findOne({ email });
-    if (!user) return res.status(400).json({ message: 'Invalid credentials' });
-
-    // Optionally check role
-    if (role && user.role !== role) {
-      return res.status(400).json({ message: 'Invalid credentials' });
+router.post('/login',
+  body('email').isEmail().withMessage('Valid email is required').normalizeEmail(),
+  body('password').notEmpty().withMessage('Password is required'),
+  validate,
+  async (req, res) => {
+    try {
+      const result = await authService.loginUser(req.body);
+      res.json(result);
+    } catch (err) {
+      res.status(err.status || 500).json({ message: err.message });
     }
-
-    const isMatch = await bcrypt.compare(password, user.password);
-    if (!isMatch) return res.status(400).json({ message: 'Invalid credentials' });
-
-    const token = jwt.sign({ id: user._id, role: user.role }, JWT_SECRET, { expiresIn: '7d' });
-    res.json({ token, user: formatUser(user) });
-  } catch (err) {
-    res.status(500).json({ message: 'Server error', error: err.message });
   }
-});
+);
 
 // Get current user
 router.get('/me', authMiddleware, async (req, res) => {
-  res.json(formatUser(req.user));
+  try {
+    const profile = await authService.getProfile(req.user.id);
+    res.json(profile);
+  } catch (err) {
+    res.status(err.status || 500).json({ message: err.message });
+  }
 });
 
 router.get('/profile', authMiddleware, async (req, res) => {
-  res.json(formatUser(req.user));
+  try {
+    const profile = await authService.getProfile(req.user.id);
+    res.json(profile);
+  } catch (err) {
+    res.status(err.status || 500).json({ message: err.message });
+  }
+});
+
+// Update profile
+router.patch('/profile', authMiddleware, async (req, res) => {
+  try {
+    const profile = await authService.updateProfile(req.user.id, req.body);
+    res.json(profile);
+  } catch (err) {
+    res.status(err.status || 500).json({ message: err.message });
+  }
 });
 
 // Update Wallet Balance
-router.post('/wallet/topup', authMiddleware, async (req, res) => {
-  const { amount } = req.body;
-  const amt = parseFloat(amount);
-  if (!amt || amt <= 0) {
-    return res.status(400).json({ message: 'Invalid amount' });
+router.post('/wallet/topup',
+  authMiddleware,
+  body('amount').isFloat({ min: 0.01 }).withMessage('Amount must be a positive number'),
+  validate,
+  async (req, res) => {
+    try {
+      const result = await authService.topUpWallet(req.user.id, req.body.amount);
+      res.json(result);
+    } catch (err) {
+      res.status(err.status || 500).json({ message: err.message });
+    }
   }
-  try {
-    const user = await User.findById(req.user.id);
-    user.walletBalance += amt;
-    await user.save();
-    res.json({ walletBalance: user.walletBalance });
-  } catch (err) {
-    res.status(500).json({ message: 'Server error', error: err.message });
-  }
-});
+);
 
 module.exports = router;
 module.exports.authMiddleware = authMiddleware;

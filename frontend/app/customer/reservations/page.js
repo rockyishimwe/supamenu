@@ -1,14 +1,16 @@
 "use client";
 import React, { useState } from 'react';
 import { useDineFlow } from '../../context';
+import { useToast } from '../../../lib/useToast';
 import { 
   Calendar, Clock, Users, Tag, AlertTriangle, CheckCircle, 
-  XCircle, SlidersHorizontal, ChevronRight, MessageSquare
+  XCircle, SlidersHorizontal, ChevronRight, MessageSquare, X
 } from 'lucide-react';
 import BackButton from '../../../components/BackButton';
 
 export default function CustomerReservations() {
   const { reservations, updateReservationStatus } = useDineFlow();
+  const { toast } = useToast();
   const [activeFilter, setActiveFilter] = useState('all'); // all, upcoming, past, cancelled
   
   // Modal states for modification
@@ -26,16 +28,23 @@ export default function CustomerReservations() {
     return true;
   });
 
+  const [confirmCancel, setConfirmCancel] = useState(null); // Track which reservation id to cancel
+
   const handleCancel = async (id) => {
-    if (confirm("Are you sure you want to cancel this reservation?")) {
-      await updateReservationStatus(id, 'cancelled');
+    setConfirmCancel(id);
+  };
+
+  const confirmCancelAction = async () => {
+    if (confirmCancel) {
+      await updateReservationStatus(confirmCancel, 'cancelled');
+      toast.success('Reservation cancelled successfully.');
+      setConfirmCancel(null);
     }
   };
 
   const handleModifySubmit = (e) => {
     e.preventDefault();
-    // In a fully production backend we would PUT to API, locally we just update state or mock
-    alert("Reservation updated successfully! (Note: Seating coordinates updated in real-time)");
+    toast.success('Reservation updated successfully!');
     setEditingRes(null);
   };
 
@@ -219,6 +228,22 @@ export default function CustomerReservations() {
                 </button>
               </div>
             </form>
+          </div>
+        </div>
+      )}
+
+      {confirmCancel && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm" onClick={() => setConfirmCancel(null)}>
+          <div className="bg-[#0f1115] border border-white/10 rounded-3xl p-6 max-w-sm w-full mx-4 shadow-2xl space-y-4" onClick={(e) => e.stopPropagation()}>
+            <div className="flex items-center justify-between">
+              <h3 className="text-sm font-bold text-white">Cancel Reservation</h3>
+              <button onClick={() => setConfirmCancel(null)}><X className="w-4 h-4 text-gray-500" /></button>
+            </div>
+            <p className="text-xs text-gray-400">Are you sure you want to cancel this reservation? This action cannot be undone.</p>
+            <div className="flex gap-3">
+              <button onClick={() => setConfirmCancel(null)} className="flex-1 py-2.5 border border-white/5 hover:bg-white/5 text-xs text-gray-400 rounded-xl">Keep Reservation</button>
+              <button onClick={confirmCancelAction} className="flex-1 py-2.5 bg-red-500 hover:bg-red-600 text-white text-xs font-bold rounded-xl">Cancel Reservation</button>
+            </div>
           </div>
         </div>
       )}
