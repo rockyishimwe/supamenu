@@ -3,14 +3,16 @@ import React, { useState } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { 
-  ArrowRight, ShieldCheck, Flame, Zap, Award, Sparkles, CheckCircle2, ChevronDown, MonitorCheck, ChefHat
+  ArrowRight, ShieldCheck, Flame, Zap, Award, Sparkles, CheckCircle2, ChevronDown, MonitorCheck, ChefHat, Sun, Moon
 } from 'lucide-react';
 import DineFlowLogo from '../../components/DineFlowLogo';
+import { useThemeStore } from '../../lib/useTheme';
 
 export default function LandingPage() {
   const router = useRouter();
-  const [activeTab, setActiveTab] = useState('customer'); // customer, owner, staff
+  const [activeTab, setActiveTab] = useState('customer');
   const [activeFaq, setActiveFaq] = useState(null);
+  const { theme, toggleTheme } = useThemeStore();
 
   const stats = [
     { value: '2,500+', label: 'Restaurants', desc: 'Trust our platform' },
@@ -35,7 +37,7 @@ export default function LandingPage() {
   ];
 
   return (
-    <div className="min-h-screen bg-[#07090e] text-[#f3f4f6]">
+    <div className="min-h-screen bg-surface text-body">
       {/* Navbar */}
       <nav className="h-20 max-w-7xl mx-auto flex items-center justify-between px-8 border-b border-white/5">
         <Link href="/" className="text-white">
@@ -46,6 +48,14 @@ export default function LandingPage() {
           <a href="#faq" className="hover:text-white transition-colors">FAQ</a>
         </div>
         <div className="flex items-center gap-4">
+          <button
+            type="button"
+            onClick={toggleTheme}
+            className="p-2 rounded-xl hover:bg-white/5 transition-colors"
+            aria-label={`Switch to ${theme === 'dark' ? 'light' : 'dark'} mode`}
+          >
+            {theme === 'dark' ? <Sun className="w-5 h-5 text-gray-400" /> : <Moon className="w-5 h-5 text-gray-600" />}
+          </button>
           <Link href="/login" className="text-sm font-semibold text-white px-5 py-2.5 rounded-xl border border-white/10 hover:bg-white/5 transition-all">
             Login
           </Link>
@@ -82,7 +92,7 @@ export default function LandingPage() {
         {/* Hero Devices Illustration */}
         <div className="lg:col-span-6 flex justify-center relative">
           <div className="absolute inset-0 bg-[#FF6B00]/5 filter blur-3xl rounded-full"></div>
-          <div className="relative w-full max-w-lg aspect-square rounded-3xl bg-[#0f1115] border border-white/5 p-6 flex flex-col justify-between overflow-hidden shadow-2xl">
+          <div className="relative w-full max-w-lg aspect-square rounded-3xl bg-panel border border-white/5 p-6 flex flex-col justify-between overflow-hidden shadow-2xl">
             <div className="flex items-center justify-between border-b border-white/5 pb-4">
               <span className="text-xs text-gray-500 font-mono">LIVE_SYSTEM_ECOSYSTEM</span>
               <span className="w-2.5 h-2.5 rounded-full bg-[#22C55E] animate-pulse"></span>
@@ -128,7 +138,7 @@ export default function LandingPage() {
       </section>
 
       {/* Stats Bar */}
-      <section className="bg-[#0f1115] border-y border-white/5 py-12">
+      <section className="bg-panel border-y border-white/5 py-12">
         <div className="max-w-7xl mx-auto px-8 grid grid-cols-2 md:grid-cols-4 gap-8">
           {stats.map((stat, i) => (
             <div key={i} className="text-center space-y-1">
@@ -182,7 +192,7 @@ export default function LandingPage() {
         </div>
 
         {/* Tab Content Cards */}
-        <div className="max-w-3xl mx-auto p-8 rounded-3xl bg-[#0f1115] border border-white/5 grid md:grid-cols-2 gap-8 items-center">
+        <div className="max-w-3xl mx-auto p-8 rounded-3xl bg-panel border border-white/5 grid md:grid-cols-2 gap-8 items-center">
           <div className="space-y-6">
             <h3 className="text-2xl font-bold text-white capitalize">
               {activeTab === 'customer' && 'Discover & Book Instantly'}
@@ -222,7 +232,7 @@ export default function LandingPage() {
           </div>
 
           {/* Visual card sidebar mockup representation */}
-          <div className="bg-[#07090e] border border-white/5 rounded-2xl p-6 space-y-4">
+          <div className="bg-surface border border-white/5 rounded-2xl p-6 space-y-4">
             <div className="flex items-center justify-between border-b border-white/5 pb-3">
               <span className="text-[10px] text-gray-500 font-bold uppercase tracking-wider">Preview Dashboard</span>
               <span className="text-[9px] px-2 py-0.5 rounded-full bg-[#FF6B00]/15 text-[#FF6B00] font-semibold">Active</span>
@@ -282,7 +292,7 @@ export default function LandingPage() {
 
         <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
           {features.map((feature, i) => (
-            <div key={i} className="p-6 rounded-3xl bg-[#0f1115] border border-white/5 hover:border-white/10 hover-lift transition-all space-y-4">
+            <div key={i} className="p-6 rounded-3xl bg-panel border border-white/5 hover:border-white/10 hover-lift transition-all space-y-4">
               <div className={`w-10 h-10 rounded-2xl bg-gradient-to-br ${feature.color} flex items-center justify-center font-bold text-white text-sm`}>
                 0{i + 1}
               </div>
@@ -304,7 +314,7 @@ export default function LandingPage() {
           {faqs.map((faq, idx) => (
             <div 
               key={idx} 
-              className="bg-[#0f1115] border border-white/5 rounded-2xl overflow-hidden cursor-pointer"
+              className="bg-panel border border-white/5 rounded-2xl overflow-hidden cursor-pointer"
               onClick={() => setActiveFaq(activeFaq === idx ? null : idx)}
             >
               <div className="p-5 flex items-center justify-between text-xs font-semibold text-white">
@@ -322,7 +332,7 @@ export default function LandingPage() {
       </section>
 
       {/* Footer */}
-      <footer className="bg-[#0f1115] border-t border-white/5 py-12 mt-12">
+      <footer className="bg-panel border-t border-white/5 py-12 mt-12">
         <div className="max-w-7xl mx-auto px-8 flex flex-col md:flex-row items-center justify-between gap-6">
           <Link href="/" className="text-white">
             <DineFlowLogo size="sm" />

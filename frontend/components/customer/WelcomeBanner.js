@@ -41,7 +41,7 @@ export default function WelcomeBanner({ currentUser }) {
           </div>
         </div>
       </div>
-      <div className="md:col-span-4 bg-[#0f1115] border border-white/5 p-6 rounded-3xl flex flex-col justify-between relative overflow-hidden">
+      <div className="md:col-span-4 bg-panel border border-white/5 p-6 rounded-3xl flex flex-col justify-between relative overflow-hidden">
         <div className="absolute top-0 right-0 w-32 h-32 bg-blue-500/5 rounded-full filter blur-2xl"></div>
         <div className="space-y-4">
           <div className="flex justify-between items-center">

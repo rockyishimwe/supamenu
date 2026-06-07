@@ -49,7 +49,7 @@ export default function CustomerReservations() {
   };
 
   return (
-    <div className="p-8 space-y-8 bg-[#07090e] min-h-screen text-gray-300">
+    <div className="p-8 space-y-8 bg-surface min-h-screen text-gray-300">
       <BackButton />
 
       {/* Header */}
@@ -85,7 +85,7 @@ export default function CustomerReservations() {
       {/* Grid of Reservations */}
       <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
         {filteredReservations.length === 0 ? (
-          <div className="col-span-3 text-center py-16 bg-[#0f1115] border border-dashed border-white/5 rounded-3xl text-gray-500">
+          <div className="col-span-3 text-center py-16 bg-panel border border-dashed border-white/5 rounded-3xl text-gray-500">
             <Calendar className="w-12 h-12 mx-auto text-gray-600 mb-3 animate-pulse" />
             <p className="text-sm font-semibold">No reservations found.</p>
             <p className="text-xs mt-1">Book a table layout at any restaurant to get started.</p>
@@ -94,7 +94,7 @@ export default function CustomerReservations() {
           filteredReservations.map(res => (
             <div 
               key={res._id}
-              className="bg-[#0f1115] border border-white/5 rounded-3xl p-5 space-y-4 hover:border-white/10 transition-all duration-300"
+              className="bg-panel border border-white/5 rounded-3xl p-5 space-y-4 hover:border-white/10 transition-all duration-300"
             >
               {/* Header */}
               <div className="flex justify-between items-start border-b border-white/5 pb-3">
@@ -174,7 +174,7 @@ export default function CustomerReservations() {
         <div className="fixed inset-0 z-50 overflow-hidden flex items-center justify-center">
           <div className="absolute inset-0 bg-black/60 backdrop-blur-sm" onClick={() => setEditingRes(null)}></div>
           
-          <div className="bg-[#0f1115] border border-white/10 rounded-3xl p-6 max-w-sm w-full relative z-10 space-y-5 shadow-2xl">
+          <div className="bg-panel border border-white/10 rounded-3xl p-6 max-w-sm w-full relative z-10 space-y-5 shadow-2xl">
             <div className="space-y-1">
               <h3 className="text-sm font-bold text-white uppercase tracking-wider">Modify Seating Details</h3>
               <p className="text-[10px] text-gray-500">Adjust date, time, and guests count for {editingRes.restaurantName}.</p>
@@ -234,7 +234,7 @@ export default function CustomerReservations() {
 
       {confirmCancel && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm" onClick={() => setConfirmCancel(null)}>
-          <div className="bg-[#0f1115] border border-white/10 rounded-3xl p-6 max-w-sm w-full mx-4 shadow-2xl space-y-4" onClick={(e) => e.stopPropagation()}>
+          <div className="bg-panel border border-white/10 rounded-3xl p-6 max-w-sm w-full mx-4 shadow-2xl space-y-4" onClick={(e) => e.stopPropagation()}>
             <div className="flex items-center justify-between">
               <h3 className="text-sm font-bold text-white">Cancel Reservation</h3>
               <button onClick={() => setConfirmCancel(null)}><X className="w-4 h-4 text-gray-500" /></button>

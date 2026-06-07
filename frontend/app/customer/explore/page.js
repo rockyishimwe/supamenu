@@ -45,7 +45,7 @@ export default function CustomerExplore() {
   });
 
   return (
-    <div className="grid lg:grid-cols-12 min-h-[calc(100vh-5rem)] bg-[#07090e]">
+    <div className="grid lg:grid-cols-12 min-h-[calc(100vh-5rem)] bg-surface">
       
       {/* Left Column: Search Filters & List */}
       <div className="lg:col-span-6 p-6 border-r border-[#1f2228] flex flex-col overflow-y-auto max-h-[calc(100vh-5rem)] scrollbar-thin space-y-6">
@@ -97,7 +97,7 @@ export default function CustomerExplore() {
                     className={`px-3 py-1.5 rounded-xl text-[10px] font-bold transition-all duration-150 border ${
                       cuisineFilter === cuisine 
                         ? 'bg-[#FF6B00] border-[#FF6B00] text-white' 
-                        : 'bg-[#0f1115] border-white/5 text-gray-400 hover:text-white'
+                        : 'bg-panel border-white/5 text-gray-400 hover:text-white'
                     }`}
                   >
                     {cuisine}
@@ -118,7 +118,7 @@ export default function CustomerExplore() {
                       className={`flex-1 py-1.5 rounded-xl text-[10px] font-bold border transition-all duration-150 ${
                         ratingFilter === rating
                           ? 'bg-[#FF6B00] border-[#FF6B00] text-white'
-                          : 'bg-[#0f1115] border-white/5 text-gray-400 hover:text-white'
+                          : 'bg-panel border-white/5 text-gray-400 hover:text-white'
                       }`}
                     >
                       {rating === 0 ? 'All' : `${rating}+ ⭐`}
@@ -137,7 +137,7 @@ export default function CustomerExplore() {
                       className={`flex-1 py-1.5 rounded-xl text-[10px] font-bold border transition-all duration-150 ${
                         priceFilter === price
                           ? 'bg-[#FF6B00] border-[#FF6B00] text-white'
-                          : 'bg-[#0f1115] border-white/5 text-gray-400 hover:text-white'
+                          : 'bg-panel border-white/5 text-gray-400 hover:text-white'
                       }`}
                     >
                       {price}
@@ -164,7 +164,7 @@ export default function CustomerExplore() {
               <div
                 key={res._id}
                 onMouseEnter={() => setSelectedMapPin(res._id)}
-                className={`p-4 bg-[#0f1115] border rounded-3xl flex gap-4 hover:border-white/10 transition-all duration-300 group cursor-pointer ${
+                className={`p-4 bg-panel border rounded-3xl flex gap-4 hover:border-white/10 transition-all duration-300 group cursor-pointer ${
                   selectedMapPin === res._id ? 'border-[#FF6B00]' : 'border-white/5'
                 }`}
               >
@@ -207,14 +207,14 @@ export default function CustomerExplore() {
       </div>
 
       {/* Right Column: Simulated Map */}
-      <div className="hidden lg:col-span-6 bg-[#07090e] p-6 relative overflow-hidden flex items-center justify-center min-h-[calc(100vh-5rem)]">
+      <div className="hidden lg:col-span-6 bg-surface p-6 relative overflow-hidden flex items-center justify-center min-h-[calc(100vh-5rem)]">
         
         {/* Dark Grid Background representing map */}
         <div className="absolute inset-0 bg-[radial-gradient(#1f2228_1px,transparent_1px)] [background-size:24px_24px] opacity-25"></div>
         <div className="absolute top-1/4 -right-1/4 w-[150%] h-1/2 bg-[#FF6B00]/5 filter blur-3xl rounded-full"></div>
         
         {/* Map UI overlays */}
-        <div className="absolute top-6 left-6 z-10 p-3 bg-[#0f1115]/80 backdrop-blur-md border border-white/10 rounded-2xl flex items-center gap-3 shadow-xl">
+        <div className="absolute top-6 left-6 z-10 p-3 bg-panel/80 backdrop-blur-md border border-white/10 rounded-2xl flex items-center gap-3 shadow-xl">
           <div className="w-8 h-8 rounded-lg bg-[#FF6B00]/10 flex items-center justify-center text-[#FF6B00]">
             <MapPin className="w-4.5 h-4.5" />
           </div>
@@ -224,12 +224,12 @@ export default function CustomerExplore() {
           </div>
         </div>
 
-        <button className="absolute bottom-6 right-6 z-10 w-10 h-10 rounded-full bg-[#0f1115] border border-white/10 flex items-center justify-center text-gray-400 hover:text-white shadow-xl hover-lift">
+        <button className="absolute bottom-6 right-6 z-10 w-10 h-10 rounded-full bg-panel border border-white/10 flex items-center justify-center text-gray-400 hover:text-white shadow-xl hover-lift">
           <Crosshair className="w-5 h-5 text-[#FF6B00]" />
         </button>
 
         {/* Map Pins Simulation Container */}
-        <div className="relative w-full h-[400px] border border-white/5 rounded-3xl bg-[#0f1115]/40 backdrop-blur-sm overflow-hidden flex items-center justify-center">
+        <div className="relative w-full h-[400px] border border-white/5 rounded-3xl bg-panel/40 backdrop-blur-sm overflow-hidden flex items-center justify-center">
           
           {/* Simulated Roads/Landmarks */}
           <div className="absolute inset-0 border border-white/5 rounded-3xl bg-[radial-gradient(#1b1e22_1.5px,transparent_1.5px)] [background-size:16px_16px] opacity-10"></div>
@@ -267,7 +267,7 @@ export default function CustomerExplore() {
               >
                 {/* Tooltip on hover */}
                 {isHovered && (
-                  <div className="absolute bottom-11 p-2 bg-[#0f1115] border border-[#FF6B00] rounded-xl text-center whitespace-nowrap shadow-2xl animate-bounce">
+                  <div className="absolute bottom-11 p-2 bg-panel border border-[#FF6B00] rounded-xl text-center whitespace-nowrap shadow-2xl animate-bounce">
                     <p className="text-[10px] text-white font-bold">{res.name}</p>
                     <div className="flex items-center justify-center gap-1 mt-0.5 text-[8px] font-semibold text-[#FF6B00]">
                       <Star className="w-2.5 h-2.5 fill-[#FF6B00]" /> {res.rating}
@@ -279,7 +279,7 @@ export default function CustomerExplore() {
                 <div className={`w-8 h-8 rounded-full border-2 flex items-center justify-center transition-all duration-300 shadow-xl ${
                   isHovered
                     ? 'bg-[#FF6B00] border-white scale-110 shadow-[#FF6B00]/25' 
-                    : 'bg-[#0f1115] border-white/20 hover:border-white'
+                    : 'bg-panel border-white/20 hover:border-white'
                 }`}>
                   <Compass className={`w-4 h-4 ${isHovered ? 'text-white' : 'text-gray-400'}`} />
                 </div>

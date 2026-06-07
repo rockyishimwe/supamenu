@@ -3,7 +3,7 @@ import DineFlowLogo from '../components/DineFlowLogo';
 
 export default function NotFound() {
   return (
-    <div className="min-h-screen bg-[#07090e] flex flex-col items-center justify-center p-8 text-center">
+    <div className="min-h-screen bg-surface flex flex-col items-center justify-center p-8 text-center">
       <div className="max-w-md space-y-6">
         <DineFlowLogo size="lg" />
         <div className="space-y-2">

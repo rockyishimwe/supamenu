@@ -15,7 +15,8 @@ export default function RootLayout({ children }) {
       <head>
         <link rel="icon" href={`data:image/svg+xml,${faviconSvg}`} />
       </head>
-      <body className="bg-[#07090e] text-[#f3f4f6]">
+      <body className="bg-page text-body">
+        <a href="#main-content" className="skip-to-content">Skip to content</a>
         <DineFlowProvider>
           {children}
         </DineFlowProvider>

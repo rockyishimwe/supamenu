@@ -59,11 +59,11 @@ export default function CustomerProfile() {
   };
 
   return (
-    <div className="p-8 space-y-8 bg-[#07090e] min-h-screen text-gray-300">
+    <div className="p-8 space-y-8 bg-surface min-h-screen text-gray-300">
       <BackButton />
 
       {/* Top Banner: User card */}
-      <div className="bg-[#0f1115] border border-white/5 p-6 rounded-3xl flex flex-wrap items-center justify-between gap-6 relative overflow-hidden">
+      <div className="bg-panel border border-white/5 p-6 rounded-3xl flex flex-wrap items-center justify-between gap-6 relative overflow-hidden">
         <div className="absolute top-0 right-0 w-64 h-64 bg-[#FF6B00]/5 rounded-full filter blur-3xl"></div>
         
         <div className="flex items-center gap-4 relative z-10">
@@ -154,7 +154,7 @@ export default function CustomerProfile() {
             </div>
 
             {/* Profile Information details */}
-            <div className="md:col-span-6 bg-[#0f1115] border border-white/5 p-6 rounded-3xl space-y-6">
+            <div className="md:col-span-6 bg-panel border border-white/5 p-6 rounded-3xl space-y-6">
               <h3 className="text-sm font-bold uppercase tracking-wider text-white">Account Information</h3>
               
               <div className="space-y-4 text-xs">
@@ -181,7 +181,7 @@ export default function CustomerProfile() {
             <h3 className="text-sm font-bold uppercase tracking-wider text-white">Your Orders History</h3>
             
             {orders.length === 0 ? (
-              <div className="text-center py-16 bg-[#0f1115] border border-dashed border-white/5 rounded-3xl text-gray-500">
+              <div className="text-center py-16 bg-panel border border-dashed border-white/5 rounded-3xl text-gray-500">
                 <ShoppingBag className="w-12 h-12 mx-auto text-gray-600 mb-3 animate-pulse" />
                 <p className="text-sm font-semibold">No order history available.</p>
                 <p className="text-xs mt-1">Visit restaurants to place items in cart and checkout.</p>
@@ -191,7 +191,7 @@ export default function CustomerProfile() {
                 {orders.map(order => (
                   <div 
                     key={order._id}
-                    className="p-5 bg-[#0f1115] border border-white/5 rounded-3xl hover:border-white/10 transition-all duration-300 space-y-4"
+                    className="p-5 bg-panel border border-white/5 rounded-3xl hover:border-white/10 transition-all duration-300 space-y-4"
                   >
                     {/* Header */}
                     <div className="flex justify-between items-start border-b border-white/5 pb-3">
@@ -245,7 +245,7 @@ export default function CustomerProfile() {
         {activeTab === 'wallet' && (
           <div className="grid md:grid-cols-12 gap-8 items-start">
             {/* Wallet Info card */}
-            <div className="md:col-span-5 bg-[#0f1115] border border-white/5 p-6 rounded-3xl relative overflow-hidden space-y-6">
+            <div className="md:col-span-5 bg-panel border border-white/5 p-6 rounded-3xl relative overflow-hidden space-y-6">
               <div className="absolute top-0 right-0 w-32 h-32 bg-blue-500/5 rounded-full filter blur-2xl"></div>
               
               <div className="space-y-3">
@@ -273,7 +273,7 @@ export default function CustomerProfile() {
             </div>
 
             {/* Top-up Form */}
-            <div className="md:col-span-7 bg-[#0f1115] border border-white/5 p-6 rounded-3xl space-y-6">
+            <div className="md:col-span-7 bg-panel border border-white/5 p-6 rounded-3xl space-y-6">
               <div className="space-y-1">
                 <h3 className="text-sm font-bold uppercase tracking-wider text-white">Add Funds to Wallet</h3>
                 <p className="text-[10px] text-gray-500">Select or input an amount below to replenish your prepaid balance.</p>

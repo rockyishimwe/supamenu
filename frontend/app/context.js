@@ -2,6 +2,7 @@
 import { useEffect, useState } from 'react';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { useAuthStore, useDataStore, useUIStore } from '../lib/store';
+import { useThemeStore } from '../lib/useTheme';
 import ToastContainer from '../components/Toast';
 
 const queryClient = new QueryClient({
@@ -13,12 +14,14 @@ export function DineFlowProvider({ children }) {
   const hydrated = useDataStore((s) => s.hydrated);
   const hydrateAuth = useAuthStore((s) => s.hydrateAuth);
   const hydrateUI = useUIStore((s) => s.hydrateUI);
+  const initTheme = useThemeStore((s) => s.initTheme);
 
   useEffect(() => {
+    initTheme();
     hydrateAuth();
     hydrateUI();
     if (!hydrated) hydrate();
-  }, [hydrate, hydrated, hydrateAuth, hydrateUI]);
+  }, [hydrate, hydrated, hydrateAuth, hydrateUI, initTheme]);
 
   return (
     <QueryClientProvider client={queryClient}>

@@ -1,12 +1,14 @@
 "use client";
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import { Bell, ShoppingCart, Wallet, Search, Menu } from 'lucide-react';
+import { Bell, ShoppingCart, Wallet, Search, Menu, Sun, Moon } from 'lucide-react';
 import { useDineFlow } from '../app/context';
+import { useThemeStore } from '../lib/useTheme';
 import DineFlowLogo from './DineFlowLogo';
 
 export default function Navbar({ role = 'customer', onMenuToggle }) {
   const { currentUser, cart, logout } = useDineFlow();
+  const { theme, toggleTheme } = useThemeStore();
   const router = useRouter();
   const cartCount = cart?.reduce((s, i) => s + i.quantity, 0) || 0;
 
@@ -50,6 +52,14 @@ export default function Navbar({ role = 'customer', onMenuToggle }) {
         )}
 
         <div className="flex items-center gap-2 sm:gap-3">
+          <button
+            type="button"
+            onClick={toggleTheme}
+            className="p-2 rounded-xl hover:bg-white/5"
+            aria-label={`Switch to ${theme === 'dark' ? 'light' : 'dark'} mode`}
+          >
+            {theme === 'dark' ? <Sun className="w-4 h-4" /> : <Moon className="w-4 h-4" />}
+          </button>
           {role === 'customer' && currentUser && (
             <span className="hidden sm:flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-primary/15 text-primary text-xs font-semibold">
               <Wallet className="w-3.5 h-3.5" /> ${currentUser.walletBalance?.toFixed(2)}

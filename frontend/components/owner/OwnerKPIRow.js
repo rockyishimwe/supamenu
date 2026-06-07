@@ -12,7 +12,7 @@ export default function OwnerKPIRow({ totalRevenue, activeTablesCount, totalTabl
   return (
     <div className="grid grid-cols-2 lg:grid-cols-4 gap-6">
       {kpis.map((kpi, idx) => (
-        <div key={idx} className="p-5 rounded-3xl bg-[#0f1115] border border-white/5 flex flex-col justify-between h-28 relative overflow-hidden">
+        <div key={idx} className="p-5 rounded-3xl bg-panel border border-white/5 flex flex-col justify-between h-28 relative overflow-hidden">
           <div className="absolute top-0 right-0 w-16 h-16 bg-white/2 rounded-full filter blur-xl"></div>
           <div className="flex justify-between items-start">
             <span className="text-[9px] uppercase font-bold tracking-widest text-gray-500">{kpi.label}</span>

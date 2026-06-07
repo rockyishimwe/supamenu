@@ -36,7 +36,7 @@ function SkeletonRow() {
   return (
     <div className="grid grid-cols-2 lg:grid-cols-4 gap-6 animate-pulse">
       {[1,2,3,4].map(i => (
-        <div key={i} className="p-5 rounded-3xl bg-[#0f1115] border border-white/5 h-28">
+        <div key={i} className="p-5 rounded-3xl bg-panel border border-white/5 h-28">
           <div className="h-3 bg-white/5 rounded w-20 mb-4" />
           <div className="h-6 bg-white/5 rounded w-24" />
           <div className="h-3 bg-white/5 rounded w-16 mt-2" />
@@ -48,7 +48,7 @@ function SkeletonRow() {
 
 function SkeletonChart() {
   return (
-    <div className="bg-[#0f1115] border border-white/5 p-6 rounded-3xl animate-pulse">
+    <div className="bg-panel border border-white/5 p-6 rounded-3xl animate-pulse">
       <div className="h-4 bg-white/5 rounded w-48 mb-2" />
       <div className="h-3 bg-white/5 rounded w-32 mb-4" />
       <div className="h-[260px] bg-white/5 rounded-xl" />
@@ -77,7 +77,7 @@ export default function OwnerDashboard() {
 
   if (loading) {
     return (
-      <div className="p-8 space-y-8 bg-[#07090e] min-h-screen">
+      <div className="p-8 space-y-8 bg-surface min-h-screen">
         <SkeletonRow />
         <div className="grid lg:grid-cols-12 gap-8">
           <div className="lg:col-span-8"><SkeletonChart /></div>
@@ -88,7 +88,7 @@ export default function OwnerDashboard() {
   }
 
   return (
-    <div className="p-8 space-y-8 bg-[#07090e] min-h-screen text-gray-300">
+    <div className="p-8 space-y-8 bg-surface min-h-screen text-gray-300">
       
       {/* Upper KPIs Row */}
       <OwnerKPIRow
@@ -103,7 +103,7 @@ export default function OwnerDashboard() {
       <div className="grid lg:grid-cols-12 gap-8">
         
         {/* Sales Chart (Left) */}
-        <div className="lg:col-span-8 bg-[#0f1115] border border-white/5 p-6 rounded-3xl space-y-4">
+        <div className="lg:col-span-8 bg-panel border border-white/5 p-6 rounded-3xl space-y-4">
           <div className="flex justify-between items-center pb-2">
             <div className="space-y-0.5">
               <h3 className="text-sm font-bold uppercase tracking-wider text-white">Daily Sales & Bookings Trend</h3>
@@ -135,7 +135,7 @@ export default function OwnerDashboard() {
         </div>
 
         {/* Peak Seating Hours (Right) */}
-        <div className="lg:col-span-4 bg-[#0f1115] border border-white/5 p-6 rounded-3xl space-y-4">
+        <div className="lg:col-span-4 bg-panel border border-white/5 p-6 rounded-3xl space-y-4">
           <div className="pb-2">
             <h3 className="text-sm font-bold uppercase tracking-wider text-white">Covers by Day of Week</h3>
             <p className="text-[10px] text-gray-500">Reservation covers across the week.</p>
@@ -169,7 +169,7 @@ export default function OwnerDashboard() {
           <MiniCalendar />
         </div>
         {myRestaurant?.inviteCode && (
-        <div className="lg:col-span-3 bg-[#0f1115] border border-white/5 p-5 rounded-3xl space-y-3">
+        <div className="lg:col-span-3 bg-panel border border-white/5 p-5 rounded-3xl space-y-3">
           <h3 className="text-sm font-bold uppercase tracking-wider text-white">Staff Invite Code</h3>
           <p className="text-[10px] text-gray-500">Share this code with staff to join your restaurant.</p>
           <div className="flex items-center justify-center gap-3 p-4 bg-white/5 rounded-2xl border border-dashed border-white/10">

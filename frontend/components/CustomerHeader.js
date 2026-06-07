@@ -43,7 +43,7 @@ export default function CustomerHeader() {
 
   return (
     <>
-      <header className="h-20 bg-[#0f1115]/80 backdrop-blur-md border-b border-[#1f2228] flex items-center justify-between px-8 fixed top-0 right-0 left-64 z-20">
+      <header className="h-20 bg-panel/80 backdrop-blur-md border-b border-[#1f2228] flex items-center justify-between px-8 fixed top-0 right-0 left-64 z-20">
         {/* Left: Location & Search */}
         <div className="flex items-center gap-6 flex-1 max-w-xl">
           <div className="flex items-center gap-2 px-4 py-2.5 rounded-2xl bg-white/5 border border-white/5 text-sm hover:bg-white/10 transition-all duration-200 cursor-pointer">
@@ -96,9 +96,9 @@ export default function CustomerHeader() {
               }}
               className="bg-white/5 border border-white/5 text-xs text-gray-300 px-3 py-2 rounded-xl focus:outline-none focus:border-[#FF6B00] font-medium"
             >
-              <option value="customer" className="bg-[#0f1115]">Customer Portal</option>
-              <option value="staff" className="bg-[#0f1115]">Staff Portal</option>
-              <option value="owner" className="bg-[#0f1115]">Owner Dashboard</option>
+              <option value="customer" className="bg-panel">Customer Portal</option>
+              <option value="staff" className="bg-panel">Staff Portal</option>
+              <option value="owner" className="bg-panel">Owner Dashboard</option>
             </select>
           </div>
         </div>
@@ -114,7 +114,7 @@ export default function CustomerHeader() {
           ></div>
 
           {/* Panel */}
-          <div className="absolute inset-y-0 right-0 max-w-md w-full bg-[#0f1115] border-l border-[#1f2228] shadow-2xl flex flex-col justify-between p-6">
+          <div className="absolute inset-y-0 right-0 max-w-md w-full bg-panel border-l border-[#1f2228] shadow-2xl flex flex-col justify-between p-6">
             <div>
               {/* Header */}
               <div className="flex items-center justify-between pb-6 border-b border-[#1f2228]">
@@ -187,7 +187,7 @@ export default function CustomerHeader() {
 
             {/* Footer Calculation */}
             {cart.length > 0 && (
-              <div className="border-t border-[#1f2228] pt-6 space-y-4 bg-[#0f1115]">
+              <div className="border-t border-[#1f2228] pt-6 space-y-4 bg-panel">
                 {checkoutSuccess ? (
                   <div className="bg-[#22C55E]/10 border border-[#22C55E]/20 p-6 rounded-2xl text-center space-y-2 animate-pulse">
                     <ShieldCheck className="w-10 h-10 text-[#22C55E] mx-auto" />

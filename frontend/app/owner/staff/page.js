@@ -76,7 +76,7 @@ export default function OwnerStaffRoster() {
 
   return (
     <>
-    <div className="p-8 space-y-8 bg-[#07090e] min-h-screen text-gray-300">
+    <div className="p-8 space-y-8 bg-surface min-h-screen text-gray-300">
       <BackButton />
 
       {/* Header */}
@@ -103,7 +103,7 @@ export default function OwnerStaffRoster() {
           {staffList.map(s => (
             <div 
               key={s.id}
-              className="bg-[#0f1115] border border-white/5 p-5 rounded-3xl space-y-4 hover:border-white/10 transition-all duration-300 relative group"
+              className="bg-panel border border-white/5 p-5 rounded-3xl space-y-4 hover:border-white/10 transition-all duration-300 relative group"
             >
               <div className="flex justify-between items-start">
                 <div className="flex items-center gap-3">
@@ -135,7 +135,7 @@ export default function OwnerStaffRoster() {
 
         {/* Right Side: Form panel */}
         {showAddForm && (
-          <div className="lg:col-span-4 bg-[#0f1115] border border-white/5 p-6 rounded-3xl space-y-6 animate-in fade-in duration-200">
+          <div className="lg:col-span-4 bg-panel border border-white/5 p-6 rounded-3xl space-y-6 animate-in fade-in duration-200">
             <div className="space-y-1.5 pb-4 border-b border-white/5">
               <h3 className="text-sm font-bold uppercase tracking-wider text-white">Register Staff</h3>
               <p className="text-[10px] text-gray-500">Provide name, email, credentials and initial shifts.</p>
@@ -176,10 +176,10 @@ export default function OwnerStaffRoster() {
                   onChange={(e) => setRole(e.target.value)}
                   className="w-full bg-white/5 border border-white/5 p-2.5 rounded-xl text-xs text-white"
                 >
-                  <option value="Staff Waiter" className="bg-[#0f1115]">Staff Waiter</option>
-                  <option value="Head Chef" className="bg-[#0f1115]">Head Chef</option>
-                  <option value="Kitchen Crew" className="bg-[#0f1115]">Kitchen Crew</option>
-                  <option value="Store Manager" className="bg-[#0f1115]">Store Manager</option>
+                  <option value="Staff Waiter" className="bg-panel">Staff Waiter</option>
+                  <option value="Head Chef" className="bg-panel">Head Chef</option>
+                  <option value="Kitchen Crew" className="bg-panel">Kitchen Crew</option>
+                  <option value="Store Manager" className="bg-panel">Store Manager</option>
                 </select>
               </div>
 
@@ -190,9 +190,9 @@ export default function OwnerStaffRoster() {
                   onChange={(e) => setShift(e.target.value)}
                   className="w-full bg-white/5 border border-white/5 p-2.5 rounded-xl text-xs text-white"
                 >
-                  <option value="Morning shift (08:00 - 16:00)" className="bg-[#0f1115]">Morning shift (08:00 - 16:00)</option>
-                  <option value="Evening shift (16:00 - 24:00)" className="bg-[#0f1115]">Evening shift (16:00 - 24:00)</option>
-                  <option value="Flexible shift" className="bg-[#0f1115]">Flexible shift</option>
+                  <option value="Morning shift (08:00 - 16:00)" className="bg-panel">Morning shift (08:00 - 16:00)</option>
+                  <option value="Evening shift (16:00 - 24:00)" className="bg-panel">Evening shift (16:00 - 24:00)</option>
+                  <option value="Flexible shift" className="bg-panel">Flexible shift</option>
                 </select>
               </div>
 
@@ -218,7 +218,7 @@ export default function OwnerStaffRoster() {
 
       {confirmDelete && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm" onClick={() => setConfirmDelete(null)}>
-          <div className="bg-[#0f1115] border border-white/10 rounded-3xl p-6 max-w-sm w-full mx-4 shadow-2xl space-y-4" onClick={(e) => e.stopPropagation()}>
+          <div className="bg-panel border border-white/10 rounded-3xl p-6 max-w-sm w-full mx-4 shadow-2xl space-y-4" onClick={(e) => e.stopPropagation()}>
             <div className="flex items-center justify-between">
               <h3 className="text-sm font-bold text-white">Remove Staff</h3>
               <button onClick={() => setConfirmDelete(null)}><X className="w-4 h-4 text-gray-500" /></button>

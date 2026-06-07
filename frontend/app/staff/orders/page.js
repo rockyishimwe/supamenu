@@ -27,7 +27,7 @@ export default function StaffOrders() {
       </div>
 
       {orders.length === 0 ? (
-        <div className="text-center py-16 bg-[#0f1115] border border-dashed border-white/5 rounded-3xl text-gray-500">
+        <div className="text-center py-16 bg-panel border border-dashed border-white/5 rounded-3xl text-gray-500">
           <Package className="w-12 h-12 mx-auto text-gray-600 mb-3 animate-pulse" />
           <p className="text-sm font-semibold">No orders yet today.</p>
           <p className="text-xs mt-1">New orders from customers will appear here.</p>

@@ -19,9 +19,9 @@ module.exports = {
       },
       colors: {
         primary: '#FF6B00',
-        panel: '#0F1115',
-        surface: '#07090e',
-        border: '#1f2228',
+        panel: 'var(--color-panel-dark)',
+        surface: 'var(--color-bg-dark)',
+        'border': 'var(--color-border-dark)',
         available: '#22c55e',
         occupied: '#ef4444',
         reserved: '#f59e0b',

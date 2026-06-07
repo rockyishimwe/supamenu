@@ -32,7 +32,7 @@ export default function RestaurantDetails({ params }) {
 
   if (!resolvedParams) {
     return (
-      <div className="min-h-screen bg-[#07090e] flex items-center justify-center text-gray-500 text-xs">
+      <div className="min-h-screen bg-surface flex items-center justify-center text-gray-500 text-xs">
         Loading details...
       </div>
     );
@@ -43,7 +43,7 @@ export default function RestaurantDetails({ params }) {
 
   if (!restaurant) {
     return (
-      <div className="min-h-screen bg-[#07090e] flex flex-col items-center justify-center gap-6 text-center px-8">
+      <div className="min-h-screen bg-surface flex flex-col items-center justify-center gap-6 text-center px-8">
         <h1 className="text-xl font-bold text-white">Restaurant not found</h1>
         <p className="text-sm text-gray-500 max-w-md">
           We could not find a restaurant matching this link. It may have been removed or the ID is invalid.
@@ -103,7 +103,7 @@ export default function RestaurantDetails({ params }) {
   };
 
   return (
-    <div className="bg-[#07090e] text-gray-300 min-h-screen">
+    <div className="bg-surface text-gray-300 min-h-screen">
       <div className="px-8 pt-6">
         <BackButton />
       </div>
@@ -128,7 +128,7 @@ export default function RestaurantDetails({ params }) {
               <img 
                 src={restaurant.logo} 
                 alt="Logo" 
-                className="w-16 h-16 rounded-2xl object-cover border border-white/10 bg-[#0f1115]"
+                className="w-16 h-16 rounded-2xl object-cover border border-white/10 bg-panel"
               />
               <div>
                 <h1 className="text-3xl font-extrabold text-white tracking-tight">{restaurant.name}</h1>
@@ -187,7 +187,7 @@ export default function RestaurantDetails({ params }) {
                 filteredMenu.map(item => (
                   <div 
                     key={item._id}
-                    className="p-4 bg-[#0f1115] border border-white/5 rounded-3xl flex gap-4 hover:border-white/10 transition-all duration-300"
+                    className="p-4 bg-panel border border-white/5 rounded-3xl flex gap-4 hover:border-white/10 transition-all duration-300"
                   >
                     <img 
                       src={item.image} 
@@ -239,7 +239,7 @@ export default function RestaurantDetails({ params }) {
             </div>
 
             {/* Floor Map Simulation Canvas */}
-            <div className="border border-white/5 bg-[#0f1115]/50 backdrop-blur-md rounded-3xl p-6 relative overflow-hidden h-[300px] flex items-center justify-center">
+            <div className="border border-white/5 bg-panel/50 backdrop-blur-md rounded-3xl p-6 relative overflow-hidden h-[300px] flex items-center justify-center">
               <div className="absolute inset-0 bg-[radial-gradient(#1f2228_1px,transparent_1px)] [background-size:20px_20px] opacity-15"></div>
               
               {/* Floor Plan Border */}
@@ -296,7 +296,7 @@ export default function RestaurantDetails({ params }) {
         </div>
 
         {/* Right Side: Reservation Booking Widget */}
-        <div className="lg:col-span-4 bg-[#0f1115] border border-white/5 p-6 rounded-3xl space-y-6 sticky top-28 z-10">
+        <div className="lg:col-span-4 bg-panel border border-white/5 p-6 rounded-3xl space-y-6 sticky top-28 z-10">
           <div className="space-y-1.5 pb-4 border-b border-white/5">
             <h3 className="text-sm font-bold uppercase tracking-wider text-white flex items-center gap-2">
               <Calendar className="w-4.5 h-4.5 text-[#FF6B00]" /> Seating Reservation

@@ -59,7 +59,7 @@ export default function OwnerMenuEditor() {
   };
 
   return (
-    <div className="p-8 space-y-8 bg-[#07090e] min-h-screen text-gray-300">
+    <div className="p-8 space-y-8 bg-surface min-h-screen text-gray-300">
       <BackButton />
 
       {/* Header */}
@@ -105,7 +105,7 @@ export default function OwnerMenuEditor() {
             {filteredItems.map(item => (
               <div 
                 key={item._id}
-                className="p-4 bg-[#0f1115] border border-white/5 rounded-3xl flex gap-4 hover:border-white/10 transition-all duration-300"
+                className="p-4 bg-panel border border-white/5 rounded-3xl flex gap-4 hover:border-white/10 transition-all duration-300"
               >
                 <img 
                   src={item.image} 
@@ -135,7 +135,7 @@ export default function OwnerMenuEditor() {
 
         {/* Right Pane: Add Form panel */}
         {showAddForm && (
-          <div className="lg:col-span-4 bg-[#0f1115] border border-white/5 p-6 rounded-3xl space-y-6 animate-in fade-in duration-200">
+          <div className="lg:col-span-4 bg-panel border border-white/5 p-6 rounded-3xl space-y-6 animate-in fade-in duration-200">
             <div className="space-y-1.5 pb-4 border-b border-white/5">
               <h3 className="text-sm font-bold uppercase tracking-wider text-white">Create New Dish</h3>
               <p className="text-[10px] text-gray-500">Define price, description and stock counts.</p>
@@ -188,11 +188,11 @@ export default function OwnerMenuEditor() {
                   onChange={(e) => setCategory(e.target.value)}
                   className="w-full bg-white/5 border border-white/5 p-2.5 rounded-xl text-xs text-white"
                 >
-                  <option value="Pasta" className="bg-[#0f1115]">Pasta</option>
-                  <option value="Pizzas" className="bg-[#0f1115]">Pizzas</option>
-                  <option value="Salads" className="bg-[#0f1115]">Salads</option>
-                  <option value="Desserts" className="bg-[#0f1115]">Desserts</option>
-                  <option value="Beverages" className="bg-[#0f1115]">Beverages</option>
+                  <option value="Pasta" className="bg-panel">Pasta</option>
+                  <option value="Pizzas" className="bg-panel">Pizzas</option>
+                  <option value="Salads" className="bg-panel">Salads</option>
+                  <option value="Desserts" className="bg-panel">Desserts</option>
+                  <option value="Beverages" className="bg-panel">Beverages</option>
                 </select>
               </div>
 

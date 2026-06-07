@@ -43,7 +43,7 @@ export default function OwnerTablesBuilder() {
   };
 
   return (
-    <div className="p-8 space-y-8 bg-[#07090e] min-h-screen text-gray-300">
+    <div className="p-8 space-y-8 bg-surface min-h-screen text-gray-300">
       <BackButton />
 
       {/* Header */}
@@ -67,7 +67,7 @@ export default function OwnerTablesBuilder() {
         
         {/* Left Side: Layout Grid Map */}
         <div className="lg:col-span-8 space-y-6">
-          <div className="border border-white/5 bg-[#0f1115]/50 backdrop-blur-md rounded-3xl p-6 relative overflow-hidden h-[340px] flex items-center justify-center">
+          <div className="border border-white/5 bg-panel/50 backdrop-blur-md rounded-3xl p-6 relative overflow-hidden h-[340px] flex items-center justify-center">
             <div className="absolute inset-0 bg-[radial-gradient(#1f2228_1px,transparent_1px)] [background-size:20px_20px] opacity-15"></div>
             
             {/* Visual tables mapping based on Coordinates */}
@@ -96,7 +96,7 @@ export default function OwnerTablesBuilder() {
           </div>
 
           {/* List/Tables deletions */}
-          <div className="bg-[#0f1115] border border-white/5 p-6 rounded-3xl space-y-4">
+          <div className="bg-panel border border-white/5 p-6 rounded-3xl space-y-4">
             <h3 className="text-xs font-bold uppercase tracking-wider text-white">Active Floor Seating Inventory</h3>
             
             <div className="grid md:grid-cols-2 gap-4">
@@ -120,7 +120,7 @@ export default function OwnerTablesBuilder() {
 
         {/* Right Side: Form panel */}
         {showAddForm && (
-          <div className="lg:col-span-4 bg-[#0f1115] border border-white/5 p-6 rounded-3xl space-y-6 animate-in fade-in duration-200">
+          <div className="lg:col-span-4 bg-panel border border-white/5 p-6 rounded-3xl space-y-6 animate-in fade-in duration-200">
             <div className="space-y-1.5 pb-4 border-b border-white/5">
               <h3 className="text-sm font-bold uppercase tracking-wider text-white">Configure Seating Table</h3>
               <p className="text-[10px] text-gray-500">Add grid coordinates to place on floor plan map.</p>
@@ -189,9 +189,9 @@ export default function OwnerTablesBuilder() {
                     onChange={(e) => setShape(e.target.value)}
                     className="w-full bg-white/5 border border-white/5 p-2.5 rounded-xl text-xs text-white"
                   >
-                    <option value="square" className="bg-[#0f1115]">Square</option>
-                    <option value="round" className="bg-[#0f1115]">Round</option>
-                    <option value="rectangle" className="bg-[#0f1115]">Rectangle</option>
+                    <option value="square" className="bg-panel">Square</option>
+                    <option value="round" className="bg-panel">Round</option>
+                    <option value="rectangle" className="bg-panel">Rectangle</option>
                   </select>
                 </div>
 
@@ -202,9 +202,9 @@ export default function OwnerTablesBuilder() {
                     onChange={(e) => setLocation(e.target.value)}
                     className="w-full bg-white/5 border border-white/5 p-2.5 rounded-xl text-xs text-white"
                   >
-                    <option value="Main Floor" className="bg-[#0f1115]">Main Floor</option>
-                    <option value="Patio Deck" className="bg-[#0f1115]">Patio Deck</option>
-                    <option value="Bar Section" className="bg-[#0f1115]">Bar Section</option>
+                    <option value="Main Floor" className="bg-panel">Main Floor</option>
+                    <option value="Patio Deck" className="bg-panel">Patio Deck</option>
+                    <option value="Bar Section" className="bg-panel">Bar Section</option>
                   </select>
                 </div>
               </div>

@@ -33,7 +33,7 @@ export default function OwnerFinance() {
   const dynamicTotal = orders.reduce((sum, o) => sum + o.total, 0);
 
   return (
-    <div className="p-8 space-y-8 bg-[#07090e] min-h-screen text-gray-300">
+    <div className="p-8 space-y-8 bg-surface min-h-screen text-gray-300">
       <BackButton />
 
       {/* Header */}
@@ -60,7 +60,7 @@ export default function OwnerFinance() {
         ].map((card, idx) => {
           const Icon = card.icon;
           return (
-            <div key={idx} className="p-5 rounded-3xl bg-[#0f1115] border border-white/5 flex flex-col justify-between h-28 relative overflow-hidden">
+            <div key={idx} className="p-5 rounded-3xl bg-panel border border-white/5 flex flex-col justify-between h-28 relative overflow-hidden">
               <div className="flex justify-between items-start">
                 <span className="text-[9px] uppercase font-bold tracking-widest text-gray-500">{card.label}</span>
                 <Icon className="w-4 h-4 text-gray-600" />
@@ -78,7 +78,7 @@ export default function OwnerFinance() {
       <div className="grid lg:grid-cols-12 gap-8">
         
         {/* Revenue vs Expenses BarChart (Left) */}
-        <div className="lg:col-span-8 bg-[#0f1115] border border-white/5 p-6 rounded-3xl space-y-4">
+        <div className="lg:col-span-8 bg-panel border border-white/5 p-6 rounded-3xl space-y-4">
           <div className="pb-2">
             <h3 className="text-sm font-bold uppercase tracking-wider text-white">Monthly Profit Margins</h3>
             <p className="text-[10px] text-gray-500">Gross revenue vs operational costs breakdown.</p>
@@ -102,7 +102,7 @@ export default function OwnerFinance() {
         </div>
 
         {/* Payments breakdown PieChart (Right) */}
-        <div className="lg:col-span-4 bg-[#0f1115] border border-white/5 p-6 rounded-3xl space-y-4">
+        <div className="lg:col-span-4 bg-panel border border-white/5 p-6 rounded-3xl space-y-4">
           <div className="pb-2">
             <h3 className="text-sm font-bold uppercase tracking-wider text-white">Payment Distribution</h3>
             <p className="text-[10px] text-gray-500">Breakdown of channels preferred by visitors.</p>

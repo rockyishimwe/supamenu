@@ -24,14 +24,16 @@ export default function ToastContainer() {
             <motion.div
               key={t.id}
               layout
+              role="alert"
+              aria-live="polite"
               initial={{ opacity: 0, y: 20, scale: 0.95 }}
               animate={{ opacity: 1, y: 0, scale: 1 }}
               exit={{ opacity: 0, y: -10, scale: 0.95 }}
               className={`pointer-events-auto flex items-start gap-3 px-4 py-3 rounded-2xl border backdrop-blur-md shadow-xl ${c.bg} bg-opacity-80`}
             >
-              <Icon className="w-5 h-5 shrink-0 mt-0.5" />
+              <Icon className="w-5 h-5 shrink-0 mt-0.5" aria-hidden="true" />
               <p className="text-sm font-medium flex-1">{t.message}</p>
-              <button onClick={() => removeToast(t.id)} className="shrink-0 opacity-60 hover:opacity-100">
+              <button onClick={() => removeToast(t.id)} className="shrink-0 opacity-60 hover:opacity-100" aria-label="Dismiss notification">
                 <X className="w-4 h-4" />
               </button>
             </motion.div>

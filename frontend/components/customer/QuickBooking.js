@@ -32,7 +32,7 @@ export default function QuickBooking({ restaurants, currentUser, createReservati
   };
 
   return (
-    <div className="lg:col-span-4 bg-[#0f1115] border border-white/5 p-6 rounded-3xl space-y-6 sticky top-28 z-10">
+    <div className="lg:col-span-4 bg-panel border border-white/5 p-6 rounded-3xl space-y-6 sticky top-28 z-10">
       <div className="space-y-1.5 pb-4 border-b border-white/5">
         <h3 className="text-sm font-bold uppercase tracking-wider text-white flex items-center gap-2">
           <Calendar className="w-4.5 h-4.5 text-[#FF6B00]" /> Visual Table Booking
@@ -46,7 +46,7 @@ export default function QuickBooking({ restaurants, currentUser, createReservati
             className="w-full bg-white/5 border border-white/5 text-xs text-white p-3 rounded-xl">
             <option value="">Select...</option>
             {restaurants.map((r) => (
-              <option key={r._id} value={r._id} className="bg-[#0f1115]">{r.name}</option>
+              <option key={r._id} value={r._id} className="bg-panel">{r.name}</option>
             ))}
           </select>
         </div>

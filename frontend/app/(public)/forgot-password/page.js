@@ -17,8 +17,8 @@ export default function ForgotPasswordPage() {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-[#07090e] p-8 text-[#f3f4f6]">
-      <div className="w-full max-w-md bg-[#0f1115] border border-white/5 rounded-3xl p-8 sm:p-10 shadow-2xl relative">
+    <div className="min-h-screen flex items-center justify-center bg-surface p-8 text-[#f3f4f6]">
+      <div className="w-full max-w-md bg-panel border border-white/5 rounded-3xl p-8 sm:p-10 shadow-2xl relative">
         <div className="absolute top-1/4 -left-1/4 w-[150%] h-1/2 bg-[#FF6B00]/5 filter blur-3xl rounded-full"></div>
 
         <BackButton href="/login" />

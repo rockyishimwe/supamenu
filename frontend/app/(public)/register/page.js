@@ -142,7 +142,7 @@ export default function RegisterPage() {
   };
 
   return (
-    <div className="min-h-screen grid lg:grid-cols-12 bg-[#07090e] text-[#f3f4f6]">
+    <div className="min-h-screen grid lg:grid-cols-12 bg-surface text-[#f3f4f6]">
       <div className="hidden lg:flex lg:col-span-5 flex-col justify-between p-12 bg-gradient-to-br from-[#0f1115] to-[#07090e] border-r border-white/5 relative">
         <div className="absolute top-1/4 -left-1/4 w-[150%] h-1/2 bg-[#FF6B00]/5 filter blur-3xl rounded-full"></div>
 
@@ -171,7 +171,7 @@ export default function RegisterPage() {
       </div>
 
       <div className="lg:col-span-7 flex items-center justify-center p-8 sm:p-12">
-        <div className="w-full max-w-md bg-[#0f1115] border border-white/5 rounded-3xl p-8 sm:p-10 shadow-2xl relative z-10">
+        <div className="w-full max-w-md bg-panel border border-white/5 rounded-3xl p-8 sm:p-10 shadow-2xl relative z-10">
           <BackButton href="/login" />
 
           <div className="space-y-2 mb-8">

@@ -64,7 +64,7 @@ export default function CustomerDashboard() {
   };
 
   return (
-    <div className="p-8 space-y-8 bg-[#07090e] min-h-screen text-gray-300">
+    <div className="p-8 space-y-8 bg-surface min-h-screen text-gray-300">
       
       {/* 1. Welcome Card / Wallet status */}
       <WelcomeBanner currentUser={currentUser} />
@@ -84,7 +84,7 @@ export default function CustomerDashboard() {
               className={`px-5 py-2.5 rounded-2xl text-xs font-bold whitespace-nowrap border transition-all duration-200 ${
                 selectedCategory === cat
                   ? 'bg-[#FF6B00] border-[#FF6B00] text-white shadow-md shadow-[#FF6B00]/15'
-                  : 'bg-[#0f1115] border-white/5 text-gray-400 hover:text-white hover:border-white/10'
+                  : 'bg-panel border-white/5 text-gray-400 hover:text-white hover:border-white/10'
               }`}
             >
               {cat}
@@ -105,7 +105,7 @@ export default function CustomerDashboard() {
               {filteredRestaurants.slice(0, 4).map((res) => (
                 <div 
                   key={res._id}
-                  className="bg-[#0f1115] border border-white/5 rounded-3xl overflow-hidden hover:border-white/10 transition-all duration-300 group flex flex-col justify-between"
+                  className="bg-panel border border-white/5 rounded-3xl overflow-hidden hover:border-white/10 transition-all duration-300 group flex flex-col justify-between"
                 >
                   <div className="relative h-44 overflow-hidden">
                     <img 
@@ -113,7 +113,7 @@ export default function CustomerDashboard() {
                       alt={res.name}
                       className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" 
                     />
-                    <div className="absolute top-4 right-4 px-2.5 py-1 rounded-xl bg-[#0f1115]/80 backdrop-blur-md border border-white/10 flex items-center gap-1 text-[11px] font-bold text-white">
+                    <div className="absolute top-4 right-4 px-2.5 py-1 rounded-xl bg-panel/80 backdrop-blur-md border border-white/10 flex items-center gap-1 text-[11px] font-bold text-white">
                       <Star className="w-3.5 h-3.5 fill-[#FF6B00] text-[#FF6B00]" />
                       {res.rating}
                     </div>
@@ -153,7 +153,7 @@ export default function CustomerDashboard() {
               {filteredMenuItems.map((item) => (
                 <div 
                   key={item._id}
-                  className="p-4 bg-[#0f1115] border border-white/5 rounded-3xl flex gap-4 hover:border-white/10 transition-all duration-300"
+                  className="p-4 bg-panel border border-white/5 rounded-3xl flex gap-4 hover:border-white/10 transition-all duration-300"
                 >
                   <img 
                     src={item.image} 
@@ -189,7 +189,7 @@ export default function CustomerDashboard() {
         </div>
 
         {/* Right Side: Quick Booking Widget */}
-        <div className="lg:col-span-4 bg-[#0f1115] border border-white/5 p-6 rounded-3xl space-y-6 sticky top-28 z-10">
+        <div className="lg:col-span-4 bg-panel border border-white/5 p-6 rounded-3xl space-y-6 sticky top-28 z-10">
           <div className="space-y-1.5 pb-4 border-b border-white/5">
             <h3 className="text-sm font-bold uppercase tracking-wider text-white flex items-center gap-2">
               <Calendar className="w-4.5 h-4.5 text-[#FF6B00]" /> Visual Table Booking
@@ -208,7 +208,7 @@ export default function CustomerDashboard() {
                 className="w-full bg-white/5 border border-white/5 text-xs text-white p-3 rounded-xl focus:outline-none focus:border-[#FF6B00] font-medium"
               >
                 {restaurants.map(r => (
-                  <option key={r._id} value={r._id} className="bg-[#0f1115] text-white">{r.name}</option>
+                  <option key={r._id} value={r._id} className="bg-panel text-white">{r.name}</option>
                 ))}
               </select>
             </div>

@@ -35,8 +35,11 @@ export default function ConfirmDialog({
             animate={{ scale: 1, opacity: 1 }}
             exit={{ scale: 0.9, opacity: 0 }}
             transition={{ type: 'spring', damping: 25, stiffness: 300 }}
-            className="bg-[#0f1115] border border-white/10 rounded-3xl p-6 max-w-sm w-full mx-4 shadow-2xl space-y-4"
+            className="bg-panel border border-white/10 rounded-3xl p-6 max-w-sm w-full mx-4 shadow-2xl space-y-4"
             onClick={(e) => e.stopPropagation()}
+            role="alertdialog"
+            aria-modal="true"
+            aria-labelledby="confirm-title"
           >
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-3">
