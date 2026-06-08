@@ -19,7 +19,7 @@
   color-scheme: dark;
 }
 
-/* Light mode */
+/* Light mode CSS variables */
 .light {
   --color-bg-dark: #f8f9fa;
   --color-panel-dark: #ffffff;
@@ -32,27 +32,11 @@
   color-scheme: light;
 }
 
-/* Light mode overrides */
-.light, .light body {
-  background-color: var(--color-bg-dark) !important;
-  color: var(--color-text) !important;
-}
-
 /* Theme-aware utility classes — use these in layouts instead of hardcoded hex */
 .bg-page { background-color: var(--color-bg-dark); }
 .bg-panel { background-color: var(--color-panel-dark); }
 .text-body { color: var(--color-text); }
 .text-muted { color: var(--color-text-muted); }
-
-/* Light mode text overrides — no special chars, safe for Turbopack */
-.light .text-white { color: #111827 !important; }
-.light .text-gray-300 { color: #374151 !important; }
-.light .text-gray-400 { color: #6b7280 !important; }
-.light .text-gray-500 { color: #9ca3af !important; }
-.light input, .light select, .light textarea { color: #111827 !important; }
-.light .hover\:text-white:hover { color: #111827 !important; }
-.light .border-white\/5 { border-color: #e5e7eb !important; }
-.light .border-white\/10 { border-color: #d1d5db !important; }
 
 html {
   scroll-behavior: smooth;
@@ -258,6 +242,32 @@ h1, h2, h3, h4, h5, h6, .font-display {
   50% { opacity: .75; }
 }
 
+/* Film grain / noise texture overlay */
+.bg-noise {
+  position: relative;
+}
+.bg-noise::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  opacity: 0.015;
+  pointer-events: none;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  background-repeat: repeat;
+  background-size: 256px 256px;
+}
+
+/* Global button micro-interactions */
+.btn-micro {
+  transition: transform 0.15s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.15s ease;
+}
+.btn-micro:hover {
+  transform: scale(1.03);
+}
+.btn-micro:active {
+  transform: scale(0.97);
+}
+
 /* Card shine hover effect */
 .card-shine {
   position: relative;
@@ -309,4 +319,181 @@ h1, h2, h3, h4, h5, h6, .font-display {
   .card-shine::after {
     display: none;
   }
+}
+
+/* ============================================
+   LIGHT MODE OVERRIDES (comprehensive)
+   ============================================ */
+
+/* Text colors */
+.light .text-white { color: #111827 !important; }
+.light .text-gray-100 { color: #1f2937 !important; }
+.light .text-gray-200 { color: #374151 !important; }
+.light .text-gray-300 { color: #4b5563 !important; }
+.light .text-gray-400 { color: #6b7280 !important; }
+.light .text-gray-500 { color: #9ca3af !important; }
+.light .text-gray-600 { color: #6b7280 !important; }
+.light .text-gray-700 { color: #4b5563 !important; }
+.light .text-gray-800 { color: #374151 !important; }
+.light .text-gray-900 { color: #1f2937 !important; }
+
+/* Primary brand colors - keep as-is in both modes */
+/* Note: Tailwind arbitrary color utilities (text-[#hex]) are not overridable via
+   escaped selectors in PostCSS/Turbopack. Use semantic CSS variables instead: */
+.light { --tw-brand-green: #16a34a; --tw-brand-red: #dc2626; --tw-brand-blue: #2563eb; }
+
+/* Background utility classes (white/opacity) */
+.light .bg-white\/5 { background-color: rgba(0, 0, 0, 0.04) !important; }
+.light .bg-white\/10 { background-color: rgba(0, 0, 0, 0.06) !important; }
+.light .bg-white\/15 { background-color: rgba(0, 0, 0, 0.08) !important; }
+.light .bg-white\/20 { background-color: rgba(0, 0, 0, 0.10) !important; }
+.light .bg-white\/30 { background-color: rgba(0, 0, 0, 0.15) !important; }
+.light .bg-white\/50 { background-color: rgba(0, 0, 0, 0.25) !important; }
+
+/* Hover background utilities */
+.light .hover\:bg-white\/5:hover { background-color: rgba(0, 0, 0, 0.04) !important; }
+.light .hover\:bg-white\/10:hover { background-color: rgba(0, 0, 0, 0.06) !important; }
+.light .hover\:bg-white\/20:hover { background-color: rgba(0, 0, 0, 0.10) !important; }
+
+/* Border utilities */
+.light .border-white\/5 { border-color: #e5e7eb !important; }
+.light .border-white\/10 { border-color: #d1d5db !important; }
+.light .border-white\/20 { border-color: #9ca3af !important; }
+.light .border-white\/30 { border-color: #9ca3af !important; }
+.light .hover\:border-white\/10:hover { border-color: #d1d5db !important; }
+
+/* Hover text utilities */
+.light .hover\:text-white:hover { color: #111827 !important; }
+.light .hover\:text-gray-400:hover { color: #6b7280 !important; }
+.light .hover\:text-primary:hover { color: #FF6B00 !important; }
+
+/* Focus/active states */
+.light .focus\:border-\[#FF6B00\]:focus { border-color: #FF6B00 !important; }
+.light .focus\:bg-white\/10:focus { background-color: rgba(0, 0, 0, 0.06) !important; }
+
+/* Input field overrides */
+.light input,
+.light select,
+.light textarea { 
+  color: #111827 !important; 
+  background-color: #ffffff !important; 
+}
+.light input::placeholder,
+.light textarea::placeholder { color: #9ca3af !important; }
+.light .placeholder-gray-500::placeholder { color: #9ca3af !important; }
+
+/* Glass panel overrides */
+.light .glass-panel { 
+  background: rgba(255, 255, 255, 0.8) !important; 
+  border-color: rgba(0, 0, 0, 0.08) !important; 
+  box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.08) !important;
+}
+.light .glass-panel-heavy { 
+  background: rgba(255, 255, 255, 0.95) !important; 
+  border-color: rgba(0, 0, 0, 0.1) !important; 
+}
+.light .glass-input { 
+  background: #ffffff !important; 
+  border-color: #e5e7eb !important; 
+}
+.light .glass-input:focus { 
+  border-color: #FF6B00 !important; 
+  background: #ffffff !important; 
+  box-shadow: 0 0 0 2px rgba(255, 107, 0, 0.15) !important; 
+}
+
+/* Panel and surface backgrounds */
+.light .bg-panel { background-color: #ffffff !important; }
+.light .bg-surface { background-color: #f8f9fa !important; }
+
+/* Scrollbar for light mode */
+.light ::-webkit-scrollbar-track { background: #f8f9fa; }
+.light ::-webkit-scrollbar-thumb { background: #d1d5db; }
+.light ::-webkit-scrollbar-thumb:hover { background: #FF6B00; }
+
+/* Selection colors */
+.light ::selection { background-color: rgba(255, 107, 0, 0.2); color: #111827; }
+
+
+/* ============================================
+   HERO SECTION — LIGHT MODE FIXES
+   (based on screenshot audit)
+   ============================================ */
+
+/* Dark navy headline text becomes readable on light bg */
+.light .hero-title-dark {
+  color: #1a1f2e !important;
+}
+
+/* Badge pill (dark brown bg in dark mode) */
+.light .hero-badge {
+  background-color: rgba(255, 107, 0, 0.12) !important;
+  border: 1px solid rgba(255, 107, 0, 0.3) !important;
+  color: #c45200 !important;
+}
+.light .hero-badge svg,
+.light .hero-badge [class*="icon"] {
+  color: #c45200 !important;
+}
+
+/* Body paragraph text */
+.light .hero-description {
+  color: #374151 !important;
+}
+
+/* "Register Restaurant" outline button — dark border becomes visible */
+.light .btn-outline-hero {
+  border-color: #374151 !important;
+  color: #111827 !important;
+  background-color: transparent !important;
+}
+.light .btn-outline-hero:hover {
+  background-color: rgba(0, 0, 0, 0.05) !important;
+  border-color: #111827 !important;
+}
+
+/* Live system card panel — needs shadow/border in light mode so it doesn't vanish */
+.light .live-system-card {
+  background: #ffffff !important;
+  border: 1px solid #e5e7eb !important;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.12), 0 4px 16px rgba(0, 0, 0, 0.06) !important;
+}
+
+/* Card header text (LIVE_SYSTEM_ECOSYSTEM label) */
+.light .live-system-card .card-header-label {
+  color: #6b7280 !important;
+}
+
+/* Inner app tiles (Customer App / Owner Portal / Staff App) */
+.light .app-tile {
+  background: #f8f9fa !important;
+  border: 1px solid #e5e7eb !important;
+}
+.light .app-tile:hover {
+  background: #f0f2f5 !important;
+  border-color: #d1d5db !important;
+}
+.light .app-tile .app-tile-label {
+  color: #111827 !important;
+}
+.light .app-tile .app-tile-sublabel {
+  color: #6b7280 !important;
+}
+
+/* "All connected in real-time" footer bar */
+.light .connected-bar {
+  background: #f0f2f5 !important;
+  color: #6b7280 !important;
+  border-top: 1px solid #e5e7eb !important;
+}
+
+/* Page background for hero section */
+.light .hero-section {
+  background-color: #f8f9fa !important;
+}
+
+/* Decorative large background text (if using text-outline/ghost technique) */
+.light .hero-bg-text {
+  -webkit-text-stroke: 2px rgba(0, 0, 0, 0.06) !important;
+  color: transparent !important;
 }

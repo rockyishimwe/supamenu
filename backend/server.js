@@ -5,6 +5,7 @@ const config = require('./config/env'); // Validates required env vars on import
 const connectDB = require('./config/db');
 const errorHandler = require('./middleware/errorHandler');
 const csrfProtection = require('./middleware/csrf');
+const globalRateLimiter = require('./middleware/rateLimit');
 const swaggerUi = require('swagger-ui-express');
 const swaggerSpec = require('./swagger');
 const authRoutes = require('./routes/auth');
@@ -20,6 +21,7 @@ const app = express();
 
 // Middleware
 app.use(express.json());
+app.use(globalRateLimiter);
 app.use(csrfProtection);
 
 // API Documentation

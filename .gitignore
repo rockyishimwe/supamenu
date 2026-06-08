@@ -83,5 +83,6 @@ public/uploads/
 .turbo/
 *.tsbuildinfo
 designs/
-.cursorrules
+*.cursorrules
+*.IMPLEMENTATION_PLAN.md
 .hermes/

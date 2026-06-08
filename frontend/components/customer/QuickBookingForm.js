@@ -1,12 +1,27 @@
 "use client";
 import { useState } from 'react';
 import dynamic from 'next/dynamic';
+import { motion } from 'framer-motion';
 import { Calendar, Clock, Users } from 'lucide-react';
+import { fadeUpItem } from '../PageTransition';
 
 const ConfettiSuccess = dynamic(() => import('../ConfettiSuccess'), {
   ssr: false,
   loading: () => null,
 });
+
+const inputVariants = {
+  focus: {
+    borderColor: '#FF6B00',
+    boxShadow: '0 0 0 3px rgba(255, 107, 0, 0.15)',
+    transition: { duration: 0.2 },
+  },
+  blur: {
+    borderColor: 'rgba(255,255,255,0.05)',
+    boxShadow: 'none',
+    transition: { duration: 0.2 },
+  },
+};
 
 export default function QuickBookingForm({ restaurants, createReservation }) {
   const [resRestaurantId, setResRestaurantId] = useState(
@@ -17,6 +32,7 @@ export default function QuickBookingForm({ restaurants, createReservation }) {
   const [resTime, setResTime] = useState('19:00');
   const [resSuccess, setResSuccess] = useState(false);
   const [resLoading, setResLoading] = useState(false);
+  const [focusedField, setFocusedField] = useState(null);
 
   const handleQuickReserve = async (e) => {
     e.preventDefault();
@@ -42,7 +58,12 @@ export default function QuickBookingForm({ restaurants, createReservation }) {
   };
 
   return (
-    <div className="lg:col-span-4 bg-panel border border-white/5 p-6 rounded-3xl space-y-6 sticky top-28 z-10">
+    <motion.div
+      variants={fadeUpItem}
+      initial="initial"
+      animate="animate"
+      className="lg:col-span-4 bg-panel border border-white/5 p-6 rounded-3xl space-y-6 sticky top-28 z-10"
+    >
       <div className="space-y-1.5 pb-4 border-b border-white/5">
         <h3 className="text-sm font-bold uppercase tracking-wider text-white flex items-center gap-2">
           <Calendar className="w-4.5 h-4.5 text-[#FF6B00]" /> Visual Table Booking
@@ -57,7 +78,13 @@ export default function QuickBookingForm({ restaurants, createReservation }) {
           <select
             value={resRestaurantId}
             onChange={(e) => setResRestaurantId(e.target.value)}
-            className="w-full bg-white/5 border border-white/5 text-xs text-white p-3 rounded-xl focus:outline-none focus:border-[#FF6B00] font-medium"
+            onFocus={() => setFocusedField('restaurant')}
+            onBlur={() => setFocusedField(null)}
+            className="w-full bg-white/5 border border-white/5 text-xs text-white p-3 rounded-xl focus:outline-none font-medium transition-all duration-200"
+            style={{
+              borderColor: focusedField === 'restaurant' ? '#FF6B00' : undefined,
+              boxShadow: focusedField === 'restaurant' ? '0 0 0 3px rgba(255, 107, 0, 0.15)' : undefined,
+            }}
           >
             {restaurants.map((r) => (
               <option key={r._id} value={r._id} className="bg-panel text-white">
@@ -79,7 +106,14 @@ export default function QuickBookingForm({ restaurants, createReservation }) {
                 max="10"
                 value={resGuests}
                 onChange={(e) => setResGuests(e.target.value)}
-                className="w-full pl-9 pr-3 py-2.5 rounded-xl bg-white/5 border border-white/5 text-xs text-white focus:outline-none focus:border-[#FF6B00]"
+                onFocus={() => setFocusedField('guests')}
+                onBlur={() => setFocusedField(null)}
+                className="w-full pl-9 pr-3 py-2.5 rounded-xl bg-white/5 text-xs text-white focus:outline-none transition-all duration-200"
+                style={{
+                  border: '1px solid',
+                  borderColor: focusedField === 'guests' ? '#FF6B00' : 'rgba(255,255,255,0.05)',
+                  boxShadow: focusedField === 'guests' ? '0 0 0 3px rgba(255, 107, 0, 0.15)' : undefined,
+                }}
               />
             </div>
           </div>
@@ -93,7 +127,14 @@ export default function QuickBookingForm({ restaurants, createReservation }) {
                 type="time"
                 value={resTime}
                 onChange={(e) => setResTime(e.target.value)}
-                className="w-full pl-9 pr-3 py-2.5 rounded-xl bg-white/5 border border-white/5 text-xs text-white focus:outline-none focus:border-[#FF6B00]"
+                onFocus={() => setFocusedField('time')}
+                onBlur={() => setFocusedField(null)}
+                className="w-full pl-9 pr-3 py-2.5 rounded-xl bg-white/5 text-xs text-white focus:outline-none transition-all duration-200"
+                style={{
+                  border: '1px solid',
+                  borderColor: focusedField === 'time' ? '#FF6B00' : 'rgba(255,255,255,0.05)',
+                  boxShadow: focusedField === 'time' ? '0 0 0 3px rgba(255, 107, 0, 0.15)' : undefined,
+                }}
               />
             </div>
           </div>
@@ -108,21 +149,38 @@ export default function QuickBookingForm({ restaurants, createReservation }) {
               type="date"
               value={resDate}
               onChange={(e) => setResDate(e.target.value)}
-              className="w-full pl-9 pr-3 py-2.5 rounded-xl bg-white/5 border border-white/5 text-xs text-white focus:outline-none focus:border-[#FF6B00]"
+              onFocus={() => setFocusedField('date')}
+              onBlur={() => setFocusedField(null)}
+              className="w-full pl-9 pr-3 py-2.5 rounded-xl bg-white/5 text-xs text-white focus:outline-none transition-all duration-200"
+              style={{
+                border: '1px solid',
+                borderColor: focusedField === 'date' ? '#FF6B00' : 'rgba(255,255,255,0.05)',
+                boxShadow: focusedField === 'date' ? '0 0 0 3px rgba(255, 107, 0, 0.15)' : undefined,
+              }}
             />
           </div>
         </div>
 
         <ConfettiSuccess show={resSuccess} message="Reservation Confirmed!" />
 
-        <button
+        <motion.button
           type="submit"
           disabled={resLoading}
-          className="w-full py-3.5 bg-[#FF6B00] hover:bg-[#e05e00] text-white font-bold text-xs rounded-xl flex items-center justify-center gap-1.5 hover-lift shadow-lg shadow-[#FF6B00]/15"
+          whileHover={{ scale: 1.02, boxShadow: '0 8px 25px rgba(255, 107, 0, 0.25)' }}
+          whileTap={{ scale: 0.97 }}
+          className="w-full py-3.5 bg-[#FF6B00] hover:bg-[#e05e00] text-white font-bold text-xs rounded-xl flex items-center justify-center gap-1.5 shadow-lg shadow-[#FF6B00]/15 transition-colors"
         >
-          {resLoading ? 'Reserving...' : 'Confirm Table Reservation'}
-        </button>
+          {resLoading ? (
+            <motion.span
+              animate={{ rotate: 360 }}
+              transition={{ duration: 1, repeat: Infinity, ease: 'linear' }}
+              className="inline-block w-4 h-4 border-2 border-white/30 border-t-white rounded-full"
+            />
+          ) : (
+            'Confirm Table Reservation'
+          )}
+        </motion.button>
       </form>
-    </div>
+    </motion.div>
   );
 }

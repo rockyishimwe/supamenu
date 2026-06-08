@@ -1,5 +1,7 @@
 "use client";
+import { motion } from 'framer-motion';
 import { ArrowUpRight } from 'lucide-react';
+import { staggerContainer, fadeUpItem } from '../PageTransition';
 
 export default function OwnerKPIRow({ totalRevenue, activeTablesCount, totalTables, totalReservationsCount, menuItemsLength }) {
   const kpis = [
@@ -10,9 +12,19 @@ export default function OwnerKPIRow({ totalRevenue, activeTablesCount, totalTabl
   ];
 
   return (
-    <div className="grid grid-cols-2 lg:grid-cols-4 gap-6">
+    <motion.div
+      variants={staggerContainer}
+      initial="initial"
+      animate="animate"
+      className="grid grid-cols-2 lg:grid-cols-4 gap-6"
+    >
       {kpis.map((kpi, idx) => (
-        <div key={idx} className="p-5 rounded-3xl bg-panel border border-white/5 flex flex-col justify-between h-28 relative overflow-hidden">
+        <motion.div
+          key={idx}
+          variants={fadeUpItem}
+          whileHover={{ y: -4, transition: { duration: 0.2, ease: 'easeOut' } }}
+          className="p-5 rounded-3xl bg-panel border border-white/5 flex flex-col justify-between h-28 relative overflow-hidden cursor-default"
+        >
           <div className="absolute top-0 right-0 w-16 h-16 bg-white/2 rounded-full filter blur-xl"></div>
           <div className="flex justify-between items-start">
             <span className="text-[9px] uppercase font-bold tracking-widest text-gray-500">{kpi.label}</span>
@@ -22,8 +34,8 @@ export default function OwnerKPIRow({ totalRevenue, activeTablesCount, totalTabl
             <p className={`text-2xl font-extrabold tracking-tight ${kpi.color}`}>{kpi.val}</p>
             <p className="text-[9px] text-gray-500 mt-1 font-semibold">{kpi.change}</p>
           </div>
-        </div>
+        </motion.div>
       ))}
-    </div>
+    </motion.div>
   );
 }

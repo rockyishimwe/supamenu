@@ -95,7 +95,7 @@ export default function FloorPlan({ tables = [], selectedTableId, onTableSelect,
                     x={table.x}
                     y={table.y - 0.5}
                     textAnchor="middle"
-                    fill="white"
+                    fill="var(--color-text, white)"
                     fontSize="3.2"
                     fontWeight="bold"
                   >
@@ -105,7 +105,7 @@ export default function FloorPlan({ tables = [], selectedTableId, onTableSelect,
                     x={table.x}
                     y={table.y + 2.5}
                     textAnchor="middle"
-                    fill="#9ca3af"
+                    fill="var(--color-text-muted, #9ca3af)"
                     fontSize="2"
                   >
                     {table.capacity}s

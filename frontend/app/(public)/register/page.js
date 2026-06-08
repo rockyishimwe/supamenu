@@ -23,6 +23,7 @@ import {
 import DineFlowLogo from '../../../components/DineFlowLogo';
 import BackButton from '../../../components/BackButton';
 import confetti from 'canvas-confetti';
+import BackgroundCarousel from '../../../components/BackgroundCarousel';
 
 export default function RegisterPage() {
   const router = useRouter();
@@ -142,8 +143,15 @@ export default function RegisterPage() {
   };
 
   return (
-    <div className="min-h-screen grid lg:grid-cols-12 bg-surface text-[#f3f4f6]">
-      <div className="hidden lg:flex lg:col-span-5 flex-col justify-between p-12 bg-gradient-to-br from-[#0f1115] to-[#07090e] border-r border-white/5 relative">
+    <div className="min-h-screen grid lg:grid-cols-12 bg-surface text-body">
+      <div className="hidden lg:flex lg:col-span-5 flex-col justify-between p-12 relative overflow-hidden">
+        {/* Rotating background photos */}
+        <BackgroundCarousel
+          interval={7000}
+          overlayBg="linear-gradient(135deg, rgba(7,9,14,0.92) 0%, rgba(15,17,21,0.7) 100%)"
+          fadeDuration={1}
+        />
+        {/* Glow accent */}
         <div className="absolute top-1/4 -left-1/4 w-[150%] h-1/2 bg-[#FF6B00]/5 filter blur-3xl rounded-full"></div>
 
         <Link href="/" className="relative z-10 text-white">

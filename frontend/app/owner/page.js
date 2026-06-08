@@ -9,11 +9,11 @@ import {
 } from 'recharts';
 import { 
   TrendingUp, Calendar, Users, ShoppingBag, ArrowUpRight, 
-  Activity, Star, Clock, Sparkles, Plus
+  Activity, Star, Clock, Sparkles, Plus, Check
 } from 'lucide-react';
 import MiniCalendar from '../../components/MiniCalendar';
 import OwnerKPIRow from '../../components/owner/OwnerKPIRow';
-import { staggerContainer, fadeUpItem, slideInLeft, slideInRight } from '../../components/PageTransition';
+import { staggerContainer, fadeUpItem, slideInLeft, slideInRight, slideUpView, scaleInView } from '../../components/PageTransition';
 
 const mockSalesData = [
   { name: 'Mon', sales: 1400, reservations: 12 },
@@ -47,6 +47,7 @@ function SkeletonChart() {
 
 export default function OwnerDashboard() {
   const { restaurants, menuItems, tables, reservations, orders, analytics, addMenuItem, currentUser } = useDineFlow();
+  const [copied, setCopied] = React.useState(false);
 
   const loading = !analytics;
 
@@ -63,6 +64,14 @@ export default function OwnerDashboard() {
   const totalRevenue = orders.reduce((sum, o) => sum + o.total, 0) + 12650;
   const activeTablesCount = tables.filter(t => t.status === 'occupied').length;
   const totalReservationsCount = reservations.length + 15;
+
+  const handleCopyInvite = () => {
+    if (myRestaurant?.inviteCode) {
+      navigator.clipboard?.writeText(myRestaurant.inviteCode);
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2000);
+    }
+  };
 
   if (loading) {
     return (
@@ -82,17 +91,13 @@ export default function OwnerDashboard() {
 
   return (
     <div className="p-8 space-y-8 bg-surface min-h-screen text-gray-300">
-      {/* Background decoration */}
-      <div className="fixed inset-0 bg-dots-pattern opacity-15 pointer-events-none" />
-      <div className="fixed top-0 right-0 w-96 h-96 bg-[#FF6B00]/3 blur-3xl rounded-full pointer-events-none" />
-      <div className="fixed bottom-0 left-0 w-80 h-80 bg-blue-500/3 blur-3xl rounded-full pointer-events-none" />
-
       <div className="relative z-10">
         {/* Upper KPIs Row */}
         <motion.div
-          initial={{ opacity: 0, y: 15 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.35 }}
+          variants={slideUpView}
+          initial="initial"
+          whileInView="whileInView"
+          viewport={{ once: true, margin: '-50px' }}
         >
           <OwnerKPIRow
             totalRevenue={totalRevenue}
@@ -107,7 +112,8 @@ export default function OwnerDashboard() {
         <motion.div
           variants={staggerContainer}
           initial="initial"
-          animate="animate"
+          whileInView="whileInView"
+          viewport={{ once: true, margin: '-80px' }}
           className="grid lg:grid-cols-12 gap-8 mt-8"
         >
           {/* Sales Chart (Left) */}
@@ -175,7 +181,8 @@ export default function OwnerDashboard() {
         <motion.div
           variants={staggerContainer}
           initial="initial"
-          animate="animate"
+          whileInView="whileInView"
+          viewport={{ once: true, margin: '-80px' }}
           className="grid lg:grid-cols-12 gap-6 mt-6"
         >
           <motion.div variants={fadeUpItem} className="lg:col-span-3">
@@ -187,32 +194,45 @@ export default function OwnerDashboard() {
               <p className="text-[10px] text-gray-500">Share this code with staff to join your restaurant.</p>
               <div className="flex items-center justify-center gap-3 p-4 bg-white/5 rounded-2xl border border-dashed border-white/10">
                 <span className="text-2xl font-mono font-extrabold tracking-[0.2em] text-[#FF6B00]">{myRestaurant.inviteCode}</span>
-                <button
-                  onClick={() => navigator.clipboard?.writeText(myRestaurant.inviteCode)}
-                  className="px-3 py-1.5 bg-[#FF6B00]/10 hover:bg-[#FF6B00]/20 border border-[#FF6B00]/20 rounded-xl text-[10px] text-[#FF6B00] font-bold transition-all"
+                <motion.button
+                  onClick={handleCopyInvite}
+                  whileHover={{ scale: 1.05 }}
+                  whileTap={{ scale: 0.95 }}
+                  className={`px-3 py-1.5 rounded-xl text-[10px] font-bold transition-all ${
+                    copied
+                      ? 'bg-emerald-500/20 border border-emerald-500/30 text-emerald-400'
+                      : 'bg-[#FF6B00]/10 hover:bg-[#FF6B00]/20 border border-[#FF6B00]/20 text-[#FF6B00]'
+                  }`}
                 >
-                  Copy
-                </button>
+                  {copied ? (
+                    <span className="flex items-center gap-1"><Check className="w-3 h-3" /> Copied</span>
+                  ) : (
+                    'Copy'
+                  )}
+                </motion.button>
               </div>
             </motion.div>
           )}
           <motion.div variants={fadeUpItem} className="lg:col-span-6 glass-panel rounded-[20px] p-6 border border-white/5 card-shine">
             <div className="flex justify-between items-center mb-4">
               <h3 className="text-sm font-bold uppercase tracking-wider text-white">Menu CRUD</h3>
-              <button
+              <motion.button
                 type="button"
                 onClick={() => addMenuItem({ name: 'New Special', category: 'Appetizers', price: 12.99, stockLevel: 20, tags: ['New'], image: 'https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=400' })}
-                className="flex items-center gap-1 text-xs px-3 py-1.5 rounded-xl bg-primary text-white font-semibold hover-lift transition-all"
+                whileHover={{ scale: 1.04 }}
+                whileTap={{ scale: 0.96 }}
+                className="flex items-center gap-1 text-xs px-3 py-1.5 rounded-xl bg-primary text-white font-semibold transition-colors"
               >
                 <Plus className="w-3.5 h-3.5" /> Add Item
-              </button>
+              </motion.button>
             </div>
             <div className="space-y-2 max-h-48 overflow-y-auto">
-              {menuItems.slice(0, 6).map((item) => (
+              {menuItems.slice(0, 6).map((item, idx) => (
                 <motion.div
                   key={item._id}
-                  initial={{ opacity: 0, x: -10 }}
+                  initial={{ opacity: 0, x: -15 }}
                   animate={{ opacity: 1, x: 0 }}
+                  transition={{ delay: idx * 0.05, duration: 0.3, ease: 'easeOut' }}
                   className="flex justify-between items-center py-2 border-b border-white/5 text-sm"
                 >
                   <span className="text-white">{item.name}</span>

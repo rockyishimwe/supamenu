@@ -1,5 +1,5 @@
 "use client";
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -9,12 +9,17 @@ import {
 import DineFlowLogo from '../../components/DineFlowLogo';
 import { useThemeStore } from '../../lib/useTheme';
 import { staggerContainer, fadeUpItem, slideInLeft, slideInRight } from '../../components/PageTransition';
+import BackgroundCarousel from '../../components/BackgroundCarousel';
 
 export default function LandingPage() {
   const router = useRouter();
   const [activeTab, setActiveTab] = useState('customer');
   const [activeFaq, setActiveFaq] = useState(null);
-  const { theme, toggleTheme } = useThemeStore();
+  const { theme, toggleTheme, isClient, initTheme } = useThemeStore();
+
+  useEffect(() => {
+    initTheme();
+  }, [initTheme]);
 
   const stats = [
     { value: '2,500+', label: 'Restaurants', desc: 'Trust our platform' },
@@ -55,14 +60,16 @@ export default function LandingPage() {
           <a href="#faq" className="hover:text-white transition-colors">FAQ</a>
         </div>
         <div className="flex items-center gap-4">
-          <button
-            type="button"
-            onClick={toggleTheme}
-            className="p-2 rounded-xl hover:bg-white/5 transition-colors"
-            aria-label={`Switch to ${theme === 'dark' ? 'light' : 'dark'} mode`}
-          >
-            {theme === 'dark' ? <Sun className="w-5 h-5 text-gray-400" /> : <Moon className="w-5 h-5 text-gray-600" />}
-          </button>
+          {isClient && (
+            <button
+              type="button"
+              onClick={toggleTheme}
+              className="p-2 rounded-xl hover:bg-white/5 transition-colors"
+              aria-label={`Switch to ${theme === 'dark' ? 'light' : 'dark'} mode`}
+            >
+              {theme === 'dark' ? <Sun className="w-5 h-5 text-gray-400" /> : <Moon className="w-5 h-5 text-gray-600" />}
+            </button>
+          )}
           <Link href="/login" className="text-sm font-semibold text-white px-5 py-2.5 rounded-xl border border-white/10 hover:bg-white/5 transition-all">
             Login
           </Link>
@@ -72,12 +79,18 @@ export default function LandingPage() {
         </div>
       </motion.nav>
 
-      {/* Hero Section with Animated Background */}
+      {/* Hero Section with Background Carousel */}
       <section className="relative overflow-hidden">
-        {/* Animated gradient background */}
-        <div className="absolute inset-0 bg-animated-gradient" />
+        {/* Rotating background photos */}
+        <BackgroundCarousel
+          interval={7000}
+          overlayBg="linear-gradient(135deg, rgba(7,9,14,0.85) 0%, rgba(15,17,21,0.65) 50%, rgba(7,9,14,0.85) 100%)"
+          fadeDuration={1}
+        />
+        {/* Animated gradient on top of photos */}
+        <div className="absolute inset-0 bg-animated-gradient opacity-70 mix-blend-overlay" />
         {/* Decorative grid pattern */}
-        <div className="absolute inset-0 bg-grid-pattern opacity-40" />
+        <div className="absolute inset-0 bg-grid-pattern opacity-30" />
         {/* Floating orbs */}
         <div className="absolute top-20 left-1/4 w-96 h-96 rounded-full bg-[#FF6B00]/8 blur-3xl orb-float-1" />
         <div className="absolute bottom-20 right-1/4 w-80 h-80 rounded-full bg-blue-500/6 blur-3xl orb-float-2" />

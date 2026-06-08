@@ -7,7 +7,7 @@ import Image from 'next/image';
 import WelcomeBanner from '../../components/customer/WelcomeBanner';
 import RestaurantCard from '../../components/customer/RestaurantCard';
 import QuickBookingForm from '../../components/customer/QuickBookingForm';
-import { staggerContainer, fadeUpItem } from '../../components/PageTransition';
+import { staggerContainer, fadeUpItem, hoverGlow, slideUpView, scaleInView } from '../../components/PageTransition';
 
 export default function CustomerDashboard() {
   const { restaurants, menuItems, addToCart, createReservation, currentUser } = useDineFlow();
@@ -33,17 +33,18 @@ export default function CustomerDashboard() {
 
   return (
     <div className="p-8 space-y-8 bg-surface min-h-screen text-gray-300">
-      {/* Background decoration */}
-      <div className="fixed inset-0 bg-dots-pattern opacity-15 pointer-events-none" />
-      <div className="fixed top-0 right-0 w-96 h-96 bg-[#FF6B00]/3 blur-3xl rounded-full pointer-events-none" />
-      <div className="fixed bottom-0 left-0 w-80 h-80 bg-blue-500/3 blur-3xl rounded-full pointer-events-none" />
-
       <div className="relative z-10">
         {/* 1. Welcome Card / Wallet status */}
         <WelcomeBanner currentUser={currentUser} />
 
         {/* 2. Categories Scroll */}
-        <div className="space-y-4 mt-8">
+        <motion.div
+          variants={slideUpView}
+          initial="initial"
+          whileInView="whileInView"
+          viewport={{ once: true, margin: '-50px' }}
+          className="space-y-4 mt-8"
+        >
           <motion.div
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
@@ -65,7 +66,9 @@ export default function CustomerDashboard() {
                 key={cat}
                 variants={fadeUpItem}
                 onClick={() => setSelectedCategory(cat)}
-                className={`px-5 py-2.5 rounded-2xl text-xs font-bold whitespace-nowrap border transition-all duration-200 hover-lift ${
+                whileHover={{ scale: 1.04, boxShadow: selectedCategory === cat ? '0 0 20px rgba(255,107,0,0.3)' : '0 0 12px rgba(255,107,0,0.1)' }}
+                whileTap={{ scale: 0.96 }}
+                className={`px-5 py-2.5 rounded-2xl text-xs font-bold whitespace-nowrap border transition-colors duration-200 ${
                   selectedCategory === cat
                     ? 'bg-[#FF6B00] border-[#FF6B00] text-white shadow-md shadow-[#FF6B00]/15'
                     : 'bg-panel border-white/5 text-gray-400 hover:text-white hover:border-white/10'
@@ -75,7 +78,7 @@ export default function CustomerDashboard() {
               </motion.button>
             ))}
           </motion.div>
-        </div>
+        </motion.div>
 
         {/* 3. Main content splits */}
         <div className="grid lg:grid-cols-12 gap-8 items-start mt-8">
@@ -83,9 +86,10 @@ export default function CustomerDashboard() {
           <div className="lg:col-span-8 space-y-8">
             {/* Popular Restaurants */}
             <motion.div
-              initial={{ opacity: 0, y: 15 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.35, delay: 0.1 }}
+              variants={slideUpView}
+              initial="initial"
+              whileInView="whileInView"
+              viewport={{ once: true, margin: '-80px' }}
               className="space-y-4"
             >
               <h3 className="text-sm font-bold uppercase tracking-wider text-white">Popular Restaurants</h3>
@@ -105,9 +109,10 @@ export default function CustomerDashboard() {
 
             {/* Recommended Dishes */}
             <motion.div
-              initial={{ opacity: 0, y: 15 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.35, delay: 0.15 }}
+              variants={slideUpView}
+              initial="initial"
+              whileInView="whileInView"
+              viewport={{ once: true, margin: '-80px' }}
               className="space-y-4"
             >
               <h3 className="text-sm font-bold uppercase tracking-wider text-white">Recommended Dishes</h3>
@@ -121,7 +126,8 @@ export default function CustomerDashboard() {
                   <motion.div
                     key={item._id}
                     variants={fadeUpItem}
-                    className="p-4 bg-panel border border-white/5 rounded-3xl flex gap-4 hover:border-white/10 transition-all duration-300 card-shine"
+                    whileHover={{ y: -3, transition: { duration: 0.2 } }}
+                    className="p-4 bg-panel border border-white/5 rounded-3xl flex gap-4 hover:border-white/10 transition-colors duration-300 card-shine"
                   >
                     <Image
                       src={item.image}
@@ -143,12 +149,14 @@ export default function CustomerDashboard() {
                         <span className="flex items-center gap-1 text-[10px] font-medium text-gray-400">
                           <Star className="w-3 h-3 fill-[#FF6B00] text-[#FF6B00]" /> {item.rating} ({item.reviewsCount})
                         </span>
-                        <button
+                        <motion.button
                           onClick={() => addToCart(item, 1)}
-                          className="w-8 h-8 rounded-xl bg-[#FF6B00] hover:bg-[#e05e00] text-white flex items-center justify-center shadow-md shadow-[#FF6B00]/10 hover-lift transition-all"
+                          whileHover={{ scale: 1.08 }}
+                          whileTap={{ scale: 0.92 }}
+                          className="w-8 h-8 rounded-xl bg-[#FF6B00] hover:bg-[#e05e00] text-white flex items-center justify-center shadow-md shadow-[#FF6B00]/10 transition-colors"
                         >
                           <Plus className="w-4 h-4" />
-                        </button>
+                        </motion.button>
                       </div>
                     </div>
                   </motion.div>
@@ -159,9 +167,10 @@ export default function CustomerDashboard() {
 
           {/* Right Side: Quick Booking Widget */}
           <motion.div
-            initial={{ opacity: 0, x: 20 }}
-            animate={{ opacity: 1, x: 0 }}
-            transition={{ duration: 0.4, delay: 0.2, ease: 'easeOut' }}
+            variants={scaleInView}
+            initial="initial"
+            whileInView="whileInView"
+            viewport={{ once: true, margin: '-50px' }}
             className="lg:col-span-4"
           >
             <QuickBookingForm restaurants={restaurants} createReservation={createReservation} />

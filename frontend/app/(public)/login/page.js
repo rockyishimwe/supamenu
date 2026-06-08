@@ -6,11 +6,12 @@ import { motion } from 'framer-motion';
 import { useDineFlow } from '../../context';
 import { validateForm } from '../../../lib/validation';
 import { useToast } from '../../../lib/useToast';
-import { 
-  ShieldCheck, RefreshCw, Sparkles, Heart, Mail, Lock, Eye, EyeOff, Check, Chrome, Apple, ChevronRight, HelpCircle
+import {
+  ShieldCheck, RefreshCw, Sparkles, Heart, Mail, Lock, Eye, EyeOff, Check, ChevronRight, HelpCircle
 } from 'lucide-react';
 import DineFlowLogo from '../../../components/DineFlowLogo';
 import { staggerContainer, fadeUpItem, slideInLeft } from '../../../components/PageTransition';
+import BackgroundCarousel from '../../../components/BackgroundCarousel';
 
 export default function LoginPage() {
   const router = useRouter();
@@ -68,16 +69,17 @@ export default function LoginPage() {
   };
 
   return (
-    <div className="min-h-screen grid lg:grid-cols-12 bg-surface text-[#f3f4f6]">
-      {/* Left Pane — Design details with animated background */}
-      <div className="hidden lg:flex lg:col-span-5 flex-col justify-between p-12 bg-gradient-to-br from-[#0f1115] to-[#07090e] border-r border-white/5 relative overflow-hidden">
-        {/* Animated gradient backdrop */}
-        <div className="absolute inset-0 bg-animated-gradient opacity-60" />
-        <div className="absolute inset-0 bg-dots-pattern opacity-30" />
-        
-        {/* Floating orbs */}
-        <div className="absolute top-1/4 -left-1/4 w-[150%] h-1/2 bg-[#FF6B00]/8 blur-3xl rounded-full orb-float-1" />
-        <div className="absolute bottom-1/4 -right-1/4 w-64 h-64 bg-blue-500/6 blur-3xl rounded-full orb-float-2" />
+    <div className="min-h-screen grid lg:grid-cols-12 bg-surface text-body">
+      {/* Left Pane — Background images + overlay */}
+      <div className="hidden lg:flex lg:col-span-5 flex-col justify-between p-12 relative overflow-hidden">
+        {/* Rotating photo background */}
+        <BackgroundCarousel
+          interval={7000}
+          overlayBg="linear-gradient(135deg, rgba(7,9,14,0.92) 0%, rgba(15,17,21,0.7) 100%)"
+          fadeDuration={1}
+        />
+        {/* Glow accent */}
+        <div className="absolute top-1/4 -left-1/4 w-[150%] h-1/2 bg-[#FF6B00]/5 filter blur-3xl rounded-full" />
         
         {/* Header */}
         <motion.div
@@ -300,32 +302,6 @@ export default function LoginPage() {
               </button>
             </motion.div>
           </form>
-
-          {/* Social login */}
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ delay: 0.45, duration: 0.3 }}
-          >
-            <div className="relative my-6 text-center">
-              <span className="absolute inset-x-0 top-1/2 h-px bg-white/5"></span>
-              <span className="relative bg-panel px-3 text-[10px] text-gray-500 uppercase font-semibold">Or continue with</span>
-            </div>
-            <div className="grid grid-cols-2 gap-3">
-              <button 
-                onClick={() => handleSubmit(new Event('submit'))}
-                className="py-2.5 border border-white/5 hover:border-white/10 rounded-xl flex items-center justify-center gap-2 text-xs font-semibold hover:bg-white/5 transition-all hover-lift"
-              >
-                <Chrome className="w-4 h-4 text-red-500" /> Google
-              </button>
-              <button 
-                onClick={() => handleSubmit(new Event('submit'))}
-                className="py-2.5 border border-white/5 hover:border-white/10 rounded-xl flex items-center justify-center gap-2 text-xs font-semibold hover:bg-white/5 transition-all hover-lift"
-              >
-                <Apple className="w-4 h-4 text-white" /> Apple
-              </button>
-            </div>
-          </motion.div>
 
           <motion.div
             initial={{ opacity: 0 }}
