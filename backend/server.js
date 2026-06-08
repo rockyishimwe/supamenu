@@ -1,47 +1,59 @@
 // backend/server.js
 
 const express = require('express');
-const dotenv = require('dotenv');
+const config = require('./config/env'); // Validates required env vars on import
 const connectDB = require('./config/db');
 const errorHandler = require('./middleware/errorHandler');
-const authRoutes = require('./routes/authRoutes');
-const userRoutes = require('./routes/userRoutes');
-const productRoutes = require('./routes/productRoutes');
-const orderRoutes = require('./routes/orderRoutes');
-const seedDb = require('./seed'); // Import the seed function
-
-dotenv.config();
-
-// Connect to MongoDB
-connectDB();
+const csrfProtection = require('./middleware/csrf');
+const swaggerUi = require('swagger-ui-express');
+const swaggerSpec = require('./swagger');
+const authRoutes = require('./routes/auth');
+const orderRoutes = require('./routes/orders');
+const restaurantRoutes = require('./routes/restaurants');
+const tableRoutes = require('./routes/tables');
+const reservationRoutes = require('./routes/reservations');
+const staffRoutes = require('./routes/staff');
+const analyticsRoutes = require('./routes/analytics');
+const healthRoutes = require('./routes/health');
 
 const app = express();
 
 // Middleware
 app.use(express.json());
+app.use(csrfProtection);
 
-// Check for required environment variables and exit if missing
-if (!process.env.JWT_SECRET || !process.env.MONGO_URI) {
-  console.error('FATAL ERROR: JWT_SECRET and MONGO_URI must be defined.');
-  process.exit(1); // Exit with a non-zero code to indicate failure
-}
+// API Documentation
+app.use('/api-docs', (req, res, next) => {
+  // Override the default strict CSP to allow Chrome DevTools connections
+  res.setHeader(
+    'Content-Security-Policy',
+    "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; font-src 'self'; connect-src 'self' http://localhost:5000;"
+  );
+  next();
+}, swaggerUi.serve, swaggerUi.setup(swaggerSpec, {
+  customSiteTitle: 'DineFlow API Docs',
+  swaggerOptions: {
+    requestInterceptor: (req) => {
+      req.credentials = 'omit';
+      return req;
+    },
+  },
+}));
 
 // Routes
 app.use('/api/auth', authRoutes);
-app.use('/api/users', userRoutes);
-app.use('/api/products', productRoutes);
 app.use('/api/orders', orderRoutes);
+app.use('/api/restaurants', restaurantRoutes);
+app.use('/api/tables', tableRoutes);
+app.use('/api/reservations', reservationRoutes);
+app.use('/api/staff', staffRoutes);
+app.use('/api/analytics', analyticsRoutes);
+app.use('/api/health', healthRoutes);
 
-// Seed database if it's empty (optional, consider making it an explicit command)
-// For now, keeping it as an example, but it should be made more robust for production
-// e.g., via a CLI command like `node backend/scripts/seed.js`
-connectDB().then(() => {
-  seedDb().catch(err => console.error('Database seeding failed:', err));
-});
-
-// Error handling middleware
+// Error handling middleware (must be last)
 app.use(errorHandler);
 
-const PORT = process.env.PORT || 5000;
-
-app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
+// Connect to MongoDB and start server
+connectDB().then(() => {
+  app.listen(config.PORT, () => console.log(`Server running on port ${config.PORT}`));
+});

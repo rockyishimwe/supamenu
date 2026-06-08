@@ -41,7 +41,13 @@ router.get('/:id/menu', async (req, res) => {
 });
 
 // Update restaurant by id (Owner only)
-router.patch('/:id', authMiddleware, async (req, res) => {
+router.patch('/:id',
+  authMiddleware,
+  body('name').optional().trim().notEmpty().withMessage('Restaurant name cannot be empty'),
+  body('cuisines').optional().isArray().withMessage('Cuisines must be an array'),
+  body('address').optional().trim().notEmpty().withMessage('Address cannot be empty'),
+  validate,
+  async (req, res) => {
   if (req.user.role !== 'owner') return res.status(403).json({ message: 'Access denied' });
   try {
     const restaurant = await restaurantService.updateRestaurant(req.params.id, req.body, ALLOWED_UPDATE_FIELDS);
@@ -52,7 +58,13 @@ router.patch('/:id', authMiddleware, async (req, res) => {
 });
 
 // Create/Update restaurant profile (Owner only)
-router.post('/', authMiddleware, async (req, res) => {
+router.post('/',
+  authMiddleware,
+  body('name').optional().trim().notEmpty().withMessage('Restaurant name cannot be empty'),
+  body('address').optional().trim().notEmpty().withMessage('Address cannot be empty'),
+  body('cuisines').optional().isArray().withMessage('Cuisines must be an array'),
+  validate,
+  async (req, res) => {
   if (req.user.role !== 'owner') return res.status(403).json({ message: 'Access denied' });
   try {
     let restaurant = await restaurantService.getById(req.params.id).catch(() => null);
@@ -68,7 +80,14 @@ router.post('/', authMiddleware, async (req, res) => {
 });
 
 // Add menu item (Owner only)
-router.post('/:id/menu', authMiddleware, async (req, res) => {
+router.post('/:id/menu',
+  authMiddleware,
+  body('name').trim().notEmpty().withMessage('Menu item name is required'),
+  body('price').isFloat({ min: 0.01 }).withMessage('Price must be a positive number'),
+  body('category').trim().notEmpty().withMessage('Category is required'),
+  body('description').optional().trim(),
+  validate,
+  async (req, res) => {
   if (req.user.role !== 'owner') return res.status(403).json({ message: 'Access denied' });
   try {
     const item = await restaurantService.addMenuItem(req.params.id, req.body);

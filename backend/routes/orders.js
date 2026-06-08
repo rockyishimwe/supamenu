@@ -128,7 +128,14 @@ async function updateOrderStatusHandler(req, res) {
   }
 }
 
-router.put('/:id/status', authMiddleware, updateOrderStatusHandler);
-router.patch('/:id/status', authMiddleware, updateOrderStatusHandler);
+const orderStatusChain = [
+  authMiddleware,
+  body('status').isIn(['new', 'preparing', 'ready', 'served', 'paid', 'cancelled'])
+    .withMessage('Invalid order status'),
+  validate,
+];
+
+router.put('/:id/status', ...orderStatusChain, updateOrderStatusHandler);
+router.patch('/:id/status', ...orderStatusChain, updateOrderStatusHandler);
 
 module.exports = router;

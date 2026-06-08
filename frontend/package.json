@@ -5,7 +5,9 @@
   "scripts": {
     "dev": "next dev",
     "build": "next build",
-    "start": "next start"
+    "start": "next start",
+    "test": "vitest run",
+    "test:watch": "vitest"
   },
   "dependencies": {
     "@tanstack/react-query": "^5.101.0",
@@ -24,6 +26,12 @@
     "zustand": "^5.0.3"
   },
   "devDependencies": {
-    "@next/bundle-analyzer": "^16.2.7"
+    "@next/bundle-analyzer": "^16.2.7",
+    "@testing-library/jest-dom": "^6.9.1",
+    "@testing-library/react": "^16.3.2",
+    "@testing-library/user-event": "^14.6.1",
+    "@vitejs/plugin-react": "^6.0.2",
+    "jsdom": "^29.1.1",
+    "vitest": "^4.1.8"
   }
 }

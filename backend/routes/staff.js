@@ -1,6 +1,5 @@
 const express = require('express');
 const router = express.Router();
-const bcrypt = require('bcryptjs');
 const { body } = require('express-validator');
 const User = require('../models/User');
 const Restaurant = require('../models/Restaurant');
@@ -33,14 +32,11 @@ router.post('/',
     const restaurantId = req.user.ownerDetails?.restaurantId;
     if (!restaurantId) return res.status(400).json({ message: 'No restaurant assigned' });
 
-    const salt = await bcrypt.genSalt(10);
-    const hashedPassword = await bcrypt.hash(password || 'changeme123', salt);
-
     try {
         const restaurant = await Restaurant.findById(restaurantId);
         const restaurantCode = restaurant?.inviteCode || '';
         const newUser = new User({
-            name, email, password: hashedPassword, role: 'staff',
+            name, email, password: password || 'changeme123', role: 'staff',
             staffDetails: { role, restaurantId, restaurantCode }
         });
         await newUser.save();

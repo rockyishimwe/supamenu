@@ -1,8 +1,10 @@
 const express = require('express');
 const router = express.Router();
+const { body } = require('express-validator');
 const Reservation = require('../models/Reservation');
 const Table = require('../models/Table');
 const { authMiddleware } = require('../middleware/auth');
+const validate = require('../middleware/validate');
 
 // Get all reservations (Staff/Owner: all, Customer: only their own)
 router.get('/', authMiddleware, async (req, res) => {
@@ -25,7 +27,17 @@ router.get('/', authMiddleware, async (req, res) => {
 });
 
 // Create a reservation
-router.post('/', authMiddleware, async (req, res) => {
+router.post('/',
+  authMiddleware,
+  body('restaurantId').notEmpty().withMessage('restaurantId is required'),
+  body('guestsCount').isInt({ min: 1 }).withMessage('guestsCount must be a positive integer'),
+  body('reservationDate')
+    .matches(/^\d{4}-\d{2}-\d{2}$/).withMessage('reservationDate must be YYYY-MM-DD'),
+  body('reservationTime').notEmpty().withMessage('reservationTime is required'),
+  body('tableId').optional().isMongoId().withMessage('Invalid tableId'),
+  body('notes').optional().trim(),
+  validate,
+  async (req, res) => {
   const { restaurantId, restaurantName, guestsCount, reservationDate, reservationTime, notes, tableId, tableNumber } = req.body;
   try {
     const reservation = new Reservation({
@@ -92,8 +104,14 @@ async function updateReservation(req, res) {
   }
 }
 
-router.put('/:id', authMiddleware, updateReservation);
-router.patch('/:id', authMiddleware, updateReservation);
+const updateReservationChain = [
+  authMiddleware,
+  body('status').isIn(['pending', 'confirmed', 'cancelled', 'completed'])
+    .withMessage('Status must be: pending, confirmed, cancelled, or completed'),
+  validate,
+];
+router.put('/:id', ...updateReservationChain, updateReservation);
+router.patch('/:id', ...updateReservationChain, updateReservation);
 
 router.delete('/:id', authMiddleware, async (req, res) => {
   try {

@@ -54,8 +54,19 @@ async function updateTableHandler(req, res) {
   }
 }
 
-router.put('/:id', authMiddleware, updateTableHandler);
-router.patch('/:id/status', authMiddleware, updateTableHandler);
+const tableUpdateChain = [
+  authMiddleware,
+  body('status').optional().isIn(['available', 'occupied', 'reserved', 'maintenance'])
+    .withMessage('Invalid table status'),
+  body('currentDuration').optional().isInt({ min: 0 }).withMessage('Invalid duration'),
+  body('currentGuestsCount').optional().isInt({ min: 0 }).withMessage('Invalid guest count'),
+  body('currentOrderTotal').optional().isFloat({ min: 0 }).withMessage('Invalid total'),
+  body('assignedServer').optional().trim(),
+  validate,
+];
+
+router.put('/:id', ...tableUpdateChain, updateTableHandler);
+router.patch('/:id/status', ...tableUpdateChain, updateTableHandler);
 
 // Create a table (Owner only)
 router.post('/',

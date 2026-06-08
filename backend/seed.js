@@ -1,5 +1,4 @@
 const mongoose = require('mongoose');
-const bcrypt = require('bcryptjs');
 const dotenv = require('dotenv');
 const { GARDEN_BISTRO_LAYOUT, SAKURA_SUSHI_LAYOUT } = require('./seed/floor-layouts');
 const logger = require('./utils/logger');
@@ -74,13 +73,12 @@ async function seedDatabase({ force = false } = {}) {
     logger.info('Existing data cleared.');
   }
 
-  const salt = await bcrypt.genSalt(10);
-  const hashedPassword = await bcrypt.hash(DEMO_PASSWORD, salt);
+  logger.info('🌱 Seeding database...');
 
   const customer = await User.create({
     name: 'Sarah Jenkins',
     email: 'customer@demo.com',
-    password: hashedPassword,
+    password: DEMO_PASSWORD,
     role: 'customer',
     avatar: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=150',
     walletBalance: 250.0,
@@ -90,7 +88,7 @@ async function seedDatabase({ force = false } = {}) {
   const gardenOwner = await User.create({
     name: 'John Doe',
     email: 'owner@garden.com',
-    password: hashedPassword,
+    password: DEMO_PASSWORD,
     role: 'owner',
     avatar: 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=150',
   });
@@ -98,7 +96,7 @@ async function seedDatabase({ force = false } = {}) {
   const sakuraOwner = await User.create({
     name: 'Yuki Tanaka',
     email: 'owner@sakura.com',
-    password: hashedPassword,
+    password: DEMO_PASSWORD,
     role: 'owner',
     avatar: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=150',
   });
@@ -138,15 +136,15 @@ async function seedDatabase({ force = false } = {}) {
   });
 
   const gardenStaff = await User.insertMany([
-    { name: 'Alex Morgan', email: 'staff@garden.com', password: hashedPassword, role: 'staff', staffDetails: { role: 'Waiter', restaurantId: garden._id } },
-    { name: 'Emma Wilson', email: 'emma@garden.com', password: hashedPassword, role: 'staff', staffDetails: { role: 'Waiter', restaurantId: garden._id } },
-    { name: 'David Lee', email: 'david@garden.com', password: hashedPassword, role: 'staff', staffDetails: { role: 'Manager', restaurantId: garden._id } },
+    { name: 'Alex Morgan', email: 'staff@garden.com', password: DEMO_PASSWORD, role: 'staff', staffDetails: { role: 'Waiter', restaurantId: garden._id } },
+    { name: 'Emma Wilson', email: 'emma@garden.com', password: DEMO_PASSWORD, role: 'staff', staffDetails: { role: 'Waiter', restaurantId: garden._id } },
+    { name: 'David Lee', email: 'david@garden.com', password: DEMO_PASSWORD, role: 'staff', staffDetails: { role: 'Manager', restaurantId: garden._id } },
   ]);
 
   await User.insertMany([
-    { name: 'Ken Sato', email: 'staff@sakura.com', password: hashedPassword, role: 'staff', staffDetails: { role: 'Kitchen Staff', restaurantId: sakura._id } },
-    { name: 'Mia Chen', email: 'mia@sakura.com', password: hashedPassword, role: 'staff', staffDetails: { role: 'Waiter', restaurantId: sakura._id } },
-    { name: 'Leo Park', email: 'leo@sakura.com', password: hashedPassword, role: 'staff', staffDetails: { role: 'Cashier', restaurantId: sakura._id } },
+    { name: 'Ken Sato', email: 'staff@sakura.com', password: DEMO_PASSWORD, role: 'staff', staffDetails: { role: 'Kitchen Staff', restaurantId: sakura._id } },
+    { name: 'Mia Chen', email: 'mia@sakura.com', password: DEMO_PASSWORD, role: 'staff', staffDetails: { role: 'Waiter', restaurantId: sakura._id } },
+    { name: 'Leo Park', email: 'leo@sakura.com', password: DEMO_PASSWORD, role: 'staff', staffDetails: { role: 'Cashier', restaurantId: sakura._id } },
   ]);
 
   const gardenTables = await Table.insertMany(

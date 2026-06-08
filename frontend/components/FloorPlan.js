@@ -44,7 +44,7 @@ function SimpleTableList({ tables, selectedTableId, onTableSelect }) {
 export default function FloorPlan({ tables = [], selectedTableId, onTableSelect, restaurantId }) {
   const filtered = restaurantId
     ? tables.filter((t) => t.restaurantId === restaurantId || !t.restaurantId?.startsWith?.('res-'))
-    : tables.filter((t) => !t.restaurantId || t.restaurantId === 'res-garden' || String(t.restaurantId).includes('garden'));
+    : tables.filter((t) => !t.restaurantId || (t.restaurantId && !t.restaurantId.startsWith?.('res-')));
 
   const displayTables = filtered.length ? filtered : tables.slice(0, 15);
 

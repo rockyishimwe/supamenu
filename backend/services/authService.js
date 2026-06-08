@@ -2,7 +2,9 @@ const bcrypt = require('bcryptjs'); // For secure password hashing
 const jwt = require('jsonwebtoken');
 const User = require('../models/User');
 const Restaurant = require('../models/Restaurant');
-const { JWT_SECRET } = require('../middleware/auth');
+const config = require('../config/env');
+
+const JWT_SECRET = config.JWT_SECRET;
 
 const TOKEN_EXPIRY = '7d';
 
@@ -28,10 +30,7 @@ async function registerUser({ name, email, password, role, restaurantCode, resta
   const existing = await User.findOne({ email });
   if (existing) throw Object.assign(new Error('User already exists'), { status: 400 });
 
-  const salt = await bcrypt.genSalt(10);
-  const hashedPassword = await bcrypt.hash(password, salt);
-
-  const userData = { name, email, password: hashedPassword, role };
+  const userData = { name, email, password, role };
 
   if (role === 'staff') {
     const restaurant = await Restaurant.findOne({ inviteCode: restaurantCode });

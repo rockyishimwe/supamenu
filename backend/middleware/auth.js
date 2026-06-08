@@ -1,10 +1,24 @@
 const jwt = require('jsonwebtoken');
 const User = require('../models/User');
+const config = require('../config/env');
 
-if (!process.env.JWT_SECRET) {
-  throw new Error('JWT_SECRET environment variable is required. Set it in .env before starting the server.');
+const JWT_SECRET = config.JWT_SECRET;
+
+// Simple in-memory cache to reduce DB lookups on every request
+const userCache = new Map();
+const CACHE_TTL_MS = 60_000; // 1 minute
+
+async function getCachedUser(userId) {
+  const cached = userCache.get(userId);
+  if (cached && Date.now() - cached.timestamp < CACHE_TTL_MS) {
+    return cached.data;
+  }
+  const user = await User.findById(userId).select('-password');
+  if (user) {
+    userCache.set(userId, { data: user, timestamp: Date.now() });
+  }
+  return user;
 }
-const JWT_SECRET = process.env.JWT_SECRET;
 
 async function authMiddleware(req, res, next) {
   try {
@@ -12,7 +26,7 @@ async function authMiddleware(req, res, next) {
     if (!token) return res.status(401).json({ message: 'No token, authorization denied' });
 
     const decoded = jwt.verify(token, JWT_SECRET);
-    const user = await User.findById(decoded.id).select('-password');
+    const user = await getCachedUser(decoded.id);
     if (!user) return res.status(401).json({ message: 'Token is not valid' });
 
     req.user = user;
