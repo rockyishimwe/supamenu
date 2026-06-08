@@ -2,11 +2,13 @@
 import React, { useState } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
+import { motion, AnimatePresence } from 'framer-motion';
 import { 
   ArrowRight, ShieldCheck, Flame, Zap, Award, Sparkles, CheckCircle2, ChevronDown, MonitorCheck, ChefHat, Sun, Moon
 } from 'lucide-react';
 import DineFlowLogo from '../../components/DineFlowLogo';
 import { useThemeStore } from '../../lib/useTheme';
+import { staggerContainer, fadeUpItem, slideInLeft, slideInRight } from '../../components/PageTransition';
 
 export default function LandingPage() {
   const router = useRouter();
@@ -39,7 +41,12 @@ export default function LandingPage() {
   return (
     <div className="min-h-screen bg-surface text-body">
       {/* Navbar */}
-      <nav className="h-20 max-w-7xl mx-auto flex items-center justify-between px-8 border-b border-white/5">
+      <motion.nav
+        initial={{ opacity: 0, y: -20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.4, ease: 'easeOut' }}
+        className="h-20 max-w-7xl mx-auto flex items-center justify-between px-8 border-b border-white/5"
+      >
         <Link href="/" className="text-white">
           <DineFlowLogo size="md" />
         </Link>
@@ -63,95 +70,148 @@ export default function LandingPage() {
             Get Started
           </Link>
         </div>
-      </nav>
+      </motion.nav>
 
-      {/* Hero Section */}
-      <section className="max-w-7xl mx-auto px-8 py-20 lg:py-28 grid lg:grid-cols-12 gap-12 items-center">
-        <div className="lg:col-span-6 space-y-8">
-          <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-[#FF6B00]/10 border border-[#FF6B00]/20 text-xs font-semibold text-[#FF6B00] tracking-wide">
-            <Sparkles className="w-3.5 h-3.5" /> All-in-One Restaurant Platform
-          </div>
-          <h1 className="text-4xl sm:text-5xl lg:text-6xl font-extrabold text-white leading-[1.1] tracking-tight">
-            One Platform. <br />
-            Three Experiences. <br />
-            <span className="bg-gradient-to-r from-[#FF6B00] to-amber-500 bg-clip-text text-transparent">Endless Possibilities.</span>
-          </h1>
-          <p className="text-gray-400 text-base sm:text-lg leading-relaxed max-w-xl">
-            Discover restaurants, reserve tables, order food, and run your entire restaurant business—all connected in real time. Designed for modern gastronomy.
-          </p>
-          <div className="flex flex-col sm:flex-row gap-4">
-            <Link href="/login" className="bg-[#FF6B00] hover:bg-[#e05e00] text-white font-semibold py-4 px-8 rounded-2xl flex items-center justify-center gap-2 shadow-lg shadow-[#FF6B00]/20 hover-lift transition-all">
-              Find Restaurants <ArrowRight className="w-5 h-5" />
-            </Link>
-            <Link href="/register" className="bg-white/5 hover:bg-white/10 border border-white/10 text-white font-semibold py-4 px-8 rounded-2xl flex items-center justify-center gap-2 hover-lift transition-all">
-              Register Restaurant
-            </Link>
-          </div>
-        </div>
+      {/* Hero Section with Animated Background */}
+      <section className="relative overflow-hidden">
+        {/* Animated gradient background */}
+        <div className="absolute inset-0 bg-animated-gradient" />
+        {/* Decorative grid pattern */}
+        <div className="absolute inset-0 bg-grid-pattern opacity-40" />
+        {/* Floating orbs */}
+        <div className="absolute top-20 left-1/4 w-96 h-96 rounded-full bg-[#FF6B00]/8 blur-3xl orb-float-1" />
+        <div className="absolute bottom-20 right-1/4 w-80 h-80 rounded-full bg-blue-500/6 blur-3xl orb-float-2" />
 
-        {/* Hero Devices Illustration */}
-        <div className="lg:col-span-6 flex justify-center relative">
-          <div className="absolute inset-0 bg-[#FF6B00]/5 filter blur-3xl rounded-full"></div>
-          <div className="relative w-full max-w-lg aspect-square rounded-3xl bg-panel border border-white/5 p-6 flex flex-col justify-between overflow-hidden shadow-2xl">
-            <div className="flex items-center justify-between border-b border-white/5 pb-4">
-              <span className="text-xs text-gray-500 font-mono">LIVE_SYSTEM_ECOSYSTEM</span>
-              <span className="w-2.5 h-2.5 rounded-full bg-[#22C55E] animate-pulse"></span>
+        <div className="relative max-w-7xl mx-auto px-8 py-20 lg:py-28 grid lg:grid-cols-12 gap-12 items-center">
+          <motion.div
+            variants={slideInLeft}
+            initial="initial"
+            animate="animate"
+            className="lg:col-span-6 space-y-8"
+          >
+            <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-[#FF6B00]/10 border border-[#FF6B00]/20 text-xs font-semibold text-[#FF6B00] tracking-wide">
+              <Sparkles className="w-3.5 h-3.5" /> All-in-One Restaurant Platform
             </div>
-            
-            {/* Visual simulation of the three interconnected interfaces */}
-            <div className="grid grid-cols-3 gap-4 my-8">
-              {/* Customer node */}
-              <div className="p-4 bg-white/5 border border-[#22C55E]/20 rounded-2xl text-center space-y-2">
-                <div className="w-8 h-8 rounded-full bg-[#22C55E]/10 flex items-center justify-center mx-auto text-[#22C55E]">
-                  <CheckCircle2 className="w-4.5 h-4.5" />
-                </div>
-                <p className="text-[10px] font-bold text-white uppercase tracking-wider">Customer App</p>
-                <p className="text-[9px] text-gray-500">Ordering & Reservations</p>
+            <h1 className="text-4xl sm:text-5xl lg:text-6xl font-extrabold text-white leading-[1.1] tracking-tight">
+              One Platform. <br />
+              Three Experiences. <br />
+              <span className="bg-gradient-to-r from-[#FF6B00] to-amber-500 bg-clip-text text-transparent">Endless Possibilities.</span>
+            </h1>
+            <p className="text-gray-400 text-base sm:text-lg leading-relaxed max-w-xl">
+              Discover restaurants, reserve tables, order food, and run your entire restaurant business—all connected in real time. Designed for modern gastronomy.
+            </p>
+            <div className="flex flex-col sm:flex-row gap-4">
+              <Link href="/login" className="bg-[#FF6B00] hover:bg-[#e05e00] text-white font-semibold py-4 px-8 rounded-2xl flex items-center justify-center gap-2 shadow-lg shadow-[#FF6B00]/20 hover-lift transition-all">
+                Find Restaurants <ArrowRight className="w-5 h-5" />
+              </Link>
+              <Link href="/register" className="bg-white/5 hover:bg-white/10 border border-white/10 text-white font-semibold py-4 px-8 rounded-2xl flex items-center justify-center gap-2 hover-lift transition-all">
+                Register Restaurant
+              </Link>
+            </div>
+          </motion.div>
+
+          {/* Hero Devices Illustration */}
+          <motion.div
+            variants={slideInRight}
+            initial="initial"
+            animate="animate"
+            className="lg:col-span-6 flex justify-center relative"
+          >
+            <div className="absolute inset-0 bg-[#FF6B00]/5 filter blur-3xl rounded-full"></div>
+            <div className="relative w-full max-w-lg aspect-square rounded-3xl bg-panel border border-white/5 p-6 flex flex-col justify-between overflow-hidden shadow-2xl">
+              <div className="flex items-center justify-between border-b border-white/5 pb-4">
+                <span className="text-xs text-gray-500 font-mono">LIVE_SYSTEM_ECOSYSTEM</span>
+                <span className="w-2.5 h-2.5 rounded-full bg-[#22C55E] animate-pulse"></span>
+              </div>
+              
+              {/* Visual simulation of the three interconnected interfaces */}
+              <div className="grid grid-cols-3 gap-4 my-8">
+                {/* Customer node */}
+                <motion.div
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: 0.2, duration: 0.4 }}
+                  className="p-4 bg-white/5 border border-[#22C55E]/20 rounded-2xl text-center space-y-2"
+                >
+                  <div className="w-8 h-8 rounded-full bg-[#22C55E]/10 flex items-center justify-center mx-auto text-[#22C55E]">
+                    <CheckCircle2 className="w-4.5 h-4.5" />
+                  </div>
+                  <p className="text-[10px] font-bold text-white uppercase tracking-wider">Customer App</p>
+                  <p className="text-[9px] text-gray-500">Ordering & Reservations</p>
+                </motion.div>
+
+                {/* Owner node */}
+                <motion.div
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: 0.35, duration: 0.4 }}
+                  className="p-4 bg-white/5 border border-[#FF6B00]/20 rounded-2xl text-center space-y-2"
+                >
+                  <div className="w-8 h-8 rounded-full bg-[#FF6B00]/10 flex items-center justify-center mx-auto text-[#FF6B00]">
+                    <MonitorCheck className="w-4.5 h-4.5" />
+                  </div>
+                  <p className="text-[10px] font-bold text-white uppercase tracking-wider">Owner Portal</p>
+                  <p className="text-[9px] text-gray-500">Sales & Floor Editor</p>
+                </motion.div>
+
+                {/* Staff node */}
+                <motion.div
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: 0.5, duration: 0.4 }}
+                  className="p-4 bg-white/5 border border-blue-500/20 rounded-2xl text-center space-y-2"
+                >
+                  <div className="w-8 h-8 rounded-full bg-blue-500/10 flex items-center justify-center mx-auto text-blue-500">
+                    <ChefHat className="w-4.5 h-4.5" />
+                  </div>
+                  <p className="text-[10px] font-bold text-white uppercase tracking-wider">Staff App</p>
+                  <p className="text-[9px] text-gray-500">Live Orders & Tables</p>
+                </motion.div>
               </div>
 
-              {/* Owner node */}
-              <div className="p-4 bg-white/5 border border-[#FF6B00]/20 rounded-2xl text-center space-y-2">
-                <div className="w-8 h-8 rounded-full bg-[#FF6B00]/10 flex items-center justify-center mx-auto text-[#FF6B00]">
-                  <MonitorCheck className="w-4.5 h-4.5" />
-                </div>
-                <p className="text-[10px] font-bold text-white uppercase tracking-wider">Owner Portal</p>
-                <p className="text-[9px] text-gray-500">Sales & Floor Editor</p>
-              </div>
-
-              {/* Staff node */}
-              <div className="p-4 bg-white/5 border border-blue-500/20 rounded-2xl text-center space-y-2">
-                <div className="w-8 h-8 rounded-full bg-blue-500/10 flex items-center justify-center mx-auto text-blue-500">
-                  <ChefHat className="w-4.5 h-4.5" />
-                </div>
-                <p className="text-[10px] font-bold text-white uppercase tracking-wider">Staff App</p>
-                <p className="text-[9px] text-gray-500">Live Orders & Tables</p>
+              <div className="border-t border-white/5 pt-4 text-center">
+                <p className="text-[10px] text-gray-400 uppercase tracking-widest font-semibold bg-white/5 py-2 rounded-xl">
+                  🔗 All connected in real-time
+                </p>
               </div>
             </div>
-
-            <div className="border-t border-white/5 pt-4 text-center">
-              <p className="text-[10px] text-gray-400 uppercase tracking-widest font-semibold bg-white/5 py-2 rounded-xl">
-                🔗 All connected in real-time
-              </p>
-            </div>
-          </div>
+          </motion.div>
         </div>
       </section>
 
-      {/* Stats Bar */}
-      <section className="bg-panel border-y border-white/5 py-12">
-        <div className="max-w-7xl mx-auto px-8 grid grid-cols-2 md:grid-cols-4 gap-8">
+      {/* Stats Bar — scroll reveal */}
+      <motion.section
+        initial={{ opacity: 0, y: 30 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true, margin: '-80px' }}
+        transition={{ duration: 0.5 }}
+        className="bg-panel border-y border-white/5 py-12"
+      >
+        <motion.div
+          variants={staggerContainer}
+          initial="initial"
+          whileInView="animate"
+          viewport={{ once: true }}
+          className="max-w-7xl mx-auto px-8 grid grid-cols-2 md:grid-cols-4 gap-8"
+        >
           {stats.map((stat, i) => (
-            <div key={i} className="text-center space-y-1">
+            <motion.div key={i} variants={fadeUpItem} className="text-center space-y-1">
               <p className="text-3xl font-extrabold text-white">{stat.value}</p>
               <p className="text-sm font-semibold text-gray-300">{stat.label}</p>
               <p className="text-xs text-gray-500">{stat.desc}</p>
-            </div>
+            </motion.div>
           ))}
-        </div>
-      </section>
+        </motion.div>
+      </motion.section>
 
-      {/* Experience Tabs ("Choose Your Experience") */}
-      <section className="max-w-7xl mx-auto px-8 py-24 space-y-12">
+      {/* Experience Tabs */}
+      <motion.section
+        initial={{ opacity: 0, y: 30 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true, margin: '-80px' }}
+        transition={{ duration: 0.5 }}
+        className="max-w-7xl mx-auto px-8 py-24 space-y-12"
+      >
         <div className="text-center space-y-4">
           <h2 className="text-3xl font-bold text-white">Choose Your Experience</h2>
           <p className="text-gray-400 text-sm max-w-md mx-auto">One integrated system catering to every role inside the culinary environment.</p>
@@ -159,40 +219,29 @@ export default function LandingPage() {
 
         {/* Tab triggers */}
         <div className="flex justify-center gap-4 max-w-lg mx-auto">
-          <button 
-            onClick={() => setActiveTab('customer')}
-            className={`flex-1 py-3 px-6 rounded-2xl text-xs font-bold uppercase tracking-wider transition-all duration-200 border ${
-              activeTab === 'customer' 
-                ? 'bg-[#FF6B00] border-[#FF6B00] text-white shadow-lg shadow-[#FF6B00]/15' 
-                : 'bg-white/5 border-white/5 text-gray-400 hover:text-white'
-            }`}
-          >
-            I'm a Customer
-          </button>
-          <button 
-            onClick={() => setActiveTab('owner')}
-            className={`flex-1 py-3 px-6 rounded-2xl text-xs font-bold uppercase tracking-wider transition-all duration-200 border ${
-              activeTab === 'owner' 
-                ? 'bg-[#FF6B00] border-[#FF6B00] text-white shadow-lg shadow-[#FF6B00]/15' 
-                : 'bg-white/5 border-white/5 text-gray-400 hover:text-white'
-            }`}
-          >
-            I'm an Owner
-          </button>
-          <button 
-            onClick={() => setActiveTab('staff')}
-            className={`flex-1 py-3 px-6 rounded-2xl text-xs font-bold uppercase tracking-wider transition-all duration-200 border ${
-              activeTab === 'staff' 
-                ? 'bg-[#FF6B00] border-[#FF6B00] text-white shadow-lg shadow-[#FF6B00]/15' 
-                : 'bg-white/5 border-white/5 text-gray-400 hover:text-white'
-            }`}
-          >
-            I'm Staff
-          </button>
+          {['customer', 'owner', 'staff'].map((role) => (
+            <button
+              key={role}
+              onClick={() => setActiveTab(role)}
+              className={`flex-1 py-3 px-6 rounded-2xl text-xs font-bold uppercase tracking-wider transition-all duration-200 border ${
+                activeTab === role
+                  ? 'bg-[#FF6B00] border-[#FF6B00] text-white shadow-lg shadow-[#FF6B00]/15'
+                  : 'bg-white/5 border-white/5 text-gray-400 hover:text-white'
+              }`}
+            >
+              I'm a {role.charAt(0).toUpperCase() + role.slice(1)}
+            </button>
+          ))}
         </div>
 
         {/* Tab Content Cards */}
-        <div className="max-w-3xl mx-auto p-8 rounded-3xl bg-panel border border-white/5 grid md:grid-cols-2 gap-8 items-center">
+        <motion.div
+          key={activeTab}
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.3 }}
+          className="max-w-3xl mx-auto p-8 rounded-3xl bg-panel border border-white/5 grid md:grid-cols-2 gap-8 items-center"
+        >
           <div className="space-y-6">
             <h3 className="text-2xl font-bold text-white capitalize">
               {activeTab === 'customer' && 'Discover & Book Instantly'}
@@ -223,7 +272,7 @@ export default function LandingPage() {
                 </li>
               ))}
             </ul>
-            <Link 
+            <Link
               href="/login"
               className="inline-flex items-center gap-2 text-xs font-bold text-white bg-[#FF6B00] hover:bg-[#e05e00] px-6 py-3 rounded-xl transition-all shadow-md shadow-[#FF6B00]/10"
             >
@@ -231,7 +280,7 @@ export default function LandingPage() {
             </Link>
           </div>
 
-          {/* Visual card sidebar mockup representation */}
+          {/* Visual card sidebar */}
           <div className="bg-surface border border-white/5 rounded-2xl p-6 space-y-4">
             <div className="flex items-center justify-between border-b border-white/5 pb-3">
               <span className="text-[10px] text-gray-500 font-bold uppercase tracking-wider">Preview Dashboard</span>
@@ -240,14 +289,14 @@ export default function LandingPage() {
             
             {activeTab === 'customer' && (
               <div className="space-y-3">
-                <div className="h-10 bg-white/5 rounded-xl flex items-center justify-between px-3 text-[11px]">
+                <motion.div initial={{ opacity: 0, x: -10 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: 0.1 }} className="h-10 bg-white/5 rounded-xl flex items-center justify-between px-3 text-[11px]">
                   <span>The Garden Bistro</span>
                   <span className="text-green-500">Confirmed • Table 2</span>
-                </div>
-                <div className="h-10 bg-white/5 rounded-xl flex items-center justify-between px-3 text-[11px]">
+                </motion.div>
+                <motion.div initial={{ opacity: 0, x: -10 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: 0.2 }} className="h-10 bg-white/5 rounded-xl flex items-center justify-between px-3 text-[11px]">
                   <span>Sakura Sushi</span>
                   <span className="text-gray-500">12:00 PM • Fri</span>
-                </div>
+                </motion.div>
               </div>
             )}
 
@@ -258,7 +307,12 @@ export default function LandingPage() {
                   <span className="font-bold text-white">$12,650</span>
                 </div>
                 <div className="h-2 w-full bg-white/5 rounded-full overflow-hidden">
-                  <div className="h-full bg-[#FF6B00] rounded-full" style={{ width: '75%' }}></div>
+                  <motion.div
+                    initial={{ width: 0 }}
+                    animate={{ width: '75%' }}
+                    transition={{ duration: 1, delay: 0.3, ease: 'easeOut' }}
+                    className="h-full bg-[#FF6B00] rounded-full"
+                  />
                 </div>
                 <div className="flex justify-between items-center text-[10px] text-gray-500">
                   <span>+18% from last week</span>
@@ -269,42 +323,66 @@ export default function LandingPage() {
 
             {activeTab === 'staff' && (
               <div className="space-y-3">
-                <div className="h-9 bg-red-500/10 border border-red-500/20 rounded-xl flex items-center justify-between px-3 text-[10px] text-red-400">
+                <motion.div initial={{ opacity: 0, x: -10 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: 0.1 }} className="h-9 bg-red-500/10 border border-red-500/20 rounded-xl flex items-center justify-between px-3 text-[10px] text-red-400">
                   <span>Table 2 - Needs Service</span>
                   <span>35m duration</span>
-                </div>
-                <div className="h-9 bg-yellow-500/10 border border-yellow-500/20 rounded-xl flex items-center justify-between px-3 text-[10px] text-yellow-400">
+                </motion.div>
+                <motion.div initial={{ opacity: 0, x: -10 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: 0.2 }} className="h-9 bg-yellow-500/10 border border-yellow-500/20 rounded-xl flex items-center justify-between px-3 text-[10px] text-yellow-400">
                   <span>Table 3 - Waiting for Food</span>
                   <span>22m duration</span>
-                </div>
+                </motion.div>
               </div>
             )}
           </div>
-        </div>
-      </section>
+        </motion.div>
+      </motion.section>
 
       {/* Feature Grid */}
-      <section id="features" className="max-w-7xl mx-auto px-8 py-24 space-y-16">
+      <motion.section
+        id="features"
+        initial={{ opacity: 0, y: 30 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true, margin: '-80px' }}
+        transition={{ duration: 0.5 }}
+        className="max-w-7xl mx-auto px-8 py-24 space-y-16"
+      >
         <div className="text-center space-y-4">
           <h2 className="text-3xl font-bold text-white">Everything You Need, All in One Place</h2>
           <p className="text-gray-400 text-sm max-w-md mx-auto">Powerful components built together for a modern, fluid dining ecosystem.</p>
         </div>
 
-        <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
+        <motion.div
+          variants={staggerContainer}
+          initial="initial"
+          whileInView="animate"
+          viewport={{ once: true, margin: '-40px' }}
+          className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6"
+        >
           {features.map((feature, i) => (
-            <div key={i} className="p-6 rounded-3xl bg-panel border border-white/5 hover:border-white/10 hover-lift transition-all space-y-4">
+            <motion.div
+              key={i}
+              variants={fadeUpItem}
+              className="p-6 rounded-3xl bg-panel border border-white/5 hover:border-white/10 hover-lift transition-all space-y-4 card-shine"
+            >
               <div className={`w-10 h-10 rounded-2xl bg-gradient-to-br ${feature.color} flex items-center justify-center font-bold text-white text-sm`}>
                 0{i + 1}
               </div>
               <h3 className="font-semibold text-white text-sm">{feature.title}</h3>
               <p className="text-xs text-gray-400 leading-relaxed">{feature.desc}</p>
-            </div>
+            </motion.div>
           ))}
-        </div>
-      </section>
+        </motion.div>
+      </motion.section>
 
       {/* FAQs */}
-      <section id="faq" className="max-w-4xl mx-auto px-8 py-24 space-y-12">
+      <motion.section
+        id="faq"
+        initial={{ opacity: 0, y: 30 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true, margin: '-80px' }}
+        transition={{ duration: 0.5 }}
+        className="max-w-4xl mx-auto px-8 py-24 space-y-12"
+      >
         <div className="text-center space-y-4">
           <h2 className="text-3xl font-bold text-white text-center">Frequently Asked Questions</h2>
           <p className="text-gray-400 text-sm max-w-md mx-auto">Got questions? We have answers to help you get started with DineFlow.</p>
@@ -312,24 +390,44 @@ export default function LandingPage() {
 
         <div className="space-y-4">
           {faqs.map((faq, idx) => (
-            <div 
-              key={idx} 
+            <motion.div
+              key={idx}
+              variants={fadeUpItem}
+              initial="initial"
+              whileInView="animate"
+              viewport={{ once: true }}
               className="bg-panel border border-white/5 rounded-2xl overflow-hidden cursor-pointer"
               onClick={() => setActiveFaq(activeFaq === idx ? null : idx)}
             >
               <div className="p-5 flex items-center justify-between text-xs font-semibold text-white">
                 <span>{faq.q}</span>
-                <ChevronDown className={`w-4 h-4 text-gray-400 transition-transform duration-200 ${activeFaq === idx ? 'rotate-180' : ''}`} />
+                <motion.span
+                  animate={{ rotate: activeFaq === idx ? 180 : 0 }}
+                  transition={{ duration: 0.2 }}
+                  className="inline-flex"
+                >
+                  <ChevronDown className="w-4 h-4 text-gray-400" />
+                </motion.span>
               </div>
-              {activeFaq === idx && (
-                <div className="p-5 pt-0 text-[11px] text-gray-400 leading-relaxed border-t border-white/5">
-                  {faq.a}
-                </div>
-              )}
-            </div>
+              <AnimatePresence>
+                {activeFaq === idx && (
+                  <motion.div
+                    initial={{ height: 0, opacity: 0 }}
+                    animate={{ height: 'auto', opacity: 1 }}
+                    exit={{ height: 0, opacity: 0 }}
+                    transition={{ duration: 0.25, ease: 'easeInOut' }}
+                    className="overflow-hidden"
+                  >
+                    <div className="p-5 pt-0 text-[11px] text-gray-400 leading-relaxed border-t border-white/5">
+                      {faq.a}
+                    </div>
+                  </motion.div>
+                )}
+              </AnimatePresence>
+            </motion.div>
           ))}
         </div>
-      </section>
+      </motion.section>
 
       {/* Footer */}
       <footer className="bg-panel border-t border-white/5 py-12 mt-12">

@@ -1,5 +1,6 @@
 "use client";
 import React from 'react';
+import { motion } from 'framer-motion';
 import { useDineFlow } from '../context';
 import { SkeletonRow } from '../../components/SkeletonRow';
 import { 
@@ -12,6 +13,7 @@ import {
 } from 'lucide-react';
 import MiniCalendar from '../../components/MiniCalendar';
 import OwnerKPIRow from '../../components/owner/OwnerKPIRow';
+import { staggerContainer, fadeUpItem, slideInLeft, slideInRight } from '../../components/PageTransition';
 
 const mockSalesData = [
   { name: 'Mon', sales: 1400, reservations: 12 },
@@ -64,134 +66,163 @@ export default function OwnerDashboard() {
 
   if (loading) {
     return (
-      <div className="p-8 space-y-8 bg-surface min-h-screen">
+      <motion.div
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        className="p-8 space-y-8 bg-surface min-h-screen"
+      >
         <SkeletonRow rows={4} />
         <div className="grid lg:grid-cols-12 gap-8">
           <div className="lg:col-span-8"><SkeletonChart /></div>
           <div className="lg:col-span-4"><SkeletonChart /></div>
         </div>
-      </div>
+      </motion.div>
     );
   }
 
   return (
     <div className="p-8 space-y-8 bg-surface min-h-screen text-gray-300">
-      
-      {/* Upper KPIs Row */}
-      <OwnerKPIRow
-        totalRevenue={totalRevenue}
-        activeTablesCount={activeTablesCount}
-        totalTables={tables.length}
-        totalReservationsCount={totalReservationsCount}
-        menuItemsLength={menuItems.length}
-      />
+      {/* Background decoration */}
+      <div className="fixed inset-0 bg-dots-pattern opacity-15 pointer-events-none" />
+      <div className="fixed top-0 right-0 w-96 h-96 bg-[#FF6B00]/3 blur-3xl rounded-full pointer-events-none" />
+      <div className="fixed bottom-0 left-0 w-80 h-80 bg-blue-500/3 blur-3xl rounded-full pointer-events-none" />
 
-      {/* Main charts split */}
-      <div className="grid lg:grid-cols-12 gap-8">
-        
-        {/* Sales Chart (Left) */}
-        <div className="lg:col-span-8 bg-panel border border-white/5 p-6 rounded-3xl space-y-4">
-          <div className="flex justify-between items-center pb-2">
-            <div className="space-y-0.5">
-              <h3 className="text-sm font-bold uppercase tracking-wider text-white">Daily Sales & Bookings Trend</h3>
-              <p className="text-[10px] text-gray-500">Sales volume and customer table layout bookings.</p>
-            </div>
-            <span className="text-[10px] px-2 py-0.5 rounded bg-[#FF6B00]/10 text-[#FF6B00] font-bold">Weekly Performance</span>
-          </div>
+      <div className="relative z-10">
+        {/* Upper KPIs Row */}
+        <motion.div
+          initial={{ opacity: 0, y: 15 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.35 }}
+        >
+          <OwnerKPIRow
+            totalRevenue={totalRevenue}
+            activeTablesCount={activeTablesCount}
+            totalTables={tables.length}
+            totalReservationsCount={totalReservationsCount}
+            menuItemsLength={menuItems.length}
+          />
+        </motion.div>
 
-          <div className="h-[260px] w-full">
-            <ResponsiveContainer width="100%" height="100%">
-              <AreaChart data={salesData}>
-                <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.03)" />
-                <XAxis dataKey="name" stroke="#52525b" fontSize={10} tickLine={false} />
-                <YAxis stroke="#52525b" fontSize={10} tickLine={false} />
-                <Tooltip 
-                  contentStyle={{ backgroundColor: '#0f1115', border: '1px solid rgba(255,255,255,0.05)', borderRadius: '12px' }}
-                  labelStyle={{ color: '#fff', fontSize: '10px', fontWeight: 'bold' }}
-                />
-                <Area type="monotone" dataKey="sales" name="Sales ($)" stroke="#FF6B00" fill="url(#salesGrad)" strokeWidth={2} />
-                <defs>
-                  <linearGradient id="salesGrad" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="0%" stopColor="#FF6B00" stopOpacity={0.4} />
-                    <stop offset="100%" stopColor="#FF6B00" stopOpacity={0} />
-                  </linearGradient>
-                </defs>
-              </AreaChart>
-            </ResponsiveContainer>
-          </div>
-        </div>
-
-        {/* Peak Seating Hours (Right) */}
-        <div className="lg:col-span-4 bg-panel border border-white/5 p-6 rounded-3xl space-y-4">
-          <div className="pb-2">
-            <h3 className="text-sm font-bold uppercase tracking-wider text-white">Covers by Day of Week</h3>
-            <p className="text-[10px] text-gray-500">Reservation covers across the week.</p>
-          </div>
-
-          <div className="h-[260px] w-full">
-            <ResponsiveContainer width="100%" height="100%">
-              <BarChart data={coversData}>
-                <defs>
-                  <linearGradient id="colorOccupancy" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="5%" stopColor="#FF6B00" stopOpacity={0.3}/>
-                    <stop offset="95%" stopColor="#FF6B00" stopOpacity={0}/>
-                  </linearGradient>
-                </defs>
-                <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.03)" />
-                <XAxis dataKey="day" stroke="#52525b" fontSize={10} tickLine={false} />
-                <YAxis stroke="#52525b" fontSize={10} tickLine={false} />
-                <Tooltip 
-                  contentStyle={{ backgroundColor: '#0f1115', border: '1px solid rgba(255,255,255,0.05)', borderRadius: '12px' }}
-                />
-                <Bar dataKey="covers" name="Covers" fill="#FF6B00" radius={[8, 8, 0, 0]} />
-              </BarChart>
-            </ResponsiveContainer>
-          </div>
-        </div>
-
-      </div>
-
-      <div className="grid lg:grid-cols-12 gap-6">
-        <div className="lg:col-span-3">
-          <MiniCalendar />
-        </div>
-        {myRestaurant?.inviteCode && (
-        <div className="lg:col-span-3 bg-panel border border-white/5 p-5 rounded-3xl space-y-3">
-          <h3 className="text-sm font-bold uppercase tracking-wider text-white">Staff Invite Code</h3>
-          <p className="text-[10px] text-gray-500">Share this code with staff to join your restaurant.</p>
-          <div className="flex items-center justify-center gap-3 p-4 bg-white/5 rounded-2xl border border-dashed border-white/10">
-            <span className="text-2xl font-mono font-extrabold tracking-[0.2em] text-[#FF6B00]">{myRestaurant.inviteCode}</span>
-            <button
-              onClick={() => navigator.clipboard?.writeText(myRestaurant.inviteCode)}
-              className="px-3 py-1.5 bg-[#FF6B00]/10 hover:bg-[#FF6B00]/20 border border-[#FF6B00]/20 rounded-xl text-[10px] text-[#FF6B00] font-bold transition-all"
-            >
-              Copy
-            </button>
-          </div>
-        </div>
-        )}
-        <div className="lg:col-span-6 glass-panel rounded-[20px] p-6 border border-white/5">
-          <div className="flex justify-between items-center mb-4">
-            <h3 className="text-sm font-bold uppercase tracking-wider text-white">Menu CRUD</h3>
-            <button
-              type="button"
-              onClick={() => addMenuItem({ name: 'New Special', category: 'Appetizers', price: 12.99, stockLevel: 20, tags: ['New'], image: 'https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=400' })}
-              className="flex items-center gap-1 text-xs px-3 py-1.5 rounded-xl bg-primary text-white font-semibold"
-            >
-              <Plus className="w-3.5 h-3.5" /> Add Item
-            </button>
-          </div>
-          <div className="space-y-2 max-h-48 overflow-y-auto">
-            {menuItems.slice(0, 6).map((item) => (
-              <div key={item._id} className="flex justify-between items-center py-2 border-b border-white/5 text-sm">
-                <span className="text-white">{item.name}</span>
-                <span className="text-primary font-semibold">${item.price?.toFixed(2)}</span>
+        {/* Main charts split */}
+        <motion.div
+          variants={staggerContainer}
+          initial="initial"
+          animate="animate"
+          className="grid lg:grid-cols-12 gap-8 mt-8"
+        >
+          {/* Sales Chart (Left) */}
+          <motion.div variants={fadeUpItem} className="lg:col-span-8 bg-panel border border-white/5 p-6 rounded-3xl space-y-4 card-shine">
+            <div className="flex justify-between items-center pb-2">
+              <div className="space-y-0.5">
+                <h3 className="text-sm font-bold uppercase tracking-wider text-white">Daily Sales & Bookings Trend</h3>
+                <p className="text-[10px] text-gray-500">Sales volume and customer table layout bookings.</p>
               </div>
-            ))}
-          </div>
-        </div>
-      </div>
+              <span className="text-[10px] px-2 py-0.5 rounded bg-[#FF6B00]/10 text-[#FF6B00] font-bold">Weekly Performance</span>
+            </div>
 
+            <div className="h-[260px] w-full">
+              <ResponsiveContainer width="100%" height="100%">
+                <AreaChart data={salesData}>
+                  <defs>
+                    <linearGradient id="salesGradOwner" x1="0" y1="0" x2="0" y2="1">
+                      <stop offset="0%" stopColor="#FF6B00" stopOpacity={0.4} />
+                      <stop offset="100%" stopColor="#FF6B00" stopOpacity={0} />
+                    </linearGradient>
+                  </defs>
+                  <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.03)" />
+                  <XAxis dataKey="name" stroke="#52525b" fontSize={10} tickLine={false} />
+                  <YAxis stroke="#52525b" fontSize={10} tickLine={false} />
+                  <Tooltip 
+                    contentStyle={{ backgroundColor: '#0f1115', border: '1px solid rgba(255,255,255,0.05)', borderRadius: '12px' }}
+                    labelStyle={{ color: '#fff', fontSize: '10px', fontWeight: 'bold' }}
+                  />
+                  <Area type="monotone" dataKey="sales" name="Sales ($)" stroke="#FF6B00" fill="url(#salesGradOwner)" strokeWidth={2} />
+                </AreaChart>
+              </ResponsiveContainer>
+            </div>
+          </motion.div>
+
+          {/* Peak Seating Hours (Right) */}
+          <motion.div variants={fadeUpItem} className="lg:col-span-4 bg-panel border border-white/5 p-6 rounded-3xl space-y-4 card-shine">
+            <div className="pb-2">
+              <h3 className="text-sm font-bold uppercase tracking-wider text-white">Covers by Day of Week</h3>
+              <p className="text-[10px] text-gray-500">Reservation covers across the week.</p>
+            </div>
+
+            <div className="h-[260px] w-full">
+              <ResponsiveContainer width="100%" height="100%">
+                <BarChart data={coversData}>
+                  <defs>
+                    <linearGradient id="colorCovers" x1="0" y1="0" x2="0" y2="1">
+                      <stop offset="5%" stopColor="#FF6B00" stopOpacity={0.3}/>
+                      <stop offset="95%" stopColor="#FF6B00" stopOpacity={0}/>
+                    </linearGradient>
+                  </defs>
+                  <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.03)" />
+                  <XAxis dataKey="day" stroke="#52525b" fontSize={10} tickLine={false} />
+                  <YAxis stroke="#52525b" fontSize={10} tickLine={false} />
+                  <Tooltip 
+                    contentStyle={{ backgroundColor: '#0f1115', border: '1px solid rgba(255,255,255,0.05)', borderRadius: '12px' }}
+                  />
+                  <Bar dataKey="covers" name="Covers" fill="#FF6B00" radius={[8, 8, 0, 0]} />
+                </BarChart>
+              </ResponsiveContainer>
+            </div>
+          </motion.div>
+        </motion.div>
+
+        {/* Bottom Row */}
+        <motion.div
+          variants={staggerContainer}
+          initial="initial"
+          animate="animate"
+          className="grid lg:grid-cols-12 gap-6 mt-6"
+        >
+          <motion.div variants={fadeUpItem} className="lg:col-span-3">
+            <MiniCalendar />
+          </motion.div>
+          {myRestaurant?.inviteCode && (
+            <motion.div variants={fadeUpItem} className="lg:col-span-3 bg-panel border border-white/5 p-5 rounded-3xl space-y-3 card-shine">
+              <h3 className="text-sm font-bold uppercase tracking-wider text-white">Staff Invite Code</h3>
+              <p className="text-[10px] text-gray-500">Share this code with staff to join your restaurant.</p>
+              <div className="flex items-center justify-center gap-3 p-4 bg-white/5 rounded-2xl border border-dashed border-white/10">
+                <span className="text-2xl font-mono font-extrabold tracking-[0.2em] text-[#FF6B00]">{myRestaurant.inviteCode}</span>
+                <button
+                  onClick={() => navigator.clipboard?.writeText(myRestaurant.inviteCode)}
+                  className="px-3 py-1.5 bg-[#FF6B00]/10 hover:bg-[#FF6B00]/20 border border-[#FF6B00]/20 rounded-xl text-[10px] text-[#FF6B00] font-bold transition-all"
+                >
+                  Copy
+                </button>
+              </div>
+            </motion.div>
+          )}
+          <motion.div variants={fadeUpItem} className="lg:col-span-6 glass-panel rounded-[20px] p-6 border border-white/5 card-shine">
+            <div className="flex justify-between items-center mb-4">
+              <h3 className="text-sm font-bold uppercase tracking-wider text-white">Menu CRUD</h3>
+              <button
+                type="button"
+                onClick={() => addMenuItem({ name: 'New Special', category: 'Appetizers', price: 12.99, stockLevel: 20, tags: ['New'], image: 'https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=400' })}
+                className="flex items-center gap-1 text-xs px-3 py-1.5 rounded-xl bg-primary text-white font-semibold hover-lift transition-all"
+              >
+                <Plus className="w-3.5 h-3.5" /> Add Item
+              </button>
+            </div>
+            <div className="space-y-2 max-h-48 overflow-y-auto">
+              {menuItems.slice(0, 6).map((item) => (
+                <motion.div
+                  key={item._id}
+                  initial={{ opacity: 0, x: -10 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  className="flex justify-between items-center py-2 border-b border-white/5 text-sm"
+                >
+                  <span className="text-white">{item.name}</span>
+                  <span className="text-primary font-semibold">${item.price?.toFixed(2)}</span>
+                </motion.div>
+              ))}
+            </div>
+          </motion.div>
+        </motion.div>
+      </div>
     </div>
   );
 }
