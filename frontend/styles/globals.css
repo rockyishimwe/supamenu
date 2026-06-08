@@ -187,6 +187,20 @@ h1, h2, h3, h4, h5, h6, .font-display {
   100% { background-position: 0% 50%; }
 }
 
+/* Light mode animated gradient background */
+.light .bg-animated-gradient {
+  background: linear-gradient(
+    135deg,
+    #f8f9fa 0%,
+    #ffffff 25%,
+    #f0f2f5 50%,
+    #ffffff 75%,
+    #f8f9fa 100%
+  );
+  background-size: 400% 400%;
+  animation: gradientShift 15s ease infinite;
+}
+
 /* Floating orb animations */
 @keyframes floatOrb1 {
   0%, 100% { transform: translate(0, 0) scale(1); opacity: 0.4; }
