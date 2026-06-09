@@ -6,7 +6,7 @@ export const MOCK_RESTAURANTS = [
     name: 'The Garden Bistro',
     description: 'Italian and Continental cuisines made from the freshest ingredients.',
     coverImage: 'https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?w=1200',
-    logo: 'https://images.unsplash.com/photo-1543007630-9710e4a00a20?w=150',
+    logo: 'https://images.unsplash.com/photo-1507048331197-7d4ac70811cf?w=150&q=80',
     rating: 4.6,
     reviewsCount: 1240,
     cuisines: ['Italian', 'Continental'],
@@ -73,7 +73,7 @@ export const MOCK_MENU = [
   { _id: 'menu-g4', restaurantId: 'res-garden', name: 'Classic Tiramisu', category: 'Desserts', price: 9.99, tags: ['Bestseller'], image: 'https://images.unsplash.com/photo-1571877227200-a0d98ea607e9?w=400', stockLevel: 15, rating: 4.9 },
   { _id: 'menu-g5', restaurantId: 'res-garden', name: 'Sparkling Lemonade', category: 'Beverages', price: 5.99, tags: [], image: 'https://images.unsplash.com/photo-1621263764928-df1444c5e859?w=400', stockLevel: 100, rating: 4.5 },
   { _id: 'menu-s1', restaurantId: 'res-sakura', name: 'Dragon Roll', category: 'Sushi Rolls', price: 16.99, tags: ['Bestseller'], image: 'https://images.unsplash.com/photo-1579584425555-c3ce17fd4351?w=400', stockLevel: 40, rating: 4.8 },
-  { _id: 'menu-s2', restaurantId: 'res-sakura', name: 'Salmon Sashimi', category: 'Sashimi', price: 22.99, tags: ['Healthy', 'Bestseller'], image: 'https://images.unsplash.com/photo-1563612262-2676381f4550?w=400', stockLevel: 30, rating: 4.9 },
+  { _id: 'menu-s2', restaurantId: 'res-sakura', name: 'Salmon Sashimi', category: 'Sashimi', price: 22.99, tags: ['Healthy', 'Bestseller'], image: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=400&q=80', stockLevel: 30, rating: 4.9 },
   { _id: 'menu-s3', restaurantId: 'res-sakura', name: 'Tonkotsu Ramen', category: 'Ramen', price: 14.99, tags: [], image: 'https://images.unsplash.com/photo-1569718212165-3a8278d5f624?w=400', stockLevel: 50, rating: 4.7 },
 ];
 

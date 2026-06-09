@@ -43,11 +43,11 @@ const GARDEN_MENU = [
 
 const SAKURA_MENU = [
   { name: 'Dragon Roll', category: 'Sushi Rolls', price: 16.99, tags: ['Bestseller'], image: 'https://images.unsplash.com/photo-1579584425555-c3ce17fd4351?w=400', stockLevel: 40 },
-  { name: 'Salmon Sashimi', category: 'Sashimi', price: 22.99, tags: ['Healthy', 'Bestseller'], image: 'https://images.unsplash.com/photo-1563612262-2676381f4550?w=400', stockLevel: 30 },
+  { name: 'Salmon Sashimi', category: 'Sashimi', price: 22.99, tags: ['Healthy', 'Bestseller'], image: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=400&q=80', stockLevel: 30 },
   { name: 'Tonkotsu Ramen', category: 'Ramen', price: 14.99, tags: [], image: 'https://images.unsplash.com/photo-1569718212165-3a8278d5f624?w=400', stockLevel: 50 },
   { name: 'Edamame', category: 'Appetizers', price: 6.99, tags: ['Healthy'], image: 'https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=400', stockLevel: 80 },
   { name: 'Mochi Ice Cream', category: 'Desserts', price: 8.99, tags: [], image: 'https://images.unsplash.com/photo-1563805042-7684c019e1cb?w=400', stockLevel: 35 },
-  { name: 'Green Tea', category: 'Beverages', price: 3.99, tags: ['Healthy'], image: 'https://images.unsplash.com/photo-1564890369478-c89ca6d9de57?w=400', stockLevel: 120 },
+  { name: 'Green Tea', category: 'Beverages', price: 3.99, tags: ['Healthy'], image: 'https://images.unsplash.com/photo-1536256263959-770b48d82b0a?w=400&q=80', stockLevel: 120 },
 ];
 
 async function seedDatabase({ force = false } = {}) {
@@ -105,7 +105,8 @@ async function seedDatabase({ force = false } = {}) {
     name: 'The Garden Bistro',
     description: 'Italian and Continental cuisines made from the freshest ingredients.',
     coverImage: 'https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?w=1200',
-    logo: 'https://images.unsplash.com/photo-1543007630-9710e4a00a20?w=150',
+-    logo: 'https://images.unsplash.com/photo-1507048331197-7d4ac70811cf?w=150&q=80',
++    logo: 'https://images.unsplash.com/photo-1507048331197-7d4ac70811cf?w=150&q=80',
     rating: 4.6,
     reviewsCount: 1240,
     cuisines: ['Italian', 'Continental'],

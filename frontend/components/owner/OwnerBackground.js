@@ -7,7 +7,7 @@ import BackgroundCarousel from '../BackgroundCarousel';
  */
 const OWNER_IMAGES = [
   'https://images.unsplash.com/photo-1556909114-f6e7ad7d3136?w=1600&q=80',   // Modern restaurant bar
-  'https://images.unsplash.com/photo-1590845947881-6f2f1c1a3d98?w=1600&q=80', // Kitchen pass / management view
+  'https://images.unsplash.com/photo-1507048331197-7d4ac70811cf?w=1600&q=80', // Kitchen pass / management view
   'https://images.unsplash.com/photo-1577219491135-ce391730fb2c?w=1600&q=80', // Restaurant exterior
   'https://images.unsplash.com/photo-1567620905732-2d1ec7ab7445?w=1600&q=80', // Chef/kitchen professional
   'https://images.unsplash.com/photo-1600891964599-f61ba0e24092?w=1600&q=80', // Wine cellar / inventory

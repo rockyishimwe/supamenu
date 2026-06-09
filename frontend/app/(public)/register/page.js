@@ -131,7 +131,7 @@ export default function RegisterPage() {
           rating: 4.5,
           reviewsCount: 1,
           coverImage: 'https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?w=1200',
-          logo: 'https://images.unsplash.com/photo-1543007630-9710e4a00a20?w=150',
+          logo: 'https://images.unsplash.com/photo-1507048331197-7d4ac70811cf?w=150&q=80',
           settings: { taxes: 8.5, serviceCharges: 10.0 },
           categories: ['Appetizers', 'Mains', 'Desserts'],
         };

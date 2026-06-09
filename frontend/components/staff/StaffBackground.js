@@ -7,7 +7,6 @@ import BackgroundCarousel from '../BackgroundCarousel';
  */
 const STAFF_IMAGES = [
   'https://images.unsplash.com/photo-1577219491135-ce391730fb2c?w=1600&q=80', // Chef at work
-  'https://images.unsplash.com/photo-1590845947881-6f2f1c1a3d98?w=1600&q=80', // Kitchen pass
   'https://images.unsplash.com/photo-1556909114-f6e7ad7d3136?w=1600&q=80',   // Bar/service area
   'https://images.unsplash.com/photo-1559339352-11d035aa65de?w=1600&q=80',   // Table service
   'https://images.unsplash.com/photo-1600891964599-f61ba0e24092?w=1600&q=80', // Wine service
