@@ -2,10 +2,9 @@
 import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
-import { useRouter } from 'next/navigation';
 import { motion, AnimatePresence } from 'framer-motion';
 import { 
-  ArrowRight, ShieldCheck, Flame, Zap, Award, Sparkles, CheckCircle2, ChevronDown, MonitorCheck, ChefHat, Sun, Moon
+  ArrowRight, Sparkles, CheckCircle2, ChevronDown, Sun, Moon
 } from 'lucide-react';
 import DineFlowLogo from '../../components/DineFlowLogo';
 import { useThemeStore } from '../../lib/useTheme';
@@ -15,7 +14,6 @@ import FoodCrossfadeGallery from '../../components/FoodCrossfadeGallery';
 import TiltCard from '../../components/TiltCard';
 
 export default function LandingPage() {
-  const router = useRouter();
   const [activeTab, setActiveTab] = useState('customer');
   const [activeFaq, setActiveFaq] = useState(null);
   const { theme, toggleTheme, isClient, initTheme } = useThemeStore();
@@ -234,7 +232,7 @@ export default function LandingPage() {
               image: "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=500&q=80",
               tags: ["Fresh Catch", "Ocean View", "Seafood Platter"]
             }
-          ].map((restaurant, index) => (
+          ].map((restaurant) => (
             <motion.div
               key={restaurant.id}
               variants={fadeUpItem}
