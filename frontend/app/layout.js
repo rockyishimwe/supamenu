@@ -1,5 +1,6 @@
 import "../styles/globals.css";
 import { DineFlowProvider } from "./context";
+import CustomCursor from "../components/CustomCursor";
 
 export const metadata = {
   title: "DineFlow",
@@ -16,6 +17,7 @@ export default function RootLayout({ children }) {
         <link rel="icon" href={`data:image/svg+xml,${faviconSvg}`} />
       </head>
       <body className="bg-page text-body">
+        <CustomCursor />
         <a href="#main-content" className="skip-to-content">Skip to content</a>
         <DineFlowProvider>
           {children}

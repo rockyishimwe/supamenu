@@ -6,24 +6,11 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { useDineFlow } from '../../context';
 import { useStore } from '../../../lib/store';
 import { validateForm } from '../../../lib/validation';
-import { useToast } from '../../../lib/useToast';
-import {
-  ShieldCheck,
-  Mail,
-  Lock,
-  User,
-  ChevronRight,
-  ChevronLeft,
-  Building,
-  MapPin,
-  Store,
-  Check,
-  Utensils,
-  Shield,
-  Loader2,
-} from 'lucide-react';
-import DineFlowLogo from '../../../components/DineFlowLogo';
 import BackButton from '../../../components/BackButton';
+import AnimatedButton from '../../../components/AnimatedButton';
+import { useToast } from '../../../lib/useToast';
+import { ShieldCheck, Mail, Lock, User, ChevronRight, ChevronLeft, Building, MapPin, Store, Check, Utensils, Shield, Loader2 } from 'lucide-react';
+import DineFlowLogo from '../../../components/DineFlowLogo';
 import confetti from 'canvas-confetti';
 import BackgroundCarousel from '../../../components/BackgroundCarousel';
 
@@ -547,24 +534,25 @@ export default function RegisterPage() {
               </button>
             )}
 
-            <button
+            <AnimatedButton
               type="button"
               onClick={step === 3 || role === 'customer' ? handleRegister : handleNext}
               disabled={loading}
-              className="flex-1 py-3.5 bg-[#FF6B00] hover:bg-[#e05e00] text-white font-semibold text-xs rounded-xl flex items-center justify-center gap-1.5 hover-lift shadow-lg shadow-[#FF6B00]/10"
+              size="lg"
+              className="flex-1 shadow-lg shadow-[#FF6B00]/10"
             >
-              {loading
-                ? (
-                  <span className="flex items-center gap-2">
-                    <Loader2 className="w-4 h-4 animate-spin" />
-                    Creating...
-                  </span>
-                )
-                : step === 3 || role === 'customer'
-                  ? 'Create Ecosystem Account'
-                  : 'Continue'}
-              <ChevronRight className="w-4 h-4" />
-            </button>
+              {loading ? (
+                <span className="flex items-center gap-2">
+                  <Loader2 className="w-4 h-4 animate-spin" />
+                  Creating...
+                </span>
+              ) : (
+                <>
+                  {step === 3 || role === 'customer' ? 'Create Ecosystem Account' : 'Continue'}
+                  <ChevronRight className="w-4 h-4" />
+                </>
+              )}
+            </AnimatedButton>
           </div>
 
           <div className="mt-8 text-center text-xs text-gray-500">

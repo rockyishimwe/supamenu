@@ -12,6 +12,7 @@ import FilterModal from '../../../components/FilterModal';
 import RestaurantCard from '../../../components/customer/RestaurantCard';
 import BackButton from '../../../components/BackButton';
 import { staggerContainer, fadeUpItem } from '../../../components/PageTransition';
+import { SkeletonCard } from '../../../components/Skeleton';
 
 export default function CustomerExplore() {
   const { restaurants, menuItems, loading } = useDineFlow();
@@ -26,27 +27,20 @@ export default function CustomerExplore() {
   // Loading state
   if (loading) {
     return (
-      <div className="max-w-7xl mx-auto px-6 py-8">
-        <BackButton />
-        <div className="animate-pulse mt-6">
-          <div className="h-10 w-64 bg-white/5 rounded-2xl mb-6" />
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {[1, 2, 3, 4, 5, 6].map((i) => (
-              <div key={i} className="rounded-3xl bg-white/5 border border-white/5 overflow-hidden">
-                <div className="h-48 bg-white/5" />
-                <div className="p-5 space-y-3">
-                  <div className="h-5 w-3/4 bg-white/5 rounded" />
-                  <div className="h-4 w-1/2 bg-white/5 rounded" />
-                  <div className="h-4 w-1/3 bg-white/5 rounded" />
-                </div>
-              </div>
-            ))}
+      <div className="grid lg:grid-cols-12 min-h-[calc(100vh-5rem)] bg-surface">
+        <div className="lg:col-span-6 p-6 border-r border-[#1f2228] space-y-4">
+          <div className="flex items-center gap-3 mb-4">
+            <div className="h-8 w-8 rounded-full bg-white/5 animate-pulse" />
+            <div className="h-5 w-32 bg-white/5 rounded animate-pulse" />
           </div>
+          {[1, 2, 3].map((i) => <SkeletonCard key={i} />)}
+        </div>
+        <div className="hidden lg:col-span-6 lg:flex items-center justify-center bg-surface">
+          <div className="w-20 h-20 rounded-full border-2 border-[#FF6B00]/30 border-t-[#FF6B00] animate-spin" />
         </div>
       </div>
     );
   }
-
   // List of all cuisines
   const allCuisines = ['All', ...new Set(restaurants.flatMap(r => r.cuisines))];
 

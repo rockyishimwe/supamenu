@@ -10,6 +10,7 @@ import DineFlowLogo from '../../components/DineFlowLogo';
 import { useThemeStore } from '../../lib/useTheme';
 import { staggerContainer, fadeUpItem, slideInLeft, slideInRight } from '../../components/PageTransition';
 import BackgroundCarousel from '../../components/BackgroundCarousel';
+import FoodCrossfadeGallery from '../../components/FoodCrossfadeGallery';
 
 export default function LandingPage() {
   const router = useRouter();
@@ -123,71 +124,37 @@ export default function LandingPage() {
             </div>
           </motion.div>
 
-          {/* Hero Devices Illustration */}
+          {/* Food Image */}
           <motion.div
             variants={slideInRight}
             initial="initial"
             animate="animate"
             className="lg:col-span-6 flex justify-center relative"
           >
-            <div className="absolute inset-0 bg-[#FF6B00]/5 filter blur-3xl rounded-full"></div>
-            <div className="relative w-full max-w-lg aspect-square rounded-3xl bg-panel border border-white/5 p-6 flex flex-col justify-between overflow-hidden shadow-2xl">
-              <div className="flex items-center justify-between border-b border-white/5 pb-4">
-                <span className="text-xs text-gray-500 font-mono">LIVE_SYSTEM_ECOSYSTEM</span>
-                <span className="w-2.5 h-2.5 rounded-full bg-[#22C55E] animate-pulse"></span>
-              </div>
-              
-              {/* Visual simulation of the three interconnected interfaces */}
-              <div className="grid grid-cols-3 gap-4 my-8">
-                {/* Customer node */}
-                <motion.div
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: 0.2, duration: 0.4 }}
-                  className="p-4 bg-white/5 border border-[#22C55E]/20 rounded-2xl text-center space-y-2"
-                >
-                  <div className="w-8 h-8 rounded-full bg-[#22C55E]/10 flex items-center justify-center mx-auto text-[#22C55E]">
-                    <CheckCircle2 className="w-4.5 h-4.5" />
-                  </div>
-                  <p className="text-[10px] font-bold text-white uppercase tracking-wider">Customer App</p>
-                  <p className="text-[9px] text-gray-500">Ordering & Reservations</p>
-                </motion.div>
+            {/* Glow behind image */}
+            <div className="absolute inset-0 bg-gradient-radial from-[#FF6B00]/15 via-transparent to-transparent blur-3xl rounded-full" />
+            <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-80 h-80 rounded-full bg-[#FF6B00]/8 blur-3xl animate-pulse-slow" />
+            
+            {/* Crossfade gallery */}
+            <motion.div
+              initial={{ opacity: 0, scale: 0.9 }}
+              animate={{ opacity: 1, scale: 1 }}
+              transition={{ duration: 0.8, delay: 0.3, ease: 'easeOut' }}
+              className="relative w-full max-w-lg"
+            >
+              <FoodCrossfadeGallery />
+            </motion.div>
 
-                {/* Owner node */}
-                <motion.div
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: 0.35, duration: 0.4 }}
-                  className="p-4 bg-white/5 border border-[#FF6B00]/20 rounded-2xl text-center space-y-2"
-                >
-                  <div className="w-8 h-8 rounded-full bg-[#FF6B00]/10 flex items-center justify-center mx-auto text-[#FF6B00]">
-                    <MonitorCheck className="w-4.5 h-4.5" />
-                  </div>
-                  <p className="text-[10px] font-bold text-white uppercase tracking-wider">Owner Portal</p>
-                  <p className="text-[9px] text-gray-500">Sales & Floor Editor</p>
-                </motion.div>
-
-                {/* Staff node */}
-                <motion.div
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: 0.5, duration: 0.4 }}
-                  className="p-4 bg-white/5 border border-blue-500/20 rounded-2xl text-center space-y-2"
-                >
-                  <div className="w-8 h-8 rounded-full bg-blue-500/10 flex items-center justify-center mx-auto text-blue-500">
-                    <ChefHat className="w-4.5 h-4.5" />
-                  </div>
-                  <p className="text-[10px] font-bold text-white uppercase tracking-wider">Staff App</p>
-                  <p className="text-[9px] text-gray-500">Live Orders & Tables</p>
-                </motion.div>
-              </div>
-
-              <div className="border-t border-white/5 pt-4 text-center">
-                <p className="text-[10px] text-gray-400 uppercase tracking-widest font-semibold bg-white/5 py-2 rounded-xl">
-                  🔗 All connected in real-time
-                </p>
-              </div>
-            </div>
+            {/* Floating label */}
+            <motion.div
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 1.2, duration: 0.6 }}
+              className="absolute -bottom-2 left-1/2 -translate-x-1/2 px-4 py-2 rounded-2xl bg-panel/80 backdrop-blur-md border border-white/5 text-[10px] text-gray-400 font-medium flex items-center gap-2"
+            >
+              <span className="w-1.5 h-1.5 rounded-full bg-[#22C55E] animate-pulse" />
+              Fresh · Local · Seasonal
+            </motion.div>
           </motion.div>
         </div>
       </section>
