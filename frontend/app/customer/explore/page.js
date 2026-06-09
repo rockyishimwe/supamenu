@@ -13,6 +13,7 @@ import RestaurantCard from '../../../components/customer/RestaurantCard';
 import BackButton from '../../../components/BackButton';
 import { staggerContainer, fadeUpItem } from '../../../components/PageTransition';
 import { SkeletonCard } from '../../../components/Skeleton';
+import TiltCard from '../../../components/TiltCard';
 
 export default function CustomerExplore() {
   const { restaurants, menuItems, loading } = useDineFlow();
@@ -218,44 +219,49 @@ export default function CustomerExplore() {
               <motion.div
                 key={res._id}
                 variants={fadeUpItem}
-                onMouseEnter={() => setSelectedMapPin(res._id)}
-                className={`p-4 bg-panel border rounded-3xl flex gap-4 hover:border-white/10 transition-all duration-300 group cursor-pointer ${
-                  selectedMapPin === res._id ? 'border-[#FF6B00]' : 'border-white/5'
-                }`}
               >
-                <Image 
-                  src={res.coverImage} 
-                  alt={res.name}
-                  width={96}
-                  height={96}
-                  className="rounded-2xl object-cover" 
-                />
-                
-                <div className="flex-1 flex flex-col justify-between py-0.5">
-                  <div>
-                    <div className="flex justify-between items-start">
-                      <h3 className="text-xs font-bold text-white group-hover:text-[#FF6B00] transition-colors">{res.name}</h3>
-                      <div className="flex items-center gap-1 text-[10px] font-bold text-white">
-                        <Star className="w-3 h-3 fill-[#FF6B00] text-[#FF6B00]" />
-                        {res.rating}
+                <TiltCard>
+                <div
+                  onMouseEnter={() => setSelectedMapPin(res._id)}
+                  className={`p-4 bg-panel border rounded-3xl flex gap-4 hover:border-white/10 transition-all duration-300 group cursor-pointer ${
+                    selectedMapPin === res._id ? 'border-[#FF6B00]' : 'border-white/5'
+                  }`}
+                >
+                  <Image 
+                    src={res.coverImage} 
+                    alt={res.name}
+                    width={96}
+                    height={96}
+                    className="rounded-2xl object-cover" 
+                  />
+                  
+                  <div className="flex-1 flex flex-col justify-between py-0.5">
+                    <div>
+                      <div className="flex justify-between items-start">
+                        <h3 className="text-xs font-bold text-white group-hover:text-[#FF6B00] transition-colors">{res.name}</h3>
+                        <div className="flex items-center gap-1 text-[10px] font-bold text-white">
+                          <Star className="w-3 h-3 fill-[#FF6B00] text-[#FF6B00]" />
+                          {res.rating}
+                        </div>
                       </div>
+                      <p className="text-[10px] text-gray-500 line-clamp-1 mt-0.5">{res.description}</p>
+                      <p className="text-[9px] text-gray-400 mt-1 flex items-center gap-1">
+                        <MapPin className="w-3 h-3 text-[#FF6B00]" /> {res.address}
+                      </p>
                     </div>
-                    <p className="text-[10px] text-gray-500 line-clamp-1 mt-0.5">{res.description}</p>
-                    <p className="text-[9px] text-gray-400 mt-1 flex items-center gap-1">
-                      <MapPin className="w-3 h-3 text-[#FF6B00]" /> {res.address}
-                    </p>
-                  </div>
 
-                  <div className="flex justify-between items-center pt-2 mt-2 border-t border-white/5 text-[9px] text-gray-500">
-                    <span className="flex items-center gap-1"><Clock className="w-3 h-3 text-[#FF6B00]" /> {res.openingHours}</span>
-                    <Link 
-                      href={`/customer/restaurant/${res._id}`}
-                      className="text-white hover:underline font-bold flex items-center gap-0.5"
-                    >
-                      Book Table <ChevronRight className="w-3 h-3" />
-                    </Link>
+                    <div className="flex justify-between items-center pt-2 mt-2 border-t border-white/5 text-[9px] text-gray-500">
+                      <span className="flex items-center gap-1"><Clock className="w-3 h-3 text-[#FF6B00]" /> {res.openingHours}</span>
+                      <Link 
+                        href={`/customer/restaurant/${res._id}`}
+                        className="text-white hover:underline font-bold flex items-center gap-0.5"
+                      >
+                        Book Table <ChevronRight className="w-3 h-3" />
+                      </Link>
+                    </div>
                   </div>
                 </div>
+                </TiltCard>
               </motion.div>
             ))}
             </motion.div>
