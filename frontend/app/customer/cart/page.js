@@ -10,6 +10,7 @@ import AnimatedButton from '../../../components/AnimatedButton';
 import { Minus, Plus, Trash2, ShoppingBag } from 'lucide-react';
 import { DEFAULTS } from '../../../lib/constants';
 import { staggerContainer, fadeUpItem } from '../../../components/PageTransition';
+import { fireConfetti } from '../../../lib/confetti';
 
 export default function CartPage() {
   const router = useRouter();
@@ -124,7 +125,7 @@ export default function CartPage() {
         <div className="flex justify-between text-white font-bold text-lg pt-2 border-t border-white/10"><span>Total</span><span className="text-primary">${total.toFixed(2)}</span></div>
       </div>
       <AnimatedButton
-        onClick={() => setShowPay(true)}
+        onClick={() => { fireConfetti(); setShowPay(true); }}
         variant="default"
         size="lg"
         className="w-full"

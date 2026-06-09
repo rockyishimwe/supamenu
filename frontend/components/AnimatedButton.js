@@ -1,4 +1,5 @@
 "use client";
+import { useState, useCallback } from 'react';
 import { motion } from 'framer-motion';
 
 export default function AnimatedButton({
@@ -12,8 +13,10 @@ export default function AnimatedButton({
   loading = false,
   ...props
 }) {
+  const [ripples, setRipples] = useState([]);
+
   const base =
-    'inline-flex items-center justify-center gap-2 font-semibold transition-all duration-200 select-none';
+    'inline-flex items-center justify-center gap-2 font-semibold transition-all duration-200 select-none relative overflow-hidden';
 
   const variants = {
     default: 'bg-primary text-white hover:opacity-90',
@@ -29,10 +32,26 @@ export default function AnimatedButton({
     icon: 'p-2 rounded-xl',
   };
 
+  const handleClick = useCallback((e) => {
+    const rect = e.currentTarget.getBoundingClientRect();
+    const x = e.clientX - rect.left;
+    const y = e.clientY - rect.top;
+    const size = Math.max(rect.width, rect.height) * 2;
+    const id = Date.now() + Math.random();
+
+    setRipples((prev) => [...prev, { id, x, y, size }]);
+
+    setTimeout(() => {
+      setRipples((prev) => prev.filter((r) => r.id !== id));
+    }, 700);
+
+    onClick?.(e);
+  }, [onClick]);
+
   return (
     <motion.button
       type={type}
-      onClick={onClick}
+      onClick={handleClick}
       disabled={disabled || loading}
       whileHover={!disabled ? { scale: 1.03 } : undefined}
       whileTap={!disabled ? { scale: 0.95 } : undefined}
@@ -41,6 +60,18 @@ export default function AnimatedButton({
       } ${className}`}
       {...props}
     >
+      {ripples.map((r) => (
+        <span
+          key={r.id}
+          className="absolute rounded-full bg-white/30 pointer-events-none animate-ripple"
+          style={{
+            left: r.x - r.size / 2,
+            top: r.y - r.size / 2,
+            width: r.size,
+            height: r.size,
+          }}
+        />
+      ))}
       {loading ? (
         <svg className="animate-spin w-4 h-4" viewBox="0 0 24 24" fill="none">
           <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
