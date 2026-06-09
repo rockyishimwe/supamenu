@@ -1,5 +1,6 @@
 "use client";
 import React, { useState } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
 import { useDineFlow } from '../../context';
 import Link from 'next/link';
 import Image from 'next/image';
@@ -8,10 +9,12 @@ import {
   Compass, Clock, StarHalf, Phone, ChevronRight, Crosshair
 } from 'lucide-react';
 import FilterModal from '../../../components/FilterModal';
+import RestaurantCard from '../../../components/customer/RestaurantCard';
 import BackButton from '../../../components/BackButton';
+import { staggerContainer, fadeUpItem } from '../../../components/PageTransition';
 
 export default function CustomerExplore() {
-  const { restaurants, menuItems } = useDineFlow();
+  const { restaurants, menuItems, loading } = useDineFlow();
   const [searchQuery, setSearchQuery] = useState('');
   const [cuisineFilter, setCuisineFilter] = useState('All');
   const [ratingFilter, setRatingFilter] = useState(0);
@@ -19,6 +22,30 @@ export default function CustomerExplore() {
   const [priceMaxFilter, setPriceMaxFilter] = useState(null);
   const [showFilters, setShowFilters] = useState(false);
   const [selectedMapPin, setSelectedMapPin] = useState(null);
+
+  // Loading state
+  if (loading) {
+    return (
+      <div className="max-w-7xl mx-auto px-6 py-8">
+        <BackButton />
+        <div className="animate-pulse mt-6">
+          <div className="h-10 w-64 bg-white/5 rounded-2xl mb-6" />
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {[1, 2, 3, 4, 5, 6].map((i) => (
+              <div key={i} className="rounded-3xl bg-white/5 border border-white/5 overflow-hidden">
+                <div className="h-48 bg-white/5" />
+                <div className="p-5 space-y-3">
+                  <div className="h-5 w-3/4 bg-white/5 rounded" />
+                  <div className="h-4 w-1/2 bg-white/5 rounded" />
+                  <div className="h-4 w-1/3 bg-white/5 rounded" />
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   // List of all cuisines
   const allCuisines = ['All', ...new Set(restaurants.flatMap(r => r.cuisines))];
@@ -177,15 +204,26 @@ export default function CustomerExplore() {
           <p className="text-[10px] font-bold text-gray-500 uppercase tracking-widest">{filteredRestaurants.length} Restaurants Found</p>
           
           {filteredRestaurants.length === 0 ? (
-            <div className="text-center py-12 bg-white/2 border border-dashed border-white/5 rounded-3xl text-gray-500">
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              className="text-center py-12 bg-white/2 border border-dashed border-white/5 rounded-3xl text-gray-500"
+            >
               <Compass className="w-10 h-10 mx-auto text-gray-600 mb-2 animate-pulse" />
               <p className="text-xs font-semibold">No restaurants match your filters.</p>
               <p className="text-[10px] mt-1">Try clearing your filters or typing something else.</p>
-            </div>
+            </motion.div>
           ) : (
-            filteredRestaurants.map(res => (
-              <div
+            <motion.div
+              variants={staggerContainer}
+              initial="initial"
+              animate="animate"
+              className="space-y-4"
+            >
+            {filteredRestaurants.map(res => (
+              <motion.div
                 key={res._id}
+                variants={fadeUpItem}
                 onMouseEnter={() => setSelectedMapPin(res._id)}
                 className={`p-4 bg-panel border rounded-3xl flex gap-4 hover:border-white/10 transition-all duration-300 group cursor-pointer ${
                   selectedMapPin === res._id ? 'border-[#FF6B00]' : 'border-white/5'
@@ -224,8 +262,9 @@ export default function CustomerExplore() {
                     </Link>
                   </div>
                 </div>
-              </div>
-            ))
+              </motion.div>
+            ))}
+            </motion.div>
           )}
         </div>
 

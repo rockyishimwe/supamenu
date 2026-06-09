@@ -46,7 +46,7 @@ export async function checkHealth() {
 export const api = {
   login: (body) => fetchWithAuth('/auth/login', { method: 'POST', body: JSON.stringify(body) }),
   register: (body) => fetchWithAuth('/auth/register', { method: 'POST', body: JSON.stringify(body) }),
-  me: (token) => fetchWithAuth('/auth/me', {}, token),
+  me: (token) => fetchWithAuth('/auth/profile', {}, token),
   walletTopUp: (amount, token) => 
     fetchWithAuth('/auth/wallet/topup', { method: 'POST', body: JSON.stringify({ amount }) }, token),
   getRestaurants: () => fetchWithAuth('/restaurants'),

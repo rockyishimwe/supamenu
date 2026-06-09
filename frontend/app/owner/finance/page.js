@@ -9,6 +9,7 @@ import {
   Coins, Download, Calendar, ArrowUpRight, 
   DollarSign, Activity, FileText, Landmark
 } from 'lucide-react';
+import { DEFAULTS } from '../../../lib/constants';
 import BackButton from '../../../components/BackButton';
 
 const mockMonthlyRevenue = [
@@ -55,7 +56,7 @@ export default function OwnerFinance() {
         {[
           { label: 'Gross Revenue', val: `$${(35000 + dynamicTotal).toLocaleString()}`, change: '+12.5% Month-over-Month', icon: DollarSign },
           { label: 'Net Profit Margin', val: '$20,000', change: '57.1% margins active', icon: Landmark },
-          { label: 'Platform Taxes (8.5%)', val: `$${((35000 + dynamicTotal) * 0.085).toLocaleString()}`, change: 'Accumulated taxes due', icon: FileText },
+          { label: `Platform Taxes (${DEFAULTS.TAX_RATE}%)`, val: `$${((35000 + dynamicTotal) * (DEFAULTS.TAX_RATE / 100)).toLocaleString()}`, change: 'Accumulated taxes due', icon: FileText },
           { label: 'Average Ticket Bill', val: '$32.50', change: 'Based on last 500 visitors', icon: Activity }
         ].map((card, idx) => {
           const Icon = card.icon;

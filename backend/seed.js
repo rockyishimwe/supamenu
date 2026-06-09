@@ -14,7 +14,7 @@ const Order = require('./models/Order');
 
 const MONGO_URI = process.env.MONGO_URI || 'mongodb://localhost:27017/dineflow';
 
-const DEMO_PASSWORD = 'password123';
+const DEMO_PASSWORD = 'Demo@1234';
 
 function buildTables(restaurantId, layout, statusOverrides = {}) {
   return layout.map((t) => ({
@@ -135,16 +135,16 @@ async function seedDatabase({ force = false } = {}) {
     owner: sakuraOwner._id,
   });
 
-  const gardenStaff = await User.insertMany([
-    { name: 'Alex Morgan', email: 'staff@garden.com', password: DEMO_PASSWORD, role: 'staff', staffDetails: { role: 'Waiter', restaurantId: garden._id } },
-    { name: 'Emma Wilson', email: 'emma@garden.com', password: DEMO_PASSWORD, role: 'staff', staffDetails: { role: 'Waiter', restaurantId: garden._id } },
-    { name: 'David Lee', email: 'david@garden.com', password: DEMO_PASSWORD, role: 'staff', staffDetails: { role: 'Manager', restaurantId: garden._id } },
+  const gardenStaff = await Promise.all([
+    User.create({ name: 'Alex Morgan', email: 'staff@garden.com', password: DEMO_PASSWORD, role: 'staff', staffDetails: { role: 'Waiter', restaurantId: garden._id } }),
+    User.create({ name: 'Emma Wilson', email: 'emma@garden.com', password: DEMO_PASSWORD, role: 'staff', staffDetails: { role: 'Waiter', restaurantId: garden._id } }),
+    User.create({ name: 'David Lee', email: 'david@garden.com', password: DEMO_PASSWORD, role: 'staff', staffDetails: { role: 'Manager', restaurantId: garden._id } }),
   ]);
 
-  await User.insertMany([
-    { name: 'Ken Sato', email: 'staff@sakura.com', password: DEMO_PASSWORD, role: 'staff', staffDetails: { role: 'Kitchen Staff', restaurantId: sakura._id } },
-    { name: 'Mia Chen', email: 'mia@sakura.com', password: DEMO_PASSWORD, role: 'staff', staffDetails: { role: 'Waiter', restaurantId: sakura._id } },
-    { name: 'Leo Park', email: 'leo@sakura.com', password: DEMO_PASSWORD, role: 'staff', staffDetails: { role: 'Cashier', restaurantId: sakura._id } },
+  await Promise.all([
+    User.create({ name: 'Ken Sato', email: 'staff@sakura.com', password: DEMO_PASSWORD, role: 'staff', staffDetails: { role: 'Kitchen Staff', restaurantId: sakura._id } }),
+    User.create({ name: 'Mia Chen', email: 'mia@sakura.com', password: DEMO_PASSWORD, role: 'staff', staffDetails: { role: 'Waiter', restaurantId: sakura._id } }),
+    User.create({ name: 'Leo Park', email: 'leo@sakura.com', password: DEMO_PASSWORD, role: 'staff', staffDetails: { role: 'Cashier', restaurantId: sakura._id } }),
   ]);
 
   const gardenTables = await Table.insertMany(

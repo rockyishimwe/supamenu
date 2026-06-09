@@ -1,10 +1,12 @@
 const bcrypt = require('bcryptjs'); // For secure password hashing
 const jwt = require('jsonwebtoken');
+const crypto = require('crypto');
 const User = require('../models/User');
 const Restaurant = require('../models/Restaurant');
 const config = require('../config/env');
 
 const JWT_SECRET = config.JWT_SECRET;
+const REFRESH_TOKEN_EXPIRY_DAYS = 30;
 
 const TOKEN_EXPIRY = '7d';
 
@@ -24,6 +26,14 @@ function formatUser(user) {
 
 function generateToken(user) {
   return jwt.sign({ id: user._id, role: user.role }, JWT_SECRET, { expiresIn: TOKEN_EXPIRY });
+}
+
+function generateRefreshToken() {
+  return crypto.randomBytes(40).toString('hex');
+}
+
+function hashRefreshToken(token) {
+  return crypto.createHash('sha256').update(token).digest('hex');
 }
 
 async function registerUser({ name, email, password, role, restaurantCode, restaurantName }) {
@@ -56,8 +66,13 @@ async function registerUser({ name, email, password, role, restaurantCode, resta
     await Restaurant.findByIdAndUpdate(user.ownerDetails.restaurantId, { owner: user._id });
   }
 
-  const token = generateToken(user);
-  return { token, user: formatUser(user) };
+  const accessToken = generateToken(user);
+  const refreshToken = generateRefreshToken();
+  const hashed = hashRefreshToken(refreshToken);
+  user.refreshTokens.push({ token: hashed, expiresAt: new Date(Date.now() + REFRESH_TOKEN_EXPIRY_DAYS * 24 * 60 * 60 * 1000) });
+  await user.save();
+
+  return { token: accessToken, refreshToken, user: formatUser(user) };
 }
 
 async function loginUser({ email, password, role }) {
@@ -69,7 +84,42 @@ async function loginUser({ email, password, role }) {
   if (!isMatch) throw Object.assign(new Error('Invalid credentials'), { status: 400 });
 
   const token = generateToken(user);
-  return { token, user: formatUser(user) };
+  const refreshToken = generateRefreshToken();
+  const hashed = hashRefreshToken(refreshToken);
+  user.refreshTokens.push({ token: hashed, expiresAt: new Date(Date.now() + REFRESH_TOKEN_EXPIRY_DAYS * 24 * 60 * 60 * 1000) });
+  // Clean expired tokens on login
+  user.refreshTokens = user.refreshTokens.filter(rt => rt.expiresAt > new Date());
+  await user.save();
+  return { token, refreshToken, user: formatUser(user) };
+}
+
+async function refreshAccessToken(refreshTokenValue) {
+  const hashed = hashRefreshToken(refreshTokenValue);
+  const user = await User.findOne({ 'refreshTokens.token': hashed });
+  if (!user) throw Object.assign(new Error('Invalid or expired refresh token'), { status: 401 });
+
+  // Find the matching token entry
+  const tokenEntry = user.refreshTokens.find(rt => rt.token === hashed);
+  if (!tokenEntry || tokenEntry.expiresAt < new Date()) throw Object.assign(new Error('Refresh token expired'), { status: 401 });
+
+  // Rotate: remove old refresh token, issue new pair
+  user.refreshTokens = user.refreshTokens.filter(rt => rt.token !== hashed);
+  const newAccessToken = generateToken(user);
+  const newRefreshToken = generateRefreshToken();
+  const newHashed = hashRefreshToken(newRefreshToken);
+  user.refreshTokens.push({ token: newHashed, expiresAt: new Date(Date.now() + REFRESH_TOKEN_EXPIRY_DAYS * 24 * 60 * 60 * 1000) });
+  user.refreshTokens = user.refreshTokens.filter(rt => rt.expiresAt > new Date());
+  await user.save();
+
+  return { token: newAccessToken, refreshToken: newRefreshToken, user: formatUser(user) };
+}
+
+async function revokeRefreshToken(refreshTokenValue) {
+  const hashed = hashRefreshToken(refreshTokenValue);
+  await User.updateOne(
+    { 'refreshTokens.token': hashed },
+    { $pull: { refreshTokens: { token: hashed } } }
+  );
 }
 
 async function getProfile(userId) {
@@ -100,4 +150,4 @@ async function topUpWallet(userId, amount) {
   return { walletBalance: user.walletBalance };
 }
 
-module.exports = { registerUser, loginUser, getProfile, updateProfile, topUpWallet };
+module.exports = { registerUser, loginUser, refreshAccessToken, revokeRefreshToken, getProfile, updateProfile, topUpWallet };

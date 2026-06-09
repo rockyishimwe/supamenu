@@ -7,6 +7,7 @@ import {
   MapPin, Search, Heart, ShoppingCart, Bell, X, Plus, Minus, Trash2, ShieldCheck, Wallet, ArrowRight
 } from 'lucide-react';
 import confetti from 'canvas-confetti';
+import { DEFAULTS } from '../lib/constants';
 
 export default function CustomerHeader() {
   const { cart, updateCartQty, removeFromCart, checkout, currentUser, activeRole, setActiveRole } = useDineFlow();
@@ -17,8 +18,8 @@ export default function CustomerHeader() {
 
   const cartCount = cart.reduce((sum, item) => sum + item.quantity, 0);
   const subtotal = cart.reduce((sum, item) => sum + item.price * item.quantity, 0);
-  const tax = subtotal * 0.085;
-  const serviceCharge = subtotal * 0.10;
+  const tax = subtotal * (DEFAULTS.TAX_RATE / 100);
+  const serviceCharge = subtotal * (DEFAULTS.SERVICE_CHARGE / 100);
   const total = subtotal + tax + serviceCharge;
 
   const handleCheckout = async () => {

@@ -24,6 +24,26 @@ const rules = {
     value !== undefined && value !== null && (isNaN(value) || Number(value) <= 0)
       ? 'Must be a positive number'
       : null,
+
+  hasLowerCase: (value) =>
+    value && !/[a-z]/.test(value)
+      ? 'Must contain at least one lowercase letter'
+      : null,
+
+  hasUpperCase: (value) =>
+    value && !/[A-Z]/.test(value)
+      ? 'Must contain at least one uppercase letter'
+      : null,
+
+  hasDigit: (value) =>
+    value && !/[0-9]/.test(value)
+      ? 'Must contain at least one digit'
+      : null,
+
+  hasLetter: (value) =>
+    value && !/[a-zA-Z]/.test(value)
+      ? 'Must contain at least one letter'
+      : null,
 };
 
 /**

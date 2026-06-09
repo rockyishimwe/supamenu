@@ -36,7 +36,7 @@ export default function OwnerStaffRoster() {
 
     const { valid, errors } = validateForm(
       { name, email },
-      { name: ['required'], email: ['required', 'email'] }
+      { name: ['required', ['minLength', 2], 'hasLetter'], email: ['required', 'email'] }
     );
     if (!valid) {
       setFieldErrors(errors);

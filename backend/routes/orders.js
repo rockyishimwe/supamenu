@@ -30,12 +30,12 @@ const orderService = require('../services/orderService');
  *                 data: { type: array, items: { $ref: '#/components/schemas/Order' } }
  *                 pagination: { $ref: '#/components/schemas/Pagination' }
  */
-router.get('/', authMiddleware, async (req, res) => {
+router.get('/', authMiddleware, async (req, res, next) => {
   try {
     const result = await orderService.getOrders(req.user.id, req.user.role, req.query);
     res.json(result);
   } catch (err) {
-    res.status(err.status || 500).json({ message: err.message });
+    next(err);
   }
 });
 
@@ -84,12 +84,12 @@ router.post('/',
   body('total').isFloat({ min: 0.01 }).withMessage('Total must be a positive number'),
   body('paymentMethod').optional().isIn(['wallet', 'card', 'mobile_money']).withMessage('Invalid payment method'),
   validate,
-  async (req, res) => {
+  async (req, res, next) => {
     try {
       const order = await orderService.createOrder(req.user.id, req.body);
       res.status(201).json(order);
     } catch (err) {
-      res.status(err.status || 500).json({ message: err.message });
+      next(err);
     }
   }
 );
@@ -119,12 +119,12 @@ router.post('/',
  *       200:
  *         description: Order status updated
  */
-async function updateOrderStatusHandler(req, res) {
+async function updateOrderStatusHandler(req, res, next) {
   try {
     const order = await orderService.updateOrderStatus(req.params.id, req.body.status);
     res.json(order);
   } catch (err) {
-    res.status(err.status || 500).json({ message: err.message });
+    next(err);
   }
 }
 

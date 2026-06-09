@@ -51,35 +51,52 @@ export default function Sidebar({ role = 'customer' }) {
         {links.map(({ href, label, icon: Icon }) => {
           const active = pathname === href;
           return (
-            <Link
+            <motion.div
               key={href}
-              href={href}
-              className={`flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-colors ${
-                active ? 'bg-primary/15 text-primary' : 'text-gray-400 hover:bg-white/5 hover:text-white'
-              }`}
+              whileHover={{ x: 4 }}
+              whileTap={{ scale: 0.97 }}
+              transition={{ duration: 0.2 }}
             >
-              <Icon className="w-5 h-5 shrink-0" />
-              {!sidebarCollapsed && <span>{label}</span>}
-            </Link>
+              <Link
+                href={href}
+                className={`relative flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-colors ${
+                  active ? 'bg-primary/15 text-primary' : 'text-gray-400 hover:bg-white/5 hover:text-white'
+                }`}
+              >
+                <Icon className="w-5 h-5 shrink-0" />
+                {!sidebarCollapsed && <span>{label}</span>}
+                {active && (
+                  <motion.div
+                    layoutId="activeNav"
+                    className="absolute left-0 top-1/2 -translate-y-1/2 w-0.5 h-6 bg-primary rounded-full"
+                    transition={{ type: 'spring', stiffness: 300, damping: 30 }}
+                  />
+                )}
+              </Link>
+            </motion.div>
           );
         })}
       </nav>
       <div className="m-3 flex items-center gap-2">
-        <button
+        <motion.button
           type="button"
           onClick={toggleTheme}
+          whileTap={{ scale: 0.9 }}
+          whileHover={{ scale: 1.05 }}
           className="flex-1 p-2 rounded-xl border border-white/10 hover:bg-white/5 flex items-center justify-center"
           aria-label={`Switch to ${theme === 'dark' ? 'light' : 'dark'} mode`}
         >
           {theme === 'dark' ? <Sun className="w-4 h-4" /> : <Moon className="w-4 h-4" />}
-        </button>
-        <button
+        </motion.button>
+        <motion.button
           type="button"
           onClick={() => setSidebarCollapsed(!sidebarCollapsed)}
+          whileTap={{ scale: 0.9 }}
+          whileHover={{ scale: 1.05 }}
           className="flex-1 p-2 rounded-xl border border-white/10 hover:bg-white/5 flex items-center justify-center"
         >
           <ChevronLeft className={`w-4 h-4 transition-transform ${sidebarCollapsed ? 'rotate-180' : ''}`} />
-        </button>
+        </motion.button>
       </div>
     </motion.aside>
   );

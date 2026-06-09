@@ -1,7 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const { body } = require('express-validator');
-const { authMiddleware } = require('../middleware/auth');
+const { authMiddleware, requireRole } = require('../middleware/auth');
 const validate = require('../middleware/validate');
 const restaurantService = require('../services/restaurantService');
 
@@ -11,61 +11,61 @@ const ALLOWED_UPDATE_FIELDS = [
 ];
 
 // Get all restaurants (public)
-router.get('/', async (req, res) => {
+router.get('/', async (req, res, next) => {
   try {
     const restaurants = await restaurantService.getAll();
     res.json(restaurants);
   } catch (err) {
-    res.status(500).json({ message: 'Server error', error: err.message });
+    next(err);
   }
 });
 
 // Get single restaurant detail (public)
-router.get('/:id', async (req, res) => {
+router.get('/:id', async (req, res, next) => {
   try {
     const restaurant = await restaurantService.getById(req.params.id);
     res.json(restaurant);
   } catch (err) {
-    res.status(err.status || 500).json({ message: err.message });
+    next(err);
   }
 });
 
 // Get menu items for restaurant (public)
-router.get('/:id/menu', async (req, res) => {
+router.get('/:id/menu', async (req, res, next) => {
   try {
     const menu = await restaurantService.getMenu(req.params.id);
     res.json(menu);
   } catch (err) {
-    res.status(500).json({ message: 'Server error', error: err.message });
+    next(err);
   }
 });
 
 // Update restaurant by id (Owner only)
 router.patch('/:id',
   authMiddleware,
+  requireRole('owner'),
   body('name').optional().trim().notEmpty().withMessage('Restaurant name cannot be empty'),
   body('cuisines').optional().isArray().withMessage('Cuisines must be an array'),
   body('address').optional().trim().notEmpty().withMessage('Address cannot be empty'),
   validate,
-  async (req, res) => {
-  if (req.user.role !== 'owner') return res.status(403).json({ message: 'Access denied' });
+  async (req, res, next) => {
   try {
     const restaurant = await restaurantService.updateRestaurant(req.params.id, req.body, ALLOWED_UPDATE_FIELDS);
     res.json(restaurant);
   } catch (err) {
-    res.status(err.status || 500).json({ message: err.message });
+    next(err);
   }
 });
 
 // Create/Update restaurant profile (Owner only)
 router.post('/',
   authMiddleware,
+  requireRole('owner'),
   body('name').optional().trim().notEmpty().withMessage('Restaurant name cannot be empty'),
   body('address').optional().trim().notEmpty().withMessage('Address cannot be empty'),
   body('cuisines').optional().isArray().withMessage('Cuisines must be an array'),
   validate,
-  async (req, res) => {
-  if (req.user.role !== 'owner') return res.status(403).json({ message: 'Access denied' });
+  async (req, res, next) => {
   try {
     let restaurant = await restaurantService.getById(req.params.id).catch(() => null);
     if (restaurant) {
@@ -75,25 +75,25 @@ router.post('/',
     }
     res.status(200).json(restaurant);
   } catch (err) {
-    res.status(err.status || 500).json({ message: err.message });
+    next(err);
   }
 });
 
 // Add menu item (Owner only)
 router.post('/:id/menu',
   authMiddleware,
+  requireRole('owner'),
   body('name').trim().notEmpty().withMessage('Menu item name is required'),
   body('price').isFloat({ min: 0.01 }).withMessage('Price must be a positive number'),
   body('category').trim().notEmpty().withMessage('Category is required'),
   body('description').optional().trim(),
   validate,
-  async (req, res) => {
-  if (req.user.role !== 'owner') return res.status(403).json({ message: 'Access denied' });
+  async (req, res, next) => {
   try {
     const item = await restaurantService.addMenuItem(req.params.id, req.body);
     res.status(201).json(item);
   } catch (err) {
-    res.status(500).json({ message: 'Server error', error: err.message });
+    next(err);
   }
 });
 

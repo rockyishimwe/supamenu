@@ -6,6 +6,7 @@ import Image from 'next/image';
 import PaymentModal from '../../../components/PaymentModal';
 import BackButton from '../../../components/BackButton';
 import { Minus, Plus, Trash2 } from 'lucide-react';
+import { DEFAULTS } from '../../../lib/constants';
 
 export default function CartPage() {
   const router = useRouter();
@@ -13,8 +14,8 @@ export default function CartPage() {
   const [showPay, setShowPay] = useState(false);
 
   const subtotal = cart.reduce((s, i) => s + i.price * i.quantity, 0);
-  const tax = subtotal * 0.085;
-  const service = subtotal * 0.1;
+  const tax = subtotal * (DEFAULTS.TAX_RATE / 100);
+  const service = subtotal * (DEFAULTS.SERVICE_CHARGE / 100);
   const total = subtotal + tax + service;
 
   const handleCheckout = async (method) => {

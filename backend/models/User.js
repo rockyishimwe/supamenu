@@ -1,6 +1,11 @@
 const mongoose = require('mongoose');
 const bcrypt = require('bcryptjs');
 
+const RefreshTokenSchema = new mongoose.Schema({
+  token: { type: String, required: true },
+  expiresAt: { type: Date, required: true },
+}, { _id: false });
+
 const UserSchema = new mongoose.Schema({
   name: { type: String, required: true },
   email: { type: String, required: true, unique: true },
@@ -8,6 +13,7 @@ const UserSchema = new mongoose.Schema({
   role: { type: String, enum: ['customer', 'staff', 'owner'], default: 'customer' },
   avatar: { type: String, default: '' },
   walletBalance: { type: Number, default: 128.50 },
+  refreshTokens: [RefreshTokenSchema],
   customerDetails: {
     points: { type: Number, default: 350 },
     loyaltyTier: { type: String, default: 'Gold Member' }

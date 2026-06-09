@@ -49,7 +49,7 @@ export const useAuthStore = create((set, get) => ({
         set({ token: data.token, currentUser: data.user, activeRole: data.user.role });
         return { success: true };
       } catch (err) {
-        return { success: false, message: err.message };
+        return { success: false, message: err.message, errors: err.data?.errors };
       }
     }
     const names = { customer: 'Sarah Jenkins', staff: 'Alex Morgan', owner: 'John Doe' };
@@ -75,7 +75,7 @@ export const useAuthStore = create((set, get) => ({
         set({ token: data.token, currentUser: data.user, activeRole: data.user.role });
         return { success: true };
       } catch (err) {
-        return { success: false, message: err.message };
+        return { success: false, message: err.message, errors: err.data?.errors };
       }
     }
     const id = `u-${Date.now()}`;

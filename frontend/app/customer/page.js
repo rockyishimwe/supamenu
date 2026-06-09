@@ -10,9 +10,29 @@ import QuickBookingForm from '../../components/customer/QuickBookingForm';
 import { staggerContainer, fadeUpItem, hoverGlow, slideUpView, scaleInView } from '../../components/PageTransition';
 
 export default function CustomerDashboard() {
-  const { restaurants, menuItems, addToCart, createReservation, currentUser } = useDineFlow();
+  const { restaurants, menuItems, addToCart, createReservation, currentUser, loading } = useDineFlow();
   const [selectedCategory, setSelectedCategory] = useState('All');
   const [searchQuery, setSearchQuery] = useState('');
+
+  if (loading) {
+    return (
+      <div className="p-8 animate-pulse">
+        <div className="h-8 w-48 bg-white/5 rounded-2xl mb-6" />
+        <div className="h-6 w-32 bg-white/5 rounded-2xl mb-8" />
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          {[1, 2, 3].map((i) => (
+            <div key={i} className="rounded-3xl bg-white/5 border border-white/5 overflow-hidden">
+              <div className="h-40 bg-white/5" />
+              <div className="p-5 space-y-3">
+                <div className="h-5 w-3/4 bg-white/5 rounded" />
+                <div className="h-4 w-1/2 bg-white/5 rounded" />
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+    );
+  }
 
   const categories = ['All', ...new Set(menuItems.map((item) => item.category))];
 

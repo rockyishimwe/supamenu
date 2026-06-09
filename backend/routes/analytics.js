@@ -30,7 +30,7 @@ function coversByDayOfWeek() {
   ];
 }
 
-router.get('/summary', authMiddleware, async (req, res) => {
+router.get('/summary', authMiddleware, async (req, res, next) => {
   try {
     const ordersCount = await Order.countDocuments();
     const reservationsCount = await Reservation.countDocuments();
@@ -47,27 +47,27 @@ router.get('/summary', authMiddleware, async (req, res) => {
       pendingOrders: await Order.countDocuments({ status: { $in: ['new', 'preparing'] } }),
     });
   } catch (err) {
-    res.status(500).json({ message: 'Server error', error: err.message });
+    next(err);
   }
 });
 
-router.get('/sales-chart', authMiddleware, async (req, res) => {
+router.get('/sales-chart', authMiddleware, async (req, res, next) => {
   try {
     res.json(last30DaysSales());
   } catch (err) {
-    res.status(500).json({ message: 'Server error', error: err.message });
+    next(err);
   }
 });
 
-router.get('/reservations-chart', authMiddleware, async (req, res) => {
+router.get('/reservations-chart', authMiddleware, async (req, res, next) => {
   try {
     res.json(coversByDayOfWeek());
   } catch (err) {
-    res.status(500).json({ message: 'Server error', error: err.message });
+    next(err);
   }
 });
 
-router.get('/owner-dashboard', authMiddleware, async (req, res) => {
+router.get('/owner-dashboard', authMiddleware, async (req, res, next) => {
   try {
     const ordersCount = await Order.countDocuments();
     const reservationsCount = await Reservation.countDocuments();
@@ -94,7 +94,7 @@ router.get('/owner-dashboard', authMiddleware, async (req, res) => {
       ],
     });
   } catch (err) {
-    res.status(500).json({ message: 'Server error', error: err.message });
+    next(err);
   }
 });
 

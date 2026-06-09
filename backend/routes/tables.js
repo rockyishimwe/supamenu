@@ -2,11 +2,11 @@ const express = require('express');
 const router = express.Router();
 const { body } = require('express-validator');
 const Table = require('../models/Table');
-const { authMiddleware } = require('../middleware/auth');
+const { authMiddleware, requireRole } = require('../middleware/auth');
 const validate = require('../middleware/validate');
 
 // Get all tables for a restaurant
-router.get('/', authMiddleware, async (req, res) => {
+router.get('/', authMiddleware, async (req, res, next) => {
   try {
     const user = req.user;
     let query = {};
@@ -24,11 +24,11 @@ router.get('/', authMiddleware, async (req, res) => {
     const tables = await Table.find(query).sort({ tableNumber: 1 });
     res.json(tables);
   } catch (err) {
-    res.status(500).json({ message: 'Server error', error: err.message });
+    next(err);
   }
 });
 
-async function updateTableHandler(req, res) {
+async function updateTableHandler(req, res, next) {
   const { status, currentDuration, currentGuestName, currentGuestsCount, currentOrderTotal, assignedServer } = req.body;
   try {
     const table = await Table.findById(req.params.id);
@@ -50,7 +50,7 @@ async function updateTableHandler(req, res) {
     await table.save();
     res.json(table);
   } catch (err) {
-    res.status(500).json({ message: 'Server error', error: err.message });
+    next(err);
   }
 }
 
@@ -71,15 +71,12 @@ router.patch('/:id/status', ...tableUpdateChain, updateTableHandler);
 // Create a table (Owner only)
 router.post('/',
   authMiddleware,
+  requireRole('owner', 'staff'),
   body('restaurantId').notEmpty().withMessage('restaurantId is required'),
   body('tableNumber').isInt({ min: 1 }).withMessage('tableNumber must be a positive integer'),
   body('capacity').isInt({ min: 1 }).withMessage('capacity must be at least 1'),
   validate,
-  async (req, res) => {
-  if (req.user.role !== 'owner' && req.user.role !== 'staff') {
-    return res.status(403).json({ message: 'Access denied' });
-  }
-
+  async (req, res, next) => {
   const { restaurantId, tableNumber, capacity, location, x, y, width, height, shape, status } = req.body;
   try {
     const table = new Table({
@@ -97,21 +94,18 @@ router.post('/',
     await table.save();
     res.status(201).json(table);
   } catch (err) {
-    res.status(500).json({ message: 'Server error', error: err.message });
+    next(err);
   }
 });
 
 // Delete a table (Owner only)
-router.delete('/:id', authMiddleware, async (req, res) => {
-  if (req.user.role !== 'owner') {
-    return res.status(403).json({ message: 'Access denied: Owners only' });
-  }
+router.delete('/:id', authMiddleware, requireRole('owner'), async (req, res, next) => {
   try {
     const table = await Table.findByIdAndDelete(req.params.id);
     if (!table) return res.status(404).json({ message: 'Table not found' });
     res.json({ message: 'Table deleted successfully' });
   } catch (err) {
-    res.status(500).json({ message: 'Server error', error: err.message });
+    next(err);
   }
 });
 

@@ -7,7 +7,7 @@ const { authMiddleware } = require('../middleware/auth');
 const validate = require('../middleware/validate');
 
 // Get all reservations (Staff/Owner: all, Customer: only their own)
-router.get('/', authMiddleware, async (req, res) => {
+router.get('/', authMiddleware, async (req, res, next) => {
   try {
     let query = {};
     if (req.user.role === 'customer') {
@@ -22,7 +22,7 @@ router.get('/', authMiddleware, async (req, res) => {
     ]);
     res.json({ data: reservations, pagination: { page, limit, total, pages: Math.ceil(total / limit) } });
   } catch (err) {
-    res.status(500).json({ message: 'Server error', error: err.message });
+    next(err);
   }
 });
 
@@ -37,7 +37,7 @@ router.post('/',
   body('tableId').optional().isMongoId().withMessage('Invalid tableId'),
   body('notes').optional().trim(),
   validate,
-  async (req, res) => {
+  async (req, res, next) => {
   const { restaurantId, restaurantName, guestsCount, reservationDate, reservationTime, notes, tableId, tableNumber } = req.body;
   try {
     const reservation = new Reservation({
@@ -66,12 +66,12 @@ router.post('/',
 
     res.status(201).json(reservation);
   } catch (err) {
-    res.status(500).json({ message: 'Server error', error: err.message });
+    next(err);
   }
 });
 
 // Update reservation status (Cancel, Confirm, etc.)
-async function updateReservation(req, res) {
+async function updateReservation(req, res, next) {
   const { status } = req.body;
   try {
     const reservation = await Reservation.findById(req.params.id);
@@ -100,7 +100,7 @@ async function updateReservation(req, res) {
 
     res.json(reservation);
   } catch (err) {
-    res.status(500).json({ message: 'Server error', error: err.message });
+    next(err);
   }
 }
 
@@ -113,7 +113,7 @@ const updateReservationChain = [
 router.put('/:id', ...updateReservationChain, updateReservation);
 router.patch('/:id', ...updateReservationChain, updateReservation);
 
-router.delete('/:id', authMiddleware, async (req, res) => {
+router.delete('/:id', authMiddleware, async (req, res, next) => {
   try {
     const reservation = await Reservation.findById(req.params.id);
     if (!reservation) return res.status(404).json({ message: 'Reservation not found' });
@@ -126,7 +126,7 @@ router.delete('/:id', authMiddleware, async (req, res) => {
     await reservation.deleteOne();
     res.json({ message: 'Reservation deleted' });
   } catch (err) {
-    res.status(500).json({ message: 'Server error', error: err.message });
+    next(err);
   }
 });
 

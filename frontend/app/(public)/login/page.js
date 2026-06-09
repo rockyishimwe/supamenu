@@ -63,8 +63,23 @@ export default function LoginPage() {
       else if (activeRole === 'staff') router.push('/staff');
       else if (activeRole === 'owner') router.push('/owner');
     } else {
-      toast.error(res.message || 'Login failed. Please check credentials.');
-      setErrorMsg(res.message || 'Login failed. Please check credentials.');
+      // Map backend validation errors to individual fields
+      if (res.errors && Array.isArray(res.errors)) {
+        const fieldMap = {};
+        res.errors.forEach((e) => {
+          if (e.field) fieldMap[e.field] = e.message;
+        });
+        if (Object.keys(fieldMap).length > 0) {
+          setFieldErrors(fieldMap);
+        } else {
+          setErrorMsg(res.message || 'Login failed. Please check credentials.');
+        }
+      } else {
+        setErrorMsg(res.message || 'Login failed. Please check credentials.');
+      }
+      if (!res.errors || !Array.isArray(res.errors) || !res.errors.some((e) => e.field)) {
+        toast.error(res.message || 'Login failed. Please check credentials.');
+      }
     }
   };
 

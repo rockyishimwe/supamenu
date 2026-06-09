@@ -1,7 +1,8 @@
 "use client";
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
+import { motion, AnimatePresence } from 'framer-motion';
 import { useDineFlow } from '../../context';
 import { useStore } from '../../../lib/store';
 import { validateForm } from '../../../lib/validation';
@@ -19,6 +20,7 @@ import {
   Check,
   Utensils,
   Shield,
+  Loader2,
 } from 'lucide-react';
 import DineFlowLogo from '../../../components/DineFlowLogo';
 import BackButton from '../../../components/BackButton';
@@ -60,7 +62,11 @@ export default function RegisterPage() {
     if (step === 1) {
       const { valid, errors } = validateForm(
         { name, email, password },
-        { name: ['required'], email: ['required', 'email'], password: ['required', ['minLength', 6]] }
+        {
+          name: ['required', ['minLength', 2], 'hasLetter'],
+          email: ['required', 'email'],
+          password: ['required', ['minLength', 8], 'hasLowerCase', 'hasUpperCase', 'hasDigit'],
+        }
       );
       if (!valid) {
         setFieldErrors(errors);
@@ -97,6 +103,20 @@ export default function RegisterPage() {
   };
 
   const handleRegister = async () => {
+    // Run validation first — catches customer direct submits
+    const { valid, errors } = validateForm(
+      { name, email, password },
+      {
+        name: ['required', ['minLength', 2], 'hasLetter'],
+        email: ['required', 'email'],
+        password: ['required', ['minLength', 8], 'hasLowerCase', 'hasUpperCase', 'hasDigit'],
+      }
+    );
+    if (!valid) {
+      setFieldErrors(errors);
+      return;
+    }
+
     setLoading(true);
     setErrorMsg('');
     setFieldErrors({});
@@ -138,7 +158,20 @@ export default function RegisterPage() {
         router.push('/customer');
       }
     } else {
-      setErrorMsg(res.message || 'Registration failed');
+      // Map backend validation errors to individual fields
+      if (res.errors && Array.isArray(res.errors)) {
+        const fieldMap = {};
+        res.errors.forEach((e) => {
+          if (e.field) fieldMap[e.field] = e.message;
+        });
+        if (Object.keys(fieldMap).length > 0) {
+          setFieldErrors(fieldMap);
+        } else {
+          setErrorMsg(res.message || 'Registration failed');
+        }
+      } else {
+        setErrorMsg(res.message || 'Registration failed');
+      }
     }
   };
 
@@ -186,16 +219,41 @@ export default function RegisterPage() {
             <div className="flex justify-between items-center">
               <h3 className="text-2xl font-bold text-white">Create Account</h3>
               {isMultiStep && (
-                <span className="text-[10px] bg-white/5 border border-white/5 text-gray-400 font-bold px-2.5 py-1 rounded-full uppercase tracking-wider">
-                  Step {step} of 3
-                </span>
+                <div className="flex items-center gap-2">
+                  {[1, 2, 3].map((s) => (
+                    <React.Fragment key={s}>
+                      <div className={`w-7 h-7 rounded-full flex items-center justify-center text-[10px] font-bold transition-all ${
+                        s === step
+                          ? 'bg-[#FF6B00] text-white shadow-lg shadow-[#FF6B00]/20'
+                          : s < step
+                            ? 'bg-emerald-500/20 text-emerald-400 border border-emerald-500/30'
+                            : 'bg-white/5 text-gray-500 border border-white/10'
+                      }`}>
+                        {s < step ? <Check className="w-3 h-3" /> : s}
+                      </div>
+                      {s < 3 && (
+                        <div className={`w-6 h-0.5 rounded-full ${
+                          s < step ? 'bg-emerald-500/50' : 'bg-white/10'
+                        }`} />
+                      )}
+                    </React.Fragment>
+                  ))}
+                </div>
               )}
             </div>
             <p className="text-xs text-gray-500">Get access to reservations, checkout, and platform tools.</p>
           </div>
 
-          {step === 1 && (
-            <div className="space-y-6">
+          <AnimatePresence mode="wait">
+            {step === 1 && (
+              <motion.div
+                key="step1"
+                initial={{ opacity: 0, x: 20 }}
+                animate={{ opacity: 1, x: 0 }}
+                exit={{ opacity: 0, x: -20 }}
+                transition={{ duration: 0.25, ease: 'easeOut' }}
+                className="space-y-6"
+              >
               <div className="space-y-1.5">
                 <label className="text-[11px] font-semibold text-gray-400">Registering as a...</label>
                 <div className="grid grid-cols-3 gap-2">
@@ -278,12 +336,50 @@ export default function RegisterPage() {
                   />
                 </div>
                 {fieldErrors.password && <p className="text-red-400 text-[10px] mt-1">{fieldErrors.password}</p>}
+                {password && (
+                  <div className="mt-2 space-y-1.5 p-3 rounded-xl bg-white/3 border border-white/5">
+                    <p className="text-[9px] font-semibold uppercase tracking-wider text-gray-500 mb-1.5">Password requirements</p>
+                    {[
+                      { label: 'At least 8 characters', check: (p) => p.length >= 8 },
+                      { label: 'Uppercase letter (A–Z)', check: (p) => /[A-Z]/.test(p) },
+                      { label: 'Lowercase letter (a–z)', check: (p) => /[a-z]/.test(p) },
+                      { label: 'At least 1 digit (0–9)', check: (p) => /[0-9]/.test(p) },
+                    ].map((req) => {
+                      const ok = req.check(password);
+                      return (
+                        <div key={req.label} className="flex items-center gap-1.5">
+                          <div className={`w-3.5 h-3.5 rounded-full flex items-center justify-center transition-all ${
+                            ok ? 'bg-emerald-500/20' : 'bg-white/5'
+                          }`}>
+                            {ok ? (
+                              <Check className="w-2.5 h-2.5 text-emerald-400" />
+                            ) : (
+                              <div className="w-1.5 h-1.5 rounded-full bg-gray-600" />
+                            )}
+                          </div>
+                          <span className={`text-[10px] transition-colors ${
+                            ok ? 'text-emerald-400 font-medium' : 'text-gray-500'
+                          }`}>
+                            {req.label}
+                          </span>
+                        </div>
+                      );
+                    })}
+                  </div>
+                )}
               </div>
-            </div>
+            </motion.div>
           )}
 
           {step === 2 && role === 'owner' && (
-            <div className="space-y-6">
+            <motion.div
+              key="step2-owner"
+              initial={{ opacity: 0, x: 20 }}
+              animate={{ opacity: 1, x: 0 }}
+              exit={{ opacity: 0, x: -20 }}
+              transition={{ duration: 0.25, ease: 'easeOut' }}
+              className="space-y-6"
+            >
               <div className="space-y-1.5">
                 <label className="text-[11px] font-semibold text-gray-400">Restaurant Name</label>
                 <div className="relative">
@@ -327,11 +423,18 @@ export default function RegisterPage() {
                   />
                 </div>
               </div>
-            </div>
-          )}
+            </motion.div>
+            )}
 
-          {step === 2 && role === 'staff' && (
-            <div className="space-y-6">
+            {step === 2 && role === 'staff' && (
+            <motion.div
+            key="step2-staff"
+            initial={{ opacity: 0, x: 20 }}
+            animate={{ opacity: 1, x: 0 }}
+            exit={{ opacity: 0, x: -20 }}
+            transition={{ duration: 0.25, ease: 'easeOut' }}
+            className="space-y-6"
+            >
               <p className="text-xs text-gray-500 leading-relaxed">
                 Enter the invite code provided by your restaurant manager to join their team on DineFlow.
               </p>
@@ -349,11 +452,18 @@ export default function RegisterPage() {
                 </div>
                 {fieldErrors.restaurantCode && <p className="text-red-400 text-[10px] mt-1">{fieldErrors.restaurantCode}</p>}
               </div>
-            </div>
+            </motion.div>
           )}
 
           {step === 3 && role === 'owner' && (
-            <div className="space-y-6">
+            <motion.div
+              key="step3-owner"
+              initial={{ opacity: 0, x: 20 }}
+              animate={{ opacity: 1, x: 0 }}
+              exit={{ opacity: 0, x: -20 }}
+              transition={{ duration: 0.25, ease: 'easeOut' }}
+              className="space-y-6"
+            >
               <div className="bg-[#FF6B00]/5 border border-[#FF6B00]/15 p-6 rounded-2xl space-y-4">
                 <div className="w-10 h-10 rounded-full bg-[#FF6B00]/15 flex items-center justify-center text-[#FF6B00] mx-auto">
                   <Check className="w-5 h-5" />
@@ -379,11 +489,18 @@ export default function RegisterPage() {
                   </div>
                 </div>
               </div>
-            </div>
+            </motion.div>
           )}
 
           {step === 3 && role === 'staff' && (
-            <div className="space-y-6">
+            <motion.div
+              key="step3-staff"
+              initial={{ opacity: 0, x: 20 }}
+              animate={{ opacity: 1, x: 0 }}
+              exit={{ opacity: 0, x: -20 }}
+              transition={{ duration: 0.25, ease: 'easeOut' }}
+              className="space-y-6"
+            >
               <div className="bg-[#FF6B00]/5 border border-[#FF6B00]/15 p-6 rounded-2xl space-y-4">
                 <div className="w-10 h-10 rounded-full bg-[#FF6B00]/15 flex items-center justify-center text-[#FF6B00] mx-auto">
                   <Check className="w-5 h-5" />
@@ -409,8 +526,9 @@ export default function RegisterPage() {
                   </div>
                 </div>
               </div>
-            </div>
+            </motion.div>
           )}
+          </AnimatePresence>
 
           {errorMsg && (
             <p className="text-red-500 text-[11px] font-medium bg-red-500/5 p-2 rounded-xl border border-red-500/10 text-center mt-4">
@@ -436,7 +554,12 @@ export default function RegisterPage() {
               className="flex-1 py-3.5 bg-[#FF6B00] hover:bg-[#e05e00] text-white font-semibold text-xs rounded-xl flex items-center justify-center gap-1.5 hover-lift shadow-lg shadow-[#FF6B00]/10"
             >
               {loading
-                ? 'Creating...'
+                ? (
+                  <span className="flex items-center gap-2">
+                    <Loader2 className="w-4 h-4 animate-spin" />
+                    Creating...
+                  </span>
+                )
                 : step === 3 || role === 'customer'
                   ? 'Create Ecosystem Account'
                   : 'Continue'}
