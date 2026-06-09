@@ -3,6 +3,7 @@ const router = express.Router();
 const { body } = require('express-validator');
 const { authMiddleware, requireRole } = require('../middleware/auth');
 const validate = require('../middleware/validate');
+const { sanitize } = require('../utils/sanitize');
 const restaurantService = require('../services/restaurantService');
 
 const ALLOWED_UPDATE_FIELDS = [
@@ -50,6 +51,7 @@ router.patch('/:id',
   validate,
   async (req, res, next) => {
   try {
+    req.body = sanitize(req.body, ['name', 'description', 'address']);
     const restaurant = await restaurantService.updateRestaurant(req.params.id, req.body, ALLOWED_UPDATE_FIELDS);
     res.json(restaurant);
   } catch (err) {
@@ -69,6 +71,7 @@ router.post('/',
   try {
     let restaurant = await restaurantService.getById(req.params.id).catch(() => null);
     if (restaurant) {
+      req.body = sanitize(req.body, ['name', 'description', 'address']);
       restaurant = await restaurantService.updateRestaurant(restaurant._id, req.body, ALLOWED_UPDATE_FIELDS);
     } else {
       restaurant = await restaurantService.createRestaurant(req.body);

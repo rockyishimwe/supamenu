@@ -3,6 +3,7 @@ const router = express.Router();
 const { body } = require('express-validator');
 const { authMiddleware } = require('../middleware/auth');
 const validate = require('../middleware/validate');
+const { sanitize } = require('../utils/sanitize');
 const authService = require('../services/authService');
 
 /**
@@ -161,6 +162,7 @@ router.get('/profile', authMiddleware, async (req, res, next) => {
  */
 router.patch('/profile', authMiddleware, async (req, res, next) => {
   try {
+    req.body = sanitize(req.body, ['name', 'avatar']);
     const profile = await authService.updateProfile(req.user.id, req.body);
     res.json(profile);
   } catch (err) {

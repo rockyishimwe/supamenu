@@ -3,12 +3,14 @@
 
 const express = require('express');
 const helmet = require('helmet');
+const cors = require('cors');
 const errorHandler = require('./middleware/errorHandler');
 const csrfProtection = require('./middleware/csrf');
 const globalRateLimiter = require('./middleware/rateLimit');
 const authRateLimiter = require('./middleware/authRateLimit');
 const swaggerUi = require('swagger-ui-express');
 const swaggerSpec = require('./swagger');
+const config = require('./config/env');
 const authRoutes = require('./routes/auth');
 const orderRoutes = require('./routes/orders');
 const restaurantRoutes = require('./routes/restaurants');
@@ -21,8 +23,9 @@ const healthRoutes = require('./routes/health');
 const app = express();
 
 // Middleware
-app.use(express.json());
 app.use(helmet());
+app.use(cors({ origin: config.CORS_ORIGIN, credentials: true }));
+app.use(express.json());
 app.use(globalRateLimiter);
 app.use(csrfProtection);
 

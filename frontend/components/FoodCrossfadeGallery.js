@@ -1,5 +1,6 @@
 "use client";
 import { useState, useEffect } from 'react';
+import Image from 'next/image';
 import { motion, AnimatePresence } from 'framer-motion';
 
 const images = [
@@ -34,10 +35,13 @@ export default function FoodCrossfadeGallery() {
             exit={{ opacity: 0, scale: 0.95 }}
             transition={{ duration: 1.2, ease: [0.25, 0.1, 0.25, 1] }}
           >
-            <img
+            <Image
               src={images[index].src}
               alt={images[index].alt}
-              className="w-full h-full object-cover"
+              fill
+              sizes="(max-width: 400px) 100vw, 400px"
+              className="object-cover"
+              priority
             />
           </motion.div>
         </AnimatePresence>

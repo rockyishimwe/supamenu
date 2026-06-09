@@ -20,7 +20,9 @@ async function ensureIndexes() {
   // Order indexes
   if (colNames.includes('orders')) {
     await db.collection('orders').createIndex({ userId: 1 }, { background: true });
+    await db.collection('orders').createIndex({ userId: 1, createdAt: -1 }, { background: true });
     await db.collection('orders').createIndex({ restaurantId: 1 }, { background: true });
+    await db.collection('orders').createIndex({ restaurantId: 1, status: 1 }, { background: true });
     await db.collection('orders').createIndex({ status: 1 }, { background: true });
   }
 
@@ -28,11 +30,13 @@ async function ensureIndexes() {
   if (colNames.includes('reservations')) {
     await db.collection('reservations').createIndex({ userId: 1 }, { background: true });
     await db.collection('reservations').createIndex({ restaurantId: 1 }, { background: true });
+    await db.collection('reservations').createIndex({ restaurantId: 1, reservationDate: 1 }, { background: true });
   }
 
   // Table indexes
   if (colNames.includes('tables')) {
     await db.collection('tables').createIndex({ restaurantId: 1 }, { background: true });
+    await db.collection('tables').createIndex({ restaurantId: 1, status: 1 }, { background: true });
   }
 
   // MenuItem indexes

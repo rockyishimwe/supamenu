@@ -1,6 +1,7 @@
 "use client";
 import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
+import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import { motion, AnimatePresence } from 'framer-motion';
 import { 
@@ -243,9 +244,11 @@ export default function LandingPage() {
                 <div className="relative">
                   {/* Image */}
                   <div className="relative">
-                    <img
+                    <Image
                       src={restaurant.image}
                       alt={restaurant.name}
+                      width={500}
+                      height={192}
                       className="w-full h-48 object-cover"
                     />
                     {/* Rating badge */}

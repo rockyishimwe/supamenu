@@ -35,9 +35,11 @@ router.post('/',
     .matches(/[a-z]/).withMessage('Password must contain a lowercase letter')
     .matches(/[A-Z]/).withMessage('Password must contain an uppercase letter')
     .matches(/[0-9]/).withMessage('Password must contain a digit'),
+  body('role').isIn(['Waiter', 'Cashier', 'Kitchen Staff', 'Manager'])
+    .withMessage('Staff role must be Waiter, Cashier, Kitchen Staff, or Manager'),
   validate,
   async (req, res, next) => {
-    const { name, email, password, role } = req.body;
+    const { name, email, password, role: staffRole } = req.body;
     const restaurantId = req.user.ownerDetails?.restaurantId;
     if (!restaurantId) return res.status(400).json({ message: 'No restaurant assigned' });
 
@@ -46,7 +48,7 @@ router.post('/',
         const restaurantCode = restaurant?.inviteCode || '';
         const newUser = new User({
             name, email, password, role: 'staff',
-            staffDetails: { role, restaurantId, restaurantCode }
+            staffDetails: { role: staffRole, restaurantId, restaurantCode }
         });
         await newUser.save();
         const userData = newUser.toObject();

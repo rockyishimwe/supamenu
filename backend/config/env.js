@@ -19,4 +19,5 @@ module.exports = {
   MONGO_URI: process.env.MONGO_URI,
   JWT_SECRET: process.env.JWT_SECRET,
   PORT: parseInt(process.env.PORT, 10) || 5000,
+  CORS_ORIGIN: process.env.CORS_ORIGIN || 'http://localhost:3000',
 };
