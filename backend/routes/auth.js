@@ -172,6 +172,105 @@ router.patch('/profile', authMiddleware, async (req, res, next) => {
 
 /**
  * @openapi
+ * /auth/change-password:
+ *   post:
+ *     tags: [Auth]
+ *     summary: Change password (invalidates all other sessions)
+ *     security: [{ bearerAuth: [] }]
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required: [currentPassword, newPassword]
+ *             properties:
+ *               currentPassword: { type: string }
+ *               newPassword: { type: string, minLength: 8 }
+ *     responses:
+ *       200:
+ *         description: Password changed
+ *       400:
+ *         description: Validation error
+ */
+router.post('/change-password',
+  authMiddleware,
+  body('currentPassword').notEmpty().withMessage('Current password is required'),
+  body('newPassword')
+    .isLength({ min: 8 }).withMessage('New password must be at least 8 characters')
+    .matches(/[a-z]/).withMessage('New password must contain a lowercase letter')
+    .matches(/[A-Z]/).withMessage('New password must contain an uppercase letter')
+    .matches(/[0-9]/).withMessage('New password must contain a digit'),
+  validate,
+  async (req, res, next) => {
+    try {
+      const result = await authService.changePassword(req.user.id, req.body);
+      res.json(result);
+    } catch (err) {
+      next(err);
+    }
+  }
+);
+
+/**
+ * @openapi
+ * /auth/request-verification:
+ *   post:
+ *     tags: [Auth]
+ *     summary: Request email verification link
+ *     security: [{ bearerAuth: [] }]
+ *     responses:
+ *       200:
+ *         description: Verification email sent
+ */
+router.post('/request-verification',
+  authMiddleware,
+  async (req, res, next) => {
+    try {
+      const result = await authService.requestEmailVerification(req.user.id);
+      res.json(result);
+    } catch (err) {
+      next(err);
+    }
+  }
+);
+
+/**
+ * @openapi
+ * /auth/verify-email:
+ *   post:
+ *     tags: [Auth]
+ *     summary: Verify email with token
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required: [token]
+ *             properties:
+ *               token: { type: string }
+ *     responses:
+ *       200:
+ *         description: Email verified
+ *       400:
+ *         description: Invalid or expired token
+ */
+router.post('/verify-email',
+  body('token').notEmpty().withMessage('Verification token is required'),
+  validate,
+  async (req, res, next) => {
+    try {
+      const result = await authService.verifyEmail(req.body.token);
+      res.json(result);
+    } catch (err) {
+      next(err);
+    }
+  }
+);
+
+/**
+ * @openapi
  * /auth/wallet/topup:
  *   post:
  *     tags: [Auth]

@@ -29,6 +29,14 @@ async function authMiddleware(req, res, next) {
     const user = await getCachedUser(decoded.id);
     if (!user) return res.status(401).json({ message: 'Token is not valid' });
 
+    // Check if password was changed after this token was issued
+    if (user.passwordChangedAt) {
+      const changedAt = Math.floor(user.passwordChangedAt.getTime() / 1000);
+      if (decoded.iat < changedAt) {
+        return res.status(401).json({ message: 'Token expired due to password change. Please log in again.' });
+      }
+    }
+
     req.user = user;
     next();
   } catch (err) {

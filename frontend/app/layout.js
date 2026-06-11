@@ -15,6 +15,7 @@ export default function RootLayout({ children }) {
   return (
     <html lang="en" className="dark">
       <head>
+        <link rel="manifest" href="/manifest.json" />
         <link rel="icon" href={`data:image/svg+xml,${faviconSvg}`} />
       </head>
       <body className="bg-page text-body">

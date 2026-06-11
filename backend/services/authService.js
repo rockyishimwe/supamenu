@@ -16,6 +16,7 @@ function formatUser(user) {
     name: user.name,
     email: user.email,
     role: user.role,
+    emailVerified: user.emailVerified,
     walletBalance: user.walletBalance,
     avatar: user.avatar,
     customerDetails: user.customerDetails,
@@ -80,8 +81,29 @@ async function loginUser({ email, password, role }) {
   if (!user) throw Object.assign(new Error('Invalid credentials'), { status: 400 });
   if (role && user.role !== role) throw Object.assign(new Error('Invalid credentials'), { status: 400 });
 
+  // Account lockout check
+  const LOCKOUT_THRESHOLD = 5;
+  const LOCKOUT_WINDOW_MS = 15 * 60 * 1000; // 15 minutes
+  if (user.lockUntil && user.lockUntil > new Date()) {
+    const remainingMin = Math.ceil((user.lockUntil - new Date()) / 60000);
+    throw Object.assign(new Error(`Account locked. Try again in ${remainingMin} minute(s).`), { status: 429 });
+  }
+
   const isMatch = await bcrypt.compare(password, user.password);
-  if (!isMatch) throw Object.assign(new Error('Invalid credentials'), { status: 400 });
+  if (!isMatch) {
+    user.failedLoginAttempts = (user.failedLoginAttempts || 0) + 1;
+    if (user.failedLoginAttempts >= LOCKOUT_THRESHOLD) {
+      user.lockUntil = new Date(Date.now() + LOCKOUT_WINDOW_MS);
+      // Reset counter after locking so next attempt checks lockUntil first
+      user.failedLoginAttempts = 0;
+    }
+    await user.save();
+    throw Object.assign(new Error('Invalid credentials'), { status: 400 });
+  }
+
+  // Successful login — reset lockout
+  user.failedLoginAttempts = 0;
+  user.lockUntil = null;
 
   const token = generateToken(user);
   const refreshToken = generateRefreshToken();
@@ -140,6 +162,54 @@ async function updateProfile(userId, { name, email, avatar }) {
   return formatUser(user);
 }
 
+async function changePassword(userId, { currentPassword, newPassword }) {
+  const user = await User.findById(userId);
+  if (!user) throw Object.assign(new Error('User not found'), { status: 404 });
+
+  const isMatch = await bcrypt.compare(currentPassword, user.password);
+  if (!isMatch) throw Object.assign(new Error('Current password is incorrect'), { status: 400 });
+
+  user.password = newPassword;
+  await user.save();
+
+  // Revoke all existing refresh tokens so other sessions are invalidated
+  user.refreshTokens = [];
+  await user.save();
+
+  return { message: 'Password changed successfully. Please log in again.' };
+}
+
+async function requestEmailVerification(userId) {
+  const user = await User.findById(userId);
+  if (!user) throw Object.assign(new Error('User not found'), { status: 404 });
+  if (user.emailVerified) throw Object.assign(new Error('Email already verified'), { status: 400 });
+
+  const token = crypto.randomBytes(32).toString('hex');
+  const hashed = crypto.createHash('sha256').update(token).digest('hex');
+  user.verificationToken = hashed;
+  user.verificationTokenExpires = new Date(Date.now() + 24 * 60 * 60 * 1000); // 24h
+  await user.save();
+
+  // In production, send email here. Return token for now (stub).
+  return { message: 'Verification email sent.', token };
+}
+
+async function verifyEmail(token) {
+  const hashed = crypto.createHash('sha256').update(token).digest('hex');
+  const user = await User.findOne({
+    verificationToken: hashed,
+    verificationTokenExpires: { $gt: new Date() },
+  });
+  if (!user) throw Object.assign(new Error('Invalid or expired verification token'), { status: 400 });
+
+  user.emailVerified = true;
+  user.verificationToken = null;
+  user.verificationTokenExpires = null;
+  await user.save();
+
+  return { message: 'Email verified successfully.' };
+}
+
 async function topUpWallet(userId, amount) {
   const amt = parseFloat(amount);
   if (!amt || amt <= 0) throw Object.assign(new Error('Invalid amount'), { status: 400 });
@@ -150,4 +220,4 @@ async function topUpWallet(userId, amount) {
   return { walletBalance: user.walletBalance };
 }
 
-module.exports = { registerUser, loginUser, refreshAccessToken, revokeRefreshToken, getProfile, updateProfile, topUpWallet };
+module.exports = { registerUser, loginUser, refreshAccessToken, revokeRefreshToken, getProfile, updateProfile, changePassword, requestEmailVerification, verifyEmail, topUpWallet };

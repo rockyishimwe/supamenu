@@ -14,6 +14,19 @@ const UserSchema = new mongoose.Schema({
   avatar: { type: String, default: '' },
   walletBalance: { type: Number, default: 128.50 },
   refreshTokens: [RefreshTokenSchema],
+
+  // Account lockout
+  failedLoginAttempts: { type: Number, default: 0 },
+  lockUntil: { type: Date, default: null },
+
+  // Session invalidation
+  passwordChangedAt: { type: Date, default: null },
+
+  // Email verification
+  emailVerified: { type: Boolean, default: false },
+  verificationToken: { type: String, default: null },
+  verificationTokenExpires: { type: Date, default: null },
+
   customerDetails: {
     points: { type: Number, default: 350 },
     loyaltyTier: { type: String, default: 'Gold Member' }
@@ -35,6 +48,10 @@ UserSchema.pre('save', async function (next) {
   try {
     const salt = await bcrypt.genSalt(10);
     this.password = await bcrypt.hash(this.password, salt);
+    this.passwordChangedAt = new Date();
+    // Reset lockout on successful password set
+    this.failedLoginAttempts = 0;
+    this.lockUntil = null;
     next();
   } catch (err) {
     next(err);
