@@ -27,6 +27,10 @@ const UserSchema = new mongoose.Schema({
   verificationToken: { type: String, default: null },
   verificationTokenExpires: { type: Date, default: null },
 
+  // Password reset
+  resetPasswordToken: { type: String, default: null },
+  resetPasswordExpires: { type: Date, default: null },
+
   customerDetails: {
     points: { type: Number, default: 350 },
     loyaltyTier: { type: String, default: 'Gold Member' }

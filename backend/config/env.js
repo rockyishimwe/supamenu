@@ -20,4 +20,12 @@ module.exports = {
   JWT_SECRET: process.env.JWT_SECRET,
   PORT: parseInt(process.env.PORT, 10) || 5000,
   CORS_ORIGIN: process.env.CORS_ORIGIN || 'http://localhost:3000',
+  // SMTP mail transport
+  SMTP: {
+    host: process.env.SMTP_HOST || 'smtp.ethereal.email',
+    port: parseInt(process.env.SMTP_PORT, 10) || 587,
+    user: process.env.SMTP_USER || '',
+    pass: process.env.SMTP_PASS || '',
+    from: process.env.MAIL_FROM || 'noreply@dineflow.app',
+  },
 };

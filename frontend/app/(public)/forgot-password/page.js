@@ -1,18 +1,41 @@
 "use client";
 import React, { useState } from 'react';
 import Link from 'next/link';
-import { Mail, ShieldCheck, ArrowRight } from 'lucide-react';
+import { Mail, ShieldCheck, ArrowRight, AlertCircle } from 'lucide-react';
 import DineFlowLogo from '../../../components/DineFlowLogo';
 import BackButton from '../../../components/BackButton';
+
+const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000';
 
 export default function ForgotPasswordPage() {
   const [email, setEmail] = useState('');
   const [sent, setSent] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState('');
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    if (email) {
+    setError('');
+
+    if (!email) return;
+
+    setLoading(true);
+    try {
+      const res = await fetch(`${API_URL}/api/auth/forgot-password`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email }),
+      });
+      const data = await res.json();
+      if (!res.ok) {
+        setError(data.message || 'Something went wrong. Please try again.');
+        return;
+      }
       setSent(true);
+    } catch {
+      setError('Could not connect to the server. Please try again later.');
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -65,11 +88,28 @@ export default function ForgotPasswordPage() {
                 </div>
               </div>
 
+              {error && (
+                <div className="flex items-center gap-2 p-3 rounded-xl bg-red-500/10 border border-red-500/20 text-red-400 text-xs">
+                  <AlertCircle className="w-4 h-4 flex-shrink-0" />
+                  <span>{error}</span>
+                </div>
+              )}
+
               <button
                 type="submit"
-                className="w-full py-3.5 bg-[#FF6B00] hover:bg-[#e05e00] text-white font-semibold text-xs rounded-xl flex items-center justify-center gap-1.5 hover-lift shadow-lg shadow-[#FF6B00]/10"
+                disabled={loading}
+                className="w-full py-3.5 bg-[#FF6B00] hover:bg-[#e05e00] disabled:bg-[#FF6B00]/50 disabled:cursor-not-allowed text-white font-semibold text-xs rounded-xl flex items-center justify-center gap-1.5 hover-lift shadow-lg shadow-[#FF6B00]/10 transition-all"
               >
-                Send Reset Link <ArrowRight className="w-4.5 h-4.5" />
+                {loading ? (
+                  <span className="flex items-center gap-2">
+                    <span className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                    Sending...
+                  </span>
+                ) : (
+                  <>
+                    Send Reset Link <ArrowRight className="w-4.5 h-4.5" />
+                  </>
+                )}
               </button>
             </form>
           </div>

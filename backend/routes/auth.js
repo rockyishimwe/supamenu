@@ -5,6 +5,7 @@ const { authMiddleware } = require('../middleware/auth');
 const validate = require('../middleware/validate');
 const { sanitize } = require('../utils/sanitize');
 const authService = require('../services/authService');
+const config = require('../config/env');
 
 /**
  * @openapi
@@ -302,6 +303,83 @@ router.post('/wallet/topup',
   async (req, res, next) => {
     try {
       const result = await authService.topUpWallet(req.user.id, req.body.amount);
+      res.json(result);
+    } catch (err) {
+      next(err);
+    }
+  }
+);
+
+// ──────────────────────────────────────────────
+// Password reset (no auth required)
+// ──────────────────────────────────────────────
+
+/**
+ * @openapi
+ * /auth/forgot-password:
+ *   post:
+ *     tags: [Auth]
+ *     summary: Request a password reset email
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required: [email]
+ *             properties:
+ *               email: { type: string, format: email }
+ *     responses:
+ *       200:
+ *         description: Reset email sent if the account exists
+ */
+router.post('/forgot-password',
+  body('email').isEmail().withMessage('Valid email is required').normalizeEmail(),
+  validate,
+  async (req, res, next) => {
+    try {
+      const origin = req.headers.origin || config.CORS_ORIGIN;
+      const result = await authService.forgotPassword({ email: req.body.email, origin });
+      res.json(result);
+    } catch (err) {
+      next(err);
+    }
+  }
+);
+
+/**
+ * @openapi
+ * /auth/reset-password:
+ *   post:
+ *     tags: [Auth]
+ *     summary: Reset password with a token from the email link
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required: [token, newPassword]
+ *             properties:
+ *               token: { type: string }
+ *               newPassword: { type: string, minLength: 8 }
+ *     responses:
+ *       200:
+ *         description: Password reset successfully
+ *       400:
+ *         description: Invalid or expired token
+ */
+router.post('/reset-password',
+  body('token').notEmpty().withMessage('Reset token is required'),
+  body('newPassword')
+    .isLength({ min: 8 }).withMessage('Password must be at least 8 characters')
+    .matches(/[a-z]/).withMessage('Password must contain a lowercase letter')
+    .matches(/[A-Z]/).withMessage('Password must contain an uppercase letter')
+    .matches(/[0-9]/).withMessage('Password must contain a digit'),
+  validate,
+  async (req, res, next) => {
+    try {
+      const result = await authService.resetPassword(req.body);
       res.json(result);
     } catch (err) {
       next(err);

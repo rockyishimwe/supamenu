@@ -4,6 +4,7 @@ const crypto = require('crypto');
 const User = require('../models/User');
 const Restaurant = require('../models/Restaurant');
 const config = require('../config/env');
+const { sendVerificationEmail, sendPasswordResetEmail } = require('./emailService');
 
 const JWT_SECRET = config.JWT_SECRET;
 const REFRESH_TOKEN_EXPIRY_DAYS = 30;
@@ -190,8 +191,9 @@ async function requestEmailVerification(userId) {
   user.verificationTokenExpires = new Date(Date.now() + 24 * 60 * 60 * 1000); // 24h
   await user.save();
 
-  // In production, send email here. Return token for now (stub).
-  return { message: 'Verification email sent.', token };
+  await sendVerificationEmail(user, token, config.CORS_ORIGIN);
+
+  return { message: 'Verification email sent.' };
 }
 
 async function verifyEmail(token) {
@@ -220,4 +222,46 @@ async function topUpWallet(userId, amount) {
   return { walletBalance: user.walletBalance };
 }
 
-module.exports = { registerUser, loginUser, refreshAccessToken, revokeRefreshToken, getProfile, updateProfile, changePassword, requestEmailVerification, verifyEmail, topUpWallet };
+async function forgotPassword({ email, origin }) {
+  const user = await User.findOne({ email });
+  // Always return success to prevent email enumeration
+  if (!user) return { message: 'If that email is registered, you will receive a password reset link.' };
+
+  const token = crypto.randomBytes(32).toString('hex');
+  const hashed = crypto.createHash('sha256').update(token).digest('hex');
+  user.resetPasswordToken = hashed;
+  user.resetPasswordExpires = new Date(Date.now() + 60 * 60 * 1000); // 1 hour
+  await user.save();
+
+  await sendPasswordResetEmail(user, token, origin || config.CORS_ORIGIN);
+
+  return { message: 'If that email is registered, you will receive a password reset link.' };
+}
+
+async function resetPassword({ token, newPassword }) {
+  if (!token) throw Object.assign(new Error('Reset token is required'), { status: 400 });
+
+  const hashed = crypto.createHash('sha256').update(token).digest('hex');
+  const user = await User.findOne({
+    resetPasswordToken: hashed,
+    resetPasswordExpires: { $gt: new Date() },
+  });
+  if (!user) throw Object.assign(new Error('Invalid or expired reset token'), { status: 400 });
+
+  // Validate password strength
+  if (newPassword.length < 8) throw Object.assign(new Error('Password must be at least 8 characters'), { status: 400 });
+  if (!/[a-z]/.test(newPassword)) throw Object.assign(new Error('Password must contain a lowercase letter'), { status: 400 });
+  if (!/[A-Z]/.test(newPassword)) throw Object.assign(new Error('Password must contain an uppercase letter'), { status: 400 });
+  if (!/[0-9]/.test(newPassword)) throw Object.assign(new Error('Password must contain a digit'), { status: 400 });
+
+  user.password = newPassword;
+  user.resetPasswordToken = null;
+  user.resetPasswordExpires = null;
+  // Invalidate all other sessions
+  user.refreshTokens = [];
+  await user.save();
+
+  return { message: 'Password reset successful. Please log in with your new password.' };
+}
+
+module.exports = { registerUser, loginUser, refreshAccessToken, revokeRefreshToken, getProfile, updateProfile, changePassword, requestEmailVerification, verifyEmail, topUpWallet, forgotPassword, resetPassword };

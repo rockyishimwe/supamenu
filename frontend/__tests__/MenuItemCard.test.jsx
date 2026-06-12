@@ -3,16 +3,26 @@ import { render, screen, fireEvent } from '@testing-library/react';
 import { createElement } from 'react';
 import MenuItemCard from '@/components/MenuItemCard';
 
-// Mock next/image
+// Mock next/image — convert boolean props to strings for DOM compat
 vi.mock('next/image', () => ({
   __esModule: true,
-  default: (props) => createElement('img', props),
+  default: (props) => {
+    const htmlProps = { ...props };
+    // next/Image pass boolean attrs like fill, priority as booleans;
+    // the DOM <img> expects strings for custom attrs
+    if (htmlProps.fill === true) htmlProps.fill = 'true';
+    if (htmlProps.priority === true) htmlProps.priority = 'true';
+    return createElement('img', htmlProps);
+  },
 }));
 
-// Mock framer-motion motion.div to render a plain div
+// Mock framer-motion motion elements to render plain HTML elements
 vi.mock('framer-motion', () => ({
   motion: {
     div: 'div',
+    span: 'span',
+    p: 'p',
+    button: 'button',
   },
 }));
 

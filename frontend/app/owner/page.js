@@ -6,33 +6,15 @@ import { SkeletonRow } from '../../components/SkeletonRow';
 import dynamic from 'next/dynamic';
 import { 
   TrendingUp, Calendar, Users, ShoppingBag, ArrowUpRight, 
-  Activity, Star, Clock, Sparkles, Plus, Check
+  Activity, Star, Clock, Sparkles, Check
 } from 'lucide-react';
 import MiniCalendar from '../../components/MiniCalendar';
 import OwnerKPIRow from '../../components/owner/OwnerKPIRow';
+import MenuCRUDPanel from '../../components/owner/MenuCRUDPanel';
 import { staggerContainer, fadeUpItem, slideInLeft, slideInRight, slideUpView, scaleInView } from '../../components/PageTransition';
+import { mockSalesData, mockTimePeakData } from '../../lib/mock-data-owner';
 
 const ChartsSection = dynamic(() => import('../../components/owner/ChartsSection'), { ssr: false });
-
-const mockSalesData = [
-  { name: 'Mon', sales: 1400, reservations: 12 },
-  { name: 'Tue', sales: 2200, reservations: 18 },
-  { name: 'Wed', sales: 1800, reservations: 15 },
-  { name: 'Thu', sales: 2600, reservations: 22 },
-  { name: 'Fri', sales: 3800, reservations: 32 },
-  { name: 'Sat', sales: 5200, reservations: 45 },
-  { name: 'Sun', sales: 4500, reservations: 38 }
-];
-
-const mockTimePeakData = [
-  { time: '11am', occupancy: 20 },
-  { time: '1pm', occupancy: 65 },
-  { time: '3pm', occupancy: 30 },
-  { time: '5pm', occupancy: 45 },
-  { time: '7pm', occupancy: 90 },
-  { time: '9pm', occupancy: 85 },
-  { time: '11pm', occupancy: 25 }
-];
 
 function SkeletonChart() {
   return (
@@ -148,33 +130,18 @@ export default function OwnerDashboard() {
               </div>
             </motion.div>
           )}
-          <motion.div variants={fadeUpItem} className="lg:col-span-6 glass-panel rounded-[20px] p-6 border border-white/5 card-shine">
-            <div className="flex justify-between items-center mb-4">
-              <h3 className="text-sm font-bold uppercase tracking-wider text-white">Menu CRUD</h3>
-              <motion.button
-                type="button"
-                onClick={() => addMenuItem({ name: 'New Special', category: 'Appetizers', price: 12.99, stockLevel: 20, tags: ['New'], image: 'https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=400' })}
-                whileHover={{ scale: 1.04 }}
-                whileTap={{ scale: 0.96 }}
-                className="flex items-center gap-1 text-xs px-3 py-1.5 rounded-xl bg-primary text-white font-semibold transition-colors"
-              >
-                <Plus className="w-3.5 h-3.5" /> Add Item
-              </motion.button>
-            </div>
-            <div className="space-y-2 max-h-48 overflow-y-auto">
-              {menuItems.slice(0, 6).map((item, idx) => (
-                <motion.div
-                  key={item._id}
-                  initial={{ opacity: 0, x: -15 }}
-                  animate={{ opacity: 1, x: 0 }}
-                  transition={{ delay: idx * 0.05, duration: 0.3, ease: 'easeOut' }}
-                  className="flex justify-between items-center py-2 border-b border-white/5 text-sm"
-                >
-                  <span className="text-white">{item.name}</span>
-                  <span className="text-primary font-semibold">${item.price?.toFixed(2)}</span>
-                </motion.div>
-              ))}
-            </div>
+          <motion.div variants={fadeUpItem} className="lg:col-span-6">
+            <MenuCRUDPanel
+              menuItems={menuItems}
+              onAddItem={() => addMenuItem({
+                name: 'New Special',
+                category: 'Appetizers',
+                price: 12.99,
+                stockLevel: 20,
+                tags: ['New'],
+                image: 'https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=400',
+              })}
+            />
           </motion.div>
         </motion.div>
       </div>

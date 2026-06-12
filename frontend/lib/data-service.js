@@ -133,6 +133,25 @@ function getMode() {
   return localStorage.getItem('dineflow_mode') || 'demo';
 }
 
+/**
+ * Call an API function when in live mode with a token.
+ * Falls back to the callback silently when offline/demo.
+ * Returns { called, result } where called=true means the API was invoked.
+ */
+async function callAPI(fn, fallbackResult = null) {
+  const mode = getMode();
+  const token = getToken();
+  if (mode === 'live' && token) {
+    try {
+      const result = await fn(token);
+      return { called: true, result };
+    } catch (err) {
+      return { called: true, result: fallbackResult, error: err.message };
+    }
+  }
+  return { called: false, result: fallbackResult };
+}
+
 export async function createReservation(data) {
   const mode = getMode();
   const token = getToken();
