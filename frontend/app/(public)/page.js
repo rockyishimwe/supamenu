@@ -7,6 +7,7 @@ import FeaturedRestaurants from '../../components/landing/FeaturedRestaurants';
 import StatsBar from '../../components/landing/StatsBar';
 import ExperienceTabs from '../../components/landing/ExperienceTabs';
 import FeatureGrid from '../../components/landing/FeatureGrid';
+import TestimonialsSection from '../../components/landing/TestimonialsSection';
 import PricingSection from '../../components/landing/PricingSection';
 import LandingFAQ from '../../components/landing/LandingFAQ';
 import LandingFooter from '../../components/landing/LandingFooter';
@@ -25,10 +26,11 @@ export default function LandingPage() {
       <LandingNavbar isClient={isClient} theme={theme} toggleTheme={toggleTheme} />
       <LandingHero />
       <FeaturedRestaurants />
-      <PricingSection />
       <StatsBar />
       <ExperienceTabs activeTab={activeTab} setActiveTab={setActiveTab} />
       <FeatureGrid />
+      <TestimonialsSection />
+      <PricingSection />
       <LandingFAQ activeFaq={activeFaq} setActiveFaq={setActiveFaq} />
       <LandingFooter />
     </div>

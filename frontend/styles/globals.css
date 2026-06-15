@@ -37,6 +37,18 @@
 .bg-panel { background-color: var(--color-panel-dark); }
 .text-body { color: var(--color-text); }
 .text-muted { color: var(--color-text-muted); }
+.border-panel { border-color: var(--color-border-dark); }
+
+/* Translucent overlays — adapt to both modes */
+.bg-overlay { background-color: rgba(255,255,255,0.03); }
+.bg-overlay-medium { background-color: rgba(255,255,255,0.06); }
+.bg-overlay-strong { background-color: rgba(255,255,255,0.10); }
+.light .bg-overlay { background-color: rgba(0,0,0,0.04); }
+.light .bg-overlay-medium { background-color: rgba(0,0,0,0.08); }
+.light .bg-overlay-strong { background-color: rgba(0,0,0,0.12); }
+
+/* Section backgrounds */
+.bg-subtle { background-color: var(--color-overlay); }
 
 html {
   scroll-behavior: smooth;

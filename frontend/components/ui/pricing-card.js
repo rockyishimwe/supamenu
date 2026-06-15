@@ -7,7 +7,7 @@ function Card({ className, ...props }) {
       className={cn(
         'bg-panel relative w-full max-w-xs rounded-xl',
         'p-1.5 shadow-xl backdrop-blur-xl',
-        'border border-white/10',
+        'border border-panel',
         className,
       )}
       {...props}
@@ -19,7 +19,7 @@ function Header({ className, children, glassEffect = true, ...props }) {
   return (
     <div
       className={cn(
-        'bg-white/[0.03] relative mb-4 rounded-xl border border-white/5 p-4',
+        'bg-overlay relative mb-4 rounded-xl border border-panel p-4',
         className,
       )}
       {...props}
@@ -40,18 +40,11 @@ function Header({ className, children, glassEffect = true, ...props }) {
 }
 
 function Plan({ className, ...props }) {
-  return (
-    <div
-      className={cn('mb-8 flex items-center justify-between', className)}
-      {...props}
-    />
-  );
+  return <div className={cn('mb-8 flex items-center justify-between', className)} {...props} />;
 }
 
 function Description({ className, ...props }) {
-  return (
-    <p className={cn('text-muted text-xs', className)} {...props} />
-  );
+  return <p className={cn('text-muted text-xs', className)} {...props} />;
 }
 
 function PlanName({ className, ...props }) {
@@ -70,7 +63,7 @@ function Badge({ className, ...props }) {
   return (
     <span
       className={cn(
-        'border-white/20 text-white/80 rounded-full border px-2 py-0.5 text-xs',
+        'border-panel text-muted rounded-full border px-2 py-0.5 text-xs',
         className,
       )}
       {...props}
@@ -79,39 +72,19 @@ function Badge({ className, ...props }) {
 }
 
 function Price({ className, ...props }) {
-  return (
-    <div className={cn('mb-3 flex items-end gap-1', className)} {...props} />
-  );
+  return <div className={cn('mb-3 flex items-end gap-1', className)} {...props} />;
 }
 
 function MainPrice({ className, ...props }) {
-  return (
-    <span
-      className={cn('text-3xl font-extrabold tracking-tight text-white', className)}
-      {...props}
-    />
-  );
+  return <span className={cn('text-3xl font-extrabold tracking-tight text-body', className)} {...props} />;
 }
 
 function Period({ className, ...props }) {
-  return (
-    <span
-      className={cn('text-white/80 pb-1 text-sm', className)}
-      {...props}
-    />
-  );
+  return <span className={cn('text-muted pb-1 text-sm', className)} {...props} />;
 }
 
 function OriginalPrice({ className, ...props }) {
-  return (
-    <span
-      className={cn(
-        'text-muted mr-1 ml-auto text-lg line-through',
-        className,
-      )}
-      {...props}
-    />
-  );
+  return <span className={cn('text-muted mr-1 ml-auto text-lg line-through', className)} {...props} />;
 }
 
 function Body({ className, ...props }) {
@@ -123,46 +96,21 @@ function List({ className, ...props }) {
 }
 
 function ListItem({ className, ...props }) {
-  return (
-    <li
-      className={cn(
-        'text-muted flex items-start gap-3 text-sm',
-        className,
-      )}
-      {...props}
-    />
-  );
+  return <li className={cn('text-muted flex items-start gap-3 text-sm', className)} {...props} />;
 }
 
 function Separator({ children = 'Upgrade to access', className, ...props }) {
   return (
-    <div
-      className={cn(
-        'text-muted flex items-center gap-3 text-sm',
-        className,
-      )}
-      {...props}
-    >
-      <span className="bg-white/40 h-[1px] flex-1" />
+    <div className={cn('text-muted flex items-center gap-3 text-sm', className)} {...props}>
+      <span className="bg-overlay-strong h-[1px] flex-1" />
       <span className="text-muted shrink-0">{children}</span>
-      <span className="bg-white/40 h-[1px] flex-1" />
+      <span className="bg-overlay-strong h-[1px] flex-1" />
     </div>
   );
 }
 
 export {
-  Card,
-  Header,
-  Description,
-  Plan,
-  PlanName,
-  Badge,
-  Price,
-  MainPrice,
-  Period,
-  OriginalPrice,
-  Body,
-  List,
-  ListItem,
-  Separator,
+  Card, Header, Description, Plan, PlanName, Badge,
+  Price, MainPrice, Period, OriginalPrice,
+  Body, List, ListItem, Separator,
 };

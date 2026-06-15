@@ -94,7 +94,7 @@ export default function PricingSection() {
       >
         <motion.h2
           variants={fadeUpItem}
-          className="text-3xl md:text-4xl font-bold text-white"
+          className="text-3xl md:text-4xl font-bold text-body"
         >
           Simple, Transparent Pricing
         </motion.h2>
